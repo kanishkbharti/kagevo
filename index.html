@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kagevo — Assign Your Kage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="kage-icon" viewBox="0 0 24 24">
+    <ellipse cx="12" cy="21" rx="7" ry="2" fill="currentColor" opacity=".35"/>
+    <path fill="currentColor" d="M12 4a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Zm-5 8c-.6 1.2-1 2.8-1 4.5V19h12v-2.5c0-1.7-.4-3.3-1-4.5-.8-.6-2-.4-2.8.4L12 14l-1.2-.5C10 13 8.8 12.8 8 13.4Z"/>
+  </symbol>
+</svg>
+<style>
+:root{
+  --bg:#08080C; --bg-2:#0E0E15; --panel:rgba(255,255,255,0.045);
+  --panel-2:rgba(255,255,255,0.07); --line:rgba(255,255,255,0.09);
+  --line-2:rgba(255,255,255,0.14); --ink:#F6F6F8; --muted:#9A9AA8; --faint:#62626E;
+  --brutal:#5B8DEF; --roast:#FF6B35; --motiv:#34D399; --support:#B794F6;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(60% 50% at 18% 8%,rgba(91,141,239,.16),transparent 60%),
+  radial-gradient(50% 45% at 88% 22%,rgba(183,148,246,.14),transparent 60%),
+  radial-gradient(60% 55% at 50% 110%,rgba(52,211,153,.10),transparent 60%)}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.wrap{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:64px 28px 120px}
+</style>
+<style>
+/* ── Header ── */
+.hero{margin-bottom:64px;max-width:760px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:10px;margin-bottom:22px}
+.eyebrow .kage-logo{width:24px;height:24px;border-radius:8px;background:linear-gradient(145deg,#312e81 0%,#0a0a0f 100%);display:flex;align-items:center;justify-content:center;border:1px solid rgba(99,102,241,.35);box-shadow:0 0 16px rgba(99,102,241,.25)}
+.eyebrow .kage-logo svg{width:14px;height:14px;color:#a5b4fc;filter:drop-shadow(2px 3px 4px rgba(0,0,0,.9))}
+.hero h1{font-size:clamp(38px,6vw,72px);font-weight:800;letter-spacing:-.04em;line-height:.98}
+.hero h1 .grad{background:linear-gradient(110deg,var(--brutal),var(--support) 40%,var(--roast) 72%,var(--motiv));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{margin-top:22px;font-size:18px;line-height:1.65;color:var(--muted);max-width:620px}
+.demo-banner{margin:36px 0 48px;padding:28px 32px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(135deg,rgba(91,141,239,.08),rgba(183,148,246,.06));display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
+.demo-banner h2{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.demo-banner p{font-size:14px;color:var(--muted);margin-top:6px;max-width:480px}
+.demo-banner .tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--motiv);margin-bottom:8px}
+.demo-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:80px;gap:24px}
+.demo-wrap .hint{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.legend .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);border-radius:100px;font-size:13px;font-weight:600;background:var(--panel)}
+.legend .chip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+/* ── Gallery ── */
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:60px 40px;align-items:start}
+.frame-wrap{display:flex;flex-direction:column;align-items:center;gap:20px}
+.frame-cap{text-align:center}
+.frame-cap .num{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--faint)}
+.frame-cap h3{font-size:17px;font-weight:700;letter-spacing:-.01em;margin-top:4px}
+.frame-cap span{display:block;font-size:13px;color:var(--muted);margin-top:3px}
+/* ── Phone frame ── */
+.phone{width:330px;height:700px;border-radius:52px;background:#000;padding:11px;position:relative;
+  box-shadow:0 0 0 2px rgba(255,255,255,.06),0 40px 80px -20px rgba(0,0,0,.8),0 0 90px -30px rgba(91,141,239,.4)}
+.phone .island{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:96px;height:30px;background:#000;border-radius:100px;z-index:40}
+.screen{width:100%;height:100%;border-radius:42px;overflow:hidden;position:relative;background:var(--bg-2);display:flex;flex-direction:column;font-size:14px}
+.screen::-webkit-scrollbar{display:none}
+.scroll{flex:1;overflow-y:auto;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+/* status bar */
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:16px 26px 6px;font-size:13px;font-weight:600;flex-shrink:0}
+.statusbar .ico{display:flex;gap:6px;align-items:center;opacity:.85}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+<style>
+/* greeting */
+.greet{padding:6px 24px 0;flex-shrink:0}
+.greet .meta{display:flex;align-items:center;justify-content:space-between}
+.persona-tag{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:7px}
+.persona-tag b{color:var(--ink);font-weight:700}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,var(--support),var(--brutal));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#0b0b12}
+.avatar.kage{background:linear-gradient(145deg,#1e1e2e 0%,#0a0a10 100%);border:1px solid rgba(99,102,241,.22)}
+.avatar.kage .kage-icon{width:18px;height:18px;color:#818cf8;filter:drop-shadow(2px 4px 6px rgba(0,0,0,.85))}
+.kage-av{background:linear-gradient(145deg,#312e81 0%,#0a0a0f 100%)!important;display:flex;align-items:center;justify-content:center}
+.kage-av svg,.av-item.kage-shadow svg{width:44px;height:44px;color:#a5b4fc;filter:drop-shadow(0 8px 14px rgba(0,0,0,.85))}
+.av-item.kage-shadow svg{width:28px;height:28px}
+.greet h2{font-size:25px;font-weight:800;letter-spacing:-.03em;margin-top:14px;line-height:1.12}
+.greet h2 .soft{color:var(--faint)}
+/* orb */
+.orb-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 0 8px;flex-shrink:0}
+.orb{width:176px;height:176px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.orb .core{width:128px;height:128px;border-radius:50%;position:relative;z-index:3;
+  background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.12) 0%,#6366f1 28%,#312e81 58%,#0a0a0f 100%);
+  box-shadow:0 0 60px -6px rgba(99,102,241,.55),0 24px 48px -12px rgba(0,0,0,.85),inset 0 0 30px rgba(255,255,255,.06)}
+.orb .core.brutal{background:radial-gradient(circle at 35% 30%,#fff,#5B8DEF 32%,#1E40AF 72%,#172554);box-shadow:0 0 60px -6px var(--brutal),inset 0 0 30px rgba(255,255,255,.25)}
+.orb .ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(99,102,241,.45);animation:ripple 3s ease-out infinite}
+.orb .ring:nth-child(2){animation-delay:1s}
+.orb .ring:nth-child(3){animation-delay:2s}
+@keyframes ripple{0%{transform:scale(.72);opacity:.9}100%{transform:scale(1.25);opacity:0}}
+.orb-hint{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:18px;display:flex;align-items:center;gap:8px}
+.orb-hint .live{width:7px;height:7px;border-radius:50%;background:var(--roast);box-shadow:0 0 10px var(--roast);animation:pulse 1.4s infinite}
+/* mode rail */
+.mode-rail{display:flex;gap:8px;padding:14px 24px;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.mode-rail::-webkit-scrollbar{display:none}
+.mode-pill{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:100px;border:1px solid var(--line);font-size:12.5px;font-weight:600;color:var(--muted);background:var(--panel);white-space:nowrap;transition:.2s}
+.mode-pill i{width:8px;height:8px;border-radius:50%}
+.mode-pill.active{color:#0b0b12;border-color:transparent}
+.mode-pill.active.roast{background:var(--roast)}
+.mode-pill.active.brutal{background:var(--brutal)}
+.mode-pill.active.motiv{background:var(--motiv)}
+.mode-pill.active.support{background:var(--support)}
+/* cards */
+.sec-label{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);padding:0 24px;margin:6px 0 10px;display:flex;justify-content:space-between;align-items:center}
+.sec-label a{color:var(--brutal)}
+.card{margin:0 24px 12px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px}
+.nudge{margin:0 24px 14px;border-radius:20px;padding:16px 18px;background:linear-gradient(135deg,rgba(255,107,53,.16),rgba(183,148,246,.10));border:1px solid rgba(255,107,53,.28);position:relative;overflow:hidden}
+.nudge .from{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--roast);display:flex;align-items:center;gap:7px;font-weight:600}
+.nudge p{font-size:14.5px;line-height:1.5;margin-top:9px;color:var(--ink);font-weight:500}
+.nudge .act{display:flex;gap:8px;margin-top:14px}
+.mini-btn{font-size:12px;font-weight:600;padding:8px 14px;border-radius:100px;border:1px solid var(--line-2)}
+.mini-btn.fill{background:var(--ink);color:#0b0b12;border-color:transparent}
+</style>
+<style>
+/* habit rows */
+.habit{display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid var(--line)}
+.habit:last-child{border-bottom:none}
+.check{width:30px;height:30px;border-radius:50%;border:2px solid var(--line-2);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--motiv)}
+.check.done{background:var(--motiv);border-color:var(--motiv);color:#0b0b12}
+.check.miss{border-color:var(--roast);color:var(--roast)}
+.habit .body{flex:1;min-width:0}
+.habit .body h4{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.habit .body .sub{font-size:12px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:8px}
+.streak{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--roast);display:flex;align-items:center;gap:4px;flex-shrink:0}
+/* progress ring */
+.goal-card{display:flex;gap:16px;align-items:center}
+.ring{width:74px;height:74px;flex-shrink:0;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;letter-spacing:-.02em}
+.goal-card .info h4{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.goal-card .info p{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.45}
+.goal-card .info .date{font-family:var(--mono);font-size:11px;color:var(--brutal);margin-top:7px;letter-spacing:.05em}
+/* dock */
+.dock{display:flex;justify-content:space-around;align-items:center;padding:14px 18px 26px;border-top:1px solid var(--line);background:rgba(8,8,12,.7);backdrop-filter:blur(12px);flex-shrink:0}
+.dock a{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--faint);letter-spacing:.02em}
+.dock a.on{color:var(--ink)}
+.dock svg{width:22px;height:22px}
+.dock .mic{width:52px;height:52px;border-radius:50%;margin-top:-24px;background:radial-gradient(circle at 35% 30%,#fff,var(--roast) 45%,#C2410C);display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px -4px var(--roast),0 8px 20px rgba(0,0,0,.5);color:#0b0b12}
+/* ── Active voice screen ── */
+.voice-screen{background:radial-gradient(70% 50% at 50% 26%,rgba(255,107,53,.20),transparent 70%),var(--bg-2)}
+.voice-top{display:flex;align-items:center;justify-content:space-between;padding:8px 24px}
+.voice-top .mode-now{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:100px;background:rgba(255,107,53,.16);border:1px solid rgba(255,107,53,.4);font-size:12px;font-weight:700;color:var(--roast)}
+.x-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.big-orb-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;padding:10px 0}
+.big-orb{width:210px;height:210px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
+.big-orb .core{width:150px;height:150px;border-radius:50%;z-index:3;background:radial-gradient(circle at 36% 28%,rgba(255,255,255,.12),#6366f1 32%,#312e81 62%,#0a0a0f);box-shadow:0 0 80px -4px rgba(99,102,241,.6),0 28px 56px -14px rgba(0,0,0,.9),inset 0 0 40px rgba(255,255,255,.06);animation:breathe 3.4s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.big-orb .ring{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(99,102,241,.4);animation:ripple 3s ease-out infinite}
+.big-orb .ring:nth-child(2){animation-delay:1s}
+.big-orb .ring:nth-child(3){animation-delay:2s}
+/* waveform */
+.wave{display:flex;align-items:center;gap:4px;height:42px}
+.wave span{width:4px;border-radius:4px;background:linear-gradient(var(--roast),var(--support));animation:wv 1s ease-in-out infinite}
+@keyframes wv{0%,100%{height:8px}50%{height:38px}}
+</style>
+<style>
+/* live transcript */
+.transcript{padding:0 22px 8px;display:flex;flex-direction:column;gap:12px}
+.t-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);text-align:center;margin-bottom:2px}
+.bubble{max-width:82%;padding:11px 15px;border-radius:18px;font-size:14px;line-height:1.45}
+.bubble.user{align-self:flex-end;background:var(--panel-2);border:1px solid var(--line);border-bottom-right-radius:5px}
+.bubble.ego{align-self:flex-start;background:linear-gradient(135deg,rgba(255,107,53,.18),rgba(124,45,18,.18));border:1px solid rgba(255,107,53,.3);border-bottom-left-radius:5px;font-weight:500}
+.bubble .who{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:5px}
+.voice-controls{display:flex;align-items:center;justify-content:center;gap:18px;padding:14px 24px 30px}
+.vc{width:54px;height:54px;border-radius:50%;border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;color:var(--ink);background:var(--panel)}
+.vc.end{background:#E5484D;border-color:transparent;color:#fff;width:64px;height:64px}
+.vc small{display:none}
+/* ── Chat ── */
+.chat-head{display:flex;align-items:center;gap:12px;padding:6px 22px 12px;border-bottom:1px solid var(--line)}
+.chat-head .avatar{width:38px;height:38px}
+.chat-head .who h4{font-size:15px;font-weight:700}
+.chat-head .who span{font-size:11.5px;color:var(--motiv);display:flex;align-items:center;gap:5px}
+.chat-head .who span i{width:6px;height:6px;border-radius:50%;background:var(--motiv);box-shadow:0 0 8px var(--motiv)}
+.chat-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.chat-body::-webkit-scrollbar{display:none}
+.c-bub{max-width:80%;padding:11px 14px;border-radius:18px;font-size:14px;line-height:1.5}
+.c-bub.me{align-self:flex-end;background:var(--brutal);color:#0b0b12;font-weight:500;border-bottom-right-radius:5px}
+.c-bub.ai{align-self:flex-start;background:var(--panel-2);border:1px solid var(--line);border-bottom-left-radius:5px}
+.c-time{font-size:10px;color:var(--faint);align-self:center;font-family:var(--mono);letter-spacing:.1em;margin:4px 0}
+.suggest{display:flex;gap:8px;padding:8px 18px;overflow-x:auto;scrollbar-width:none}
+.suggest::-webkit-scrollbar{display:none}
+.suggest button{flex:0 0 auto;font-size:12.5px;font-weight:600;padding:9px 14px;border-radius:100px;border:1px solid var(--line-2);color:var(--muted);white-space:nowrap}
+.composer{display:flex;align-items:center;gap:10px;padding:12px 16px 26px;border-top:1px solid var(--line)}
+.composer .field{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:100px;padding:12px 16px;font-size:14px;color:var(--muted)}
+.composer .send{width:44px;height:44px;border-radius:50%;background:var(--brutal);display:flex;align-items:center;justify-content:center;color:#0b0b12;flex-shrink:0}
+/* intensity */
+.intensity{margin:0 24px 14px}
+.intensity .top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:9px}
+.intensity .top b{color:var(--roast)}
+.track{height:8px;border-radius:8px;background:var(--panel-2);position:relative;border:1px solid var(--line)}
+.track .fill{position:absolute;inset:0 32% 0 0;border-radius:8px;background:linear-gradient(90deg,var(--motiv),var(--roast))}
+.track .knob{position:absolute;top:50%;left:68%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-top:8px}
+</style>
+<style>
+/* persona config */
+.cfg-head{padding:8px 24px 4px;flex-shrink:0}
+.cfg-head .step{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.cfg-head h2{font-size:23px;font-weight:800;letter-spacing:-.03em;margin-top:8px;line-height:1.15}
+.cfg-head p{font-size:13.5px;color:var(--muted);margin-top:8px;line-height:1.5}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 24px}
+.mode-card{border:1px solid var(--line);border-radius:18px;padding:14px;background:var(--panel);position:relative}
+.mode-card.on.brutal{border-color:var(--brutal);background:rgba(91,141,239,.10)}
+.mode-card.on.roast{border-color:var(--roast);background:rgba(255,107,53,.10)}
+.mode-card.on.motiv{border-color:var(--motiv);background:rgba(52,211,153,.10)}
+.mode-card.on.support{border-color:var(--support);background:rgba(183,148,246,.10)}
+.mode-card .ic{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px}
+.mode-card.brutal .ic{background:rgba(91,141,239,.16)}
+.mode-card.roast .ic{background:rgba(255,107,53,.16)}
+.mode-card.motiv .ic{background:rgba(52,211,153,.16)}
+.mode-card.support .ic{background:rgba(183,148,246,.16)}
+.mode-card h4{font-size:14px;font-weight:700;letter-spacing:-.01em}
+.mode-card p{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.4}
+.mode-card .tog{position:absolute;top:13px;right:13px;width:40px;height:23px;border-radius:100px;background:var(--panel-2);border:1px solid var(--line-2);position:absolute}
+.mode-card .tog::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:var(--faint);transition:.2s}
+.mode-card.on .tog::after{left:19px;background:#fff}
+.mode-card.on.brutal .tog{background:var(--brutal)}
+.mode-card.on.roast .tog{background:var(--roast)}
+.mode-card.on.motiv .tog{background:var(--motiv)}
+.mode-card.on.support .tog{background:var(--support)}
+/* voice picker */
+.voice-row{display:flex;align-items:center;gap:12px;margin:0 24px 10px;padding:13px 15px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+.voice-row.sel{border-color:var(--support);background:rgba(183,148,246,.08)}
+.voice-row .play{width:38px;height:38px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;color:var(--support);flex-shrink:0}
+.voice-row .vinfo{flex:1}
+.voice-row .vinfo h4{font-size:14px;font-weight:600}
+.voice-row .vinfo span{font-size:11.5px;color:var(--muted)}
+.voice-row .radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--line-2)}
+.voice-row.sel .radio{border-color:var(--support);background:var(--support);box-shadow:inset 0 0 0 3px var(--bg-2)}
+.cfg-cta{margin:14px 24px 28px}
+.cfg-cta button{width:100%;padding:15px;border-radius:16px;background:var(--ink);color:#0b0b12;font-weight:700;font-size:15px}
+.safety{margin:0 24px 16px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);font-size:11.5px;color:var(--muted);line-height:1.5;display:flex;gap:10px}
+.safety .sh{color:var(--support);flex-shrink:0}
+.foot-note{text-align:center;color:var(--faint);font-size:13px;margin-top:80px;font-family:var(--mono);letter-spacing:.08em}
+@media(max-width:680px){.phone{transform:scale(.92)}.wrap{padding:40px 14px 80px}}
+/* habits screen */
+.hstats{display:flex;gap:10px;padding:8px 24px 14px}
+.hstat{flex:1;border:1px solid var(--line);border-radius:16px;padding:13px;background:var(--panel)}
+.hstat .n{font-size:24px;font-weight:800;letter-spacing:-.03em;display:flex;align-items:baseline;gap:5px}
+.hstat .n small{font-size:13px;color:var(--roast)}
+.hstat .l{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:5px}
+.ms{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.ms:last-child{border:none}
+.ms .d{width:16px;height:16px;border-radius:50%;border:2px solid var(--line-2);flex-shrink:0}
+.ms.ok .d{background:var(--motiv);border-color:var(--motiv)}
+.ms.late .d{border-color:var(--roast)}
+.ms h5{font-size:13.5px;font-weight:600;flex:1}
+.ms.ok h5{color:var(--muted);text-decoration:line-through}
+.ms .tag{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--faint)}
+.ms.late .tag{color:var(--roast)}
+/* ── Cadence habit system ── */
+.cadence-tabs{display:flex;gap:6px;padding:0 22px 12px;overflow-x:auto;scrollbar-width:none}
+.cadence-tabs::-webkit-scrollbar{display:none}
+.c-tab{flex:0 0 auto;padding:8px 12px;border-radius:100px;border:1px solid var(--line);font-size:11.5px;font-weight:700;color:var(--muted);background:var(--panel);white-space:nowrap;display:flex;align-items:center;gap:6px}
+.c-tab.on{color:#0b0b12;border-color:transparent;background:var(--ink)}
+.c-tab .cnt{font-family:var(--mono);font-size:10px;opacity:.7}
+.c-tab.full{opacity:.45}
+.slot-bar{margin:0 22px 14px;padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:var(--panel)}
+.slot-bar .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.slot-bar .top span{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.slot-bar .top b{font-size:12px;font-weight:700;color:var(--motiv)}
+.slot-bar .top b.warn{color:var(--roast)}
+.slots{display:flex;gap:5px}
+.slots i{flex:1;height:6px;border-radius:6px;background:var(--panel-2);border:1px solid var(--line)}
+.slots i.used{background:var(--motiv);border-color:var(--motiv)}
+.slots i.warn{background:var(--roast);border-color:var(--roast)}
+.parkinson{margin:0 22px 12px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,rgba(255,107,53,.12),rgba(91,141,239,.08));border:1px solid rgba(255,107,53,.25)}
+.parkinson .label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--roast);font-weight:600}
+.parkinson .timer{font-size:22px;font-weight:800;letter-spacing:-.03em;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.parkinson .sub{font-size:11.5px;color:var(--muted);line-height:1.4}
+.parkinson .bar{height:4px;border-radius:4px;background:rgba(255,255,255,.08);margin-top:10px;overflow:hidden}
+.parkinson .bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--roast),#E5484D)}
+.habit.main .body h4{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.habit .badge-main{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;padding:3px 7px;border-radius:100px;background:rgba(91,141,239,.18);color:var(--brutal);font-weight:700}
+.habit .cadence-tag{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--faint);padding:2px 7px;border:1px solid var(--line);border-radius:100px}
+.habit .deadline{font-size:11px;color:var(--roast);font-weight:600}
+.habit .deadline.ok{color:var(--motiv)}
+.add-fab{position:absolute;bottom:88px;right:22px;width:52px;height:52px;border-radius:50%;background:var(--ink);color:#0b0b12;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:300;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:10;line-height:1}
+.add-head{padding:8px 22px 10px;flex-shrink:0;border-bottom:1px solid var(--line)}
+.add-head .row{display:flex;align-items:center;justify-content:space-between}
+.add-head h2{font-size:20px;font-weight:800;letter-spacing:-.02em;margin-top:8px}
+.add-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:14px 22px}
+.add-body::-webkit-scrollbar{display:none}
+.field-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:14px 0 8px;display:block}
+.field-label:first-child{margin-top:0}
+.cadence-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.c-pick{padding:12px 8px;border-radius:14px;border:1px solid var(--line);background:var(--panel);text-align:center;transition:.2s;width:100%}
+.c-pick.sel{border-color:var(--brutal);background:rgba(91,141,239,.10)}
+.c-pick.disabled{opacity:.35;pointer-events:none}
+.c-pick .c-name{font-size:12px;font-weight:700;display:block}
+.c-pick .c-slots{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:4px;display:block}
+.c-pick.sel .c-slots{color:var(--brutal)}
+.gate-box{padding:14px;border-radius:16px;border:1px solid rgba(255,107,53,.35);background:rgba(255,107,53,.08);margin-top:12px}
+.gate-box.ok{border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.08)}
+.gate-box .gt{font-size:13px;font-weight:700;color:var(--roast);display:flex;align-items:center;gap:8px}
+.gate-box.ok .gt{color:var(--motiv)}
+.gate-box p{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.45}
+.time-box{display:flex;gap:10px;align-items:center;margin-top:8px}
+.time-box input,.time-box select{flex:1;padding:12px;border-radius:12px;border:1px solid var(--line-2);background:var(--panel-2);color:var(--ink);font-size:14px;font-weight:600}
+.goal-link{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-top:8px;width:100%;text-align:left}
+.goal-link.sel{border-color:var(--motiv);background:rgba(52,211,153,.08)}
+.goal-link h5{font-size:14px;font-weight:700}
+.goal-link span{font-size:11px;color:var(--muted)}
+.reject-list{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px dashed var(--line)}
+.reject-list .rl-title{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.reject-list span{display:inline-block;font-size:11px;color:var(--faint);margin:2px 4px 2px 0;padding:3px 8px;border-radius:100px;background:var(--panel);text-decoration:line-through}
+.add-foot{padding:12px 22px 28px;border-top:1px solid var(--line);flex-shrink:0}
+.add-foot button{width:100%;padding:15px;border-radius:16px;background:var(--ink);color:#0b0b12;font-weight:700;font-size:15px}
+.add-foot button:disabled{opacity:.35;cursor:not-allowed}
+.add-foot .limit-note{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--faint);text-align:center;margin-top:10px;line-height:1.5}
+/* ── Spotify-style share ── */
+.share-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);flex-shrink:0;transition:.2s}
+.share-btn:hover{color:var(--ink);border-color:var(--line-2);background:var(--panel)}
+.share-btn svg{width:16px;height:16px}
+.share-sheet-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:30;opacity:0;visibility:hidden;transition:.25s}
+.share-sheet-overlay.open{opacity:1;visibility:visible}
+.share-sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;background:#12121a;border-radius:24px 24px 0 0;border-top:1px solid var(--line);padding:12px 20px 28px;transform:translateY(100%);transition:transform .32s cubic-bezier(.16,1,.3,1);max-height:88%}
+.share-sheet.open{transform:translateY(0)}
+.share-handle{width:36px;height:4px;border-radius:4px;background:var(--line-2);margin:0 auto 16px}
+.share-sheet h3{font-size:17px;font-weight:800;letter-spacing:-.02em;text-align:center;margin-bottom:4px}
+.share-sheet .share-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:16px}
+.share-card-preview{border-radius:20px;overflow:hidden;margin-bottom:18px;aspect-ratio:1/1;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.share-card-preview.story{aspect-ratio:9/16;max-height:280px;margin-left:auto;margin-right:auto}
+.share-card-inner{position:absolute;inset:0;padding:22px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,#1a1030 0%,#FF6B35 45%,#5B8DEF 100%)}
+.share-card-inner .brand{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;opacity:.85}
+.share-card-inner .headline{font-size:26px;font-weight:900;letter-spacing:-.04em;line-height:1.05;margin-top:8px}
+.share-card-inner .headline em{font-style:normal;color:rgba(255,255,255,.75);font-size:16px;font-weight:600;display:block;margin-top:6px}
+.share-card-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:auto}
+.share-card-stats div{background:rgba(0,0,0,.25);backdrop-filter:blur(8px);border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,.12)}
+.share-card-stats b{display:block;font-size:22px;font-weight:800;letter-spacing:-.03em}
+.share-card-stats span{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;opacity:.75;margin-top:2px;display:block}
+.share-card-quote{font-size:13px;font-weight:600;line-height:1.4;font-style:italic;opacity:.95;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.2)}
+.share-card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-family:var(--mono);font-size:8px;letter-spacing:.12em;opacity:.7}
+.share-types{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.share-types::-webkit-scrollbar{display:none}
+.share-type{flex:0 0 auto;padding:8px 14px;border-radius:100px;border:1px solid var(--line);font-size:12px;font-weight:600;color:var(--muted);background:var(--panel);white-space:nowrap}
+.share-type.on{background:var(--ink);color:#0b0b12;border-color:transparent}
+.share-row{display:flex;justify-content:space-around;gap:8px;margin-bottom:16px}
+.share-target{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:64px}
+.share-target .ic{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--panel-2);border:1px solid var(--line)}
+.share-target .ic.link{background:rgba(52,211,153,.15);border-color:rgba(52,211,153,.35);color:var(--motiv)}
+.share-target .ic.ig{background:linear-gradient(135deg,#833AB4,#FD1D1D,#FCAF45);border:none;font-size:20px}
+.share-target .ic.wa{background:rgba(37,211,102,.15);border-color:rgba(37,211,102,.35)}
+.share-target span{font-size:10px;font-weight:600;color:var(--muted);text-align:center}
+.share-copy-row{display:flex;gap:8px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--panel);border:1px solid var(--line)}
+.share-copy-row input{flex:1;background:none;border:none;color:var(--muted);font-family:var(--mono);font-size:11px;outline:none;min-width:0}
+.share-copy-row button{padding:8px 14px;border-radius:100px;background:var(--ink);color:#0b0b12;font-size:12px;font-weight:700;flex-shrink:0}
+.share-toast{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);background:var(--ink);color:#0b0b12;padding:12px 20px;border-radius:100px;font-size:13px;font-weight:700;opacity:0;visibility:hidden;transition:.25s;z-index:50;pointer-events:none}
+.share-toast.show{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1)}
+.share-promo{margin:0 22px 14px;padding:14px 16px;border-radius:18px;border:1px solid var(--line);background:var(--panel);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.share-promo .txt h4{font-size:14px;font-weight:700}
+.share-promo .txt p{font-size:11.5px;color:var(--muted);margin-top:3px}
+.share-promo button{padding:8px 14px;border-radius:100px;background:var(--ink);color:#0b0b12;font-size:12px;font-weight:700;flex-shrink:0}
+.meta-actions{display:flex;align-items:center;gap:8px}
+/* ── Goals list & add flow ── */
+.goals-view{display:flex;flex-direction:column;height:100%}
+.goals-view.hidden{display:none}
+.goal-row{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);position:relative}
+.goal-row:last-child{border-bottom:none}
+.goal-row .menu-btn{margin-left:auto;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);flex-shrink:0;font-size:16px;line-height:1}
+.goal-row .body{flex:1;min-width:0}
+.goal-row .body h4{font-size:15px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.goal-row .body .sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45}
+.goal-row .repeat-badge{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:100px;background:rgba(52,211,153,.12);color:var(--motiv);border:1px solid rgba(52,211,153,.25);font-weight:700}
+.goal-row .repeat-badge.once{background:rgba(255,255,255,.05);color:var(--faint);border-color:var(--line)}
+.goal-row .rename-input{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--brutal);background:var(--panel-2);color:var(--ink);font-size:15px;font-weight:700;outline:none}
+.goal-actions-menu{position:absolute;right:0;top:100%;margin-top:4px;background:#16161f;border:1px solid var(--line);border-radius:14px;padding:6px;min-width:140px;z-index:20;box-shadow:0 12px 40px rgba(0,0,0,.6);display:none}
+.goal-actions-menu.open{display:block}
+.goal-actions-menu button{display:block;width:100%;text-align:left;padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;color:var(--ink)}
+.goal-actions-menu button.danger{color:#E5484D}
+.repeat-toggle{display:flex;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:8px}
+.repeat-toggle button{flex:1;padding:12px 8px;font-size:12px;font-weight:700;color:var(--muted);background:var(--panel);border-right:1px solid var(--line);transition:.2s}
+.repeat-toggle button:last-child{border-right:none}
+.repeat-toggle button.on{background:rgba(52,211,153,.14);color:var(--motiv)}
+.add-step-tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--brutal);margin-bottom:6px;display:block}
+.cadence-pick-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.c-pick-lg{padding:20px 16px;border-radius:18px;border:1px solid var(--line);background:var(--panel);text-align:left;width:100%;transition:.2s}
+.c-pick-lg.sel{border-color:var(--motiv);background:rgba(52,211,153,.10)}
+.c-pick-lg .c-name{font-size:16px;font-weight:800;display:block;letter-spacing:-.02em}
+.c-pick-lg .c-slots{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px;display:block}
+.c-pick-lg .c-desc{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.4;display:block}
+.brutal-modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.7);z-index:40;display:none;align-items:center;justify-content:center;padding:24px}
+.brutal-modal-overlay.open{display:flex}
+.brutal-modal{background:linear-gradient(145deg,#1a0a0a,#2d1515);border:1px solid rgba(255,107,53,.45);border-radius:22px;padding:22px;max-width:280px;width:100%;box-shadow:0 0 60px rgba(255,107,53,.25)}
+.brutal-modal .from{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--roast);display:flex;align-items:center;gap:8px;font-weight:700}
+.brutal-modal h3{font-size:18px;font-weight:800;letter-spacing:-.02em;margin:12px 0 8px;line-height:1.2}
+.brutal-modal p{font-size:13px;color:var(--muted);line-height:1.55}
+.brutal-modal .acts{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+.brutal-modal .acts button{padding:13px;border-radius:14px;font-weight:700;font-size:14px}
+.brutal-modal .acts .primary{background:var(--ink);color:#0b0b12}
+.brutal-modal .acts .ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.empty-goals{text-align:center;padding:32px 20px;color:var(--muted);font-size:13px}
+.empty-goals b{display:block;color:var(--ink);font-size:15px;margin-bottom:6px}
+/* ── P0 Settings · Safety · Privacy ── */
+.settings-view{display:flex;flex-direction:column;height:100%}
+.settings-tabs{display:flex;gap:6px;padding:0 22px 12px;overflow-x:auto;scrollbar-width:none}
+.settings-tabs::-webkit-scrollbar{display:none}
+.s-tab{flex:0 0 auto;padding:8px 14px;border-radius:100px;border:1px solid var(--line);font-size:11.5px;font-weight:700;color:var(--muted);background:var(--panel);white-space:nowrap}
+.s-tab.on{color:#0b0b12;background:var(--ink);border-color:transparent}
+.settings-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 22px 28px}
+.settings-body::-webkit-scrollbar{display:none}
+.set-group{margin-bottom:20px}
+.set-group-title{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;display:block}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.set-row:last-child{border-bottom:none}
+.set-row .info h4{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.set-row .info p{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4;max-width:220px}
+.toggle{width:48px;height:28px;border-radius:100px;background:var(--panel-2);border:1px solid var(--line);position:relative;flex-shrink:0;transition:.2s}
+.toggle.on{background:var(--motiv);border-color:var(--motiv)}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--faint);transition:.2s}
+.toggle.on::after{left:23px;background:#fff}
+.quiet-hours{display:flex;gap:10px;margin-top:8px}
+.quiet-hours select{flex:1;padding:11px;border-radius:12px;border:1px solid var(--line-2);background:var(--panel-2);color:var(--ink);font-size:13px;font-weight:600}
+.freq-slider{margin-top:8px}
+.freq-slider .top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}
+.freq-slider .top b{color:var(--ink)}
+.set-btn{display:block;width:100%;padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);font-size:14px;font-weight:600;text-align:center;margin-top:8px;color:var(--ink)}
+.set-btn.danger{border-color:rgba(229,72,77,.4);color:#E5484D;background:rgba(229,72,77,.08)}
+.set-btn.warn{border-color:rgba(255,107,53,.35);color:var(--roast);background:rgba(255,107,53,.08)}
+.consent-box{padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--panel);margin-bottom:10px}
+.consent-box h4{font-size:14px;font-weight:700;margin-bottom:4px}
+.consent-box p{font-size:12px;color:var(--muted);line-height:1.45}
+.consent-box .provider{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--faint);margin-top:8px}
+.retention-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:14px;background:var(--panel);border:1px solid var(--line);font-size:13px}
+.retention-row b{font-weight:700}
+/* crisis safety screen */
+.crisis-screen{background:linear-gradient(180deg,#0f0a18 0%,#1a1030 40%,#0E0E15 100%);height:100%;display:flex;flex-direction:column}
+.crisis-screen.hidden{display:none!important}
+.crisis-screen .support-banner{margin:12px 22px;padding:12px 14px;border-radius:14px;background:rgba(183,148,246,.12);border:1px solid rgba(183,148,246,.35);font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--support);font-weight:700;display:flex;align-items:center;gap:8px}
+.crisis-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:8px 22px 20px;display:flex;flex-direction:column;gap:16px}
+.crisis-body::-webkit-scrollbar{display:none}
+.crisis-orb{width:80px;height:80px;border-radius:50%;margin:8px auto;background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.1),#6366f1 35%,#312e81 65%,#0a0a0f);box-shadow:0 0 40px rgba(99,102,241,.35),0 12px 24px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}
+.crisis-orb svg{width:36px;height:36px;color:#c4b5fd;filter:drop-shadow(2px 6px 8px rgba(0,0,0,.9))}
+.crisis-msg{padding:16px 18px;border-radius:20px;background:rgba(183,148,246,.10);border:1px solid rgba(183,148,246,.25);font-size:15px;line-height:1.55;font-weight:500}
+.crisis-msg .who{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--support);margin-bottom:8px;font-weight:700}
+.crisis-disclaimer{font-size:11px;color:var(--faint);line-height:1.5;text-align:center;padding:0 12px}
+.helpline{display:block;width:100%;padding:16px;border-radius:16px;border:1px solid var(--line);background:var(--panel);text-align:left;margin-bottom:8px;transition:.2s}
+.helpline:hover{border-color:var(--support)}
+.helpline h4{font-size:15px;font-weight:700;color:var(--support)}
+.helpline p{font-size:12px;color:var(--muted);margin-top:4px}
+.helpline .num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--ink);margin-top:6px;letter-spacing:.04em}
+.crisis-foot{padding:14px 22px 28px;border-top:1px solid var(--line);flex-shrink:0}
+.crisis-foot button{width:100%;padding:14px;border-radius:14px;background:rgba(183,148,246,.15);border:1px solid rgba(183,148,246,.35);color:var(--support);font-weight:700;font-size:14px}
+.p0-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;background:rgba(229,72,77,.12);border:1px solid rgba(229,72,77,.3);font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#E5484D;font-weight:700;margin-bottom:16px}
+/* ── Onboarding engine ── */
+.onboard{display:flex;flex-direction:column;height:100%}
+.ob-top{padding:8px 22px 0;flex-shrink:0}
+.ob-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.ob-back{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px}
+.ob-back.hidden{visibility:hidden;pointer-events:none}
+.ob-skip{font-size:13px;font-weight:600;color:var(--muted);padding:8px}
+.ob-progress{display:flex;gap:5px;margin-bottom:6px}
+.ob-progress span{flex:1;height:4px;border-radius:4px;background:var(--panel-2);transition:.3s}
+.ob-progress span.done{background:var(--motiv)}
+.ob-progress span.active{background:linear-gradient(90deg,var(--brutal),var(--support))}
+.ob-step-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.ob-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:8px 22px 12px;display:flex;flex-direction:column}
+.ob-body::-webkit-scrollbar{display:none}
+.ob-body h2{font-size:24px;font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-bottom:8px}
+.ob-body .sub{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:20px}
+.ob-options{display:flex;flex-direction:column;gap:10px}
+.ob-opt{display:flex;align-items:flex-start;gap:14px;padding:15px 16px;border:1px solid var(--line);border-radius:18px;background:var(--panel);text-align:left;transition:.2s;width:100%}
+.ob-opt:hover{border-color:var(--line-2)}
+.ob-opt.sel{border-color:var(--brutal);background:rgba(91,141,239,.10)}
+.ob-opt .ic{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:var(--panel-2)}
+.ob-opt .txt h4{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.ob-opt .txt p{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.45}
+.ob-opt.multi .check{margin-left:auto;width:22px;height:22px;border-radius:50%;border:2px solid var(--line-2);flex-shrink:0;margin-top:2px}
+.ob-opt.multi.sel .check{background:var(--motiv);border-color:var(--motiv);color:#0b0b12;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+.ob-input{width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--line-2);background:var(--panel-2);color:var(--ink);font-size:16px;font-weight:600;outline:none}
+.ob-input:focus{border-color:var(--brutal)}
+.ob-input::placeholder{color:var(--faint);font-weight:500}
+.ob-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.ob-chip{font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:100px;border:1px solid var(--line-2);color:var(--muted);background:var(--panel)}
+.ob-chip.sel{background:rgba(52,211,153,.14);border-color:var(--motiv);color:var(--motiv)}
+.ob-foot{padding:12px 22px 28px;flex-shrink:0;border-top:1px solid var(--line);background:rgba(8,8,12,.85);backdrop-filter:blur(10px)}
+.ob-foot button{width:100%;padding:15px;border-radius:16px;background:var(--ink);color:#0b0b12;font-weight:700;font-size:15px;transition:.2s}
+.ob-foot button:disabled{opacity:.35;cursor:not-allowed}
+.ob-foot button.secondary{background:transparent;color:var(--muted);border:1px solid var(--line);margin-top:10px}
+/* path cards */
+.path-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.path-card{padding:20px;border-radius:20px;border:1px solid var(--line);background:var(--panel);text-align:left;position:relative;overflow:hidden;transition:.2s;width:100%}
+.path-card.sel{border-color:var(--support);background:rgba(183,148,246,.10)}
+.path-card .badge{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:5px 10px;border-radius:100px;background:rgba(183,148,246,.16);color:var(--support);display:inline-block;margin-bottom:12px}
+.path-card h3{font-size:18px;font-weight:800;letter-spacing:-.02em}
+.path-card p{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5}
+.path-card .arrow{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--faint)}
+/* avatar grid */
+.av-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.av-item{aspect-ratio:1;border-radius:18px;border:2px solid transparent;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;transition:.2s;position:relative}
+.av-item.sel{border-color:var(--ink);box-shadow:0 0 0 2px var(--bg-2),0 0 20px rgba(255,255,255,.15)}
+.av-item.sel::after{content:"✓";position:absolute;bottom:4px;right:6px;width:18px;height:18px;border-radius:50%;background:var(--motiv);color:#0b0b12;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.av-preview{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:8px}
+.av-preview .big{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;border:3px solid var(--line-2);background:var(--panel-2)}
+.av-preview .big.kage-av svg{width:48px;height:48px;color:#a5b4fc}
+.av-preview .name{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.av-preview .name span{color:var(--support)}
+/* anime roster */
+.anime-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.anime-card{padding:14px;border-radius:18px;border:1px solid var(--line);background:var(--panel);text-align:left;position:relative;transition:.2s;width:100%}
+.anime-card.sel{border-color:var(--roast);background:rgba(255,107,53,.10);box-shadow:0 0 24px -8px rgba(255,107,53,.4)}
+.anime-card .face{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:10px}
+.anime-card h4{font-size:14px;font-weight:800;letter-spacing:-.01em}
+.anime-card .show{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-top:2px}
+.anime-card .vibe{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.anime-card .vibe i{font-size:9px;font-weight:700;padding:3px 7px;border-radius:100px;font-style:normal;letter-spacing:.04em}
+.anime-card .vibe .brutal{background:rgba(91,141,239,.2);color:var(--brutal)}
+.anime-card .vibe .roast{background:rgba(255,107,53,.2);color:var(--roast)}
+.anime-card .vibe .motiv{background:rgba(52,211,153,.2);color:var(--motiv)}
+.anime-card .vibe .support{background:rgba(183,148,246,.2);color:var(--support)}
+.anime-card .quote{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.4;font-style:italic}
+.anime-card .sel-mark{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;border:2px solid var(--line-2)}
+.anime-card.sel .sel-mark{background:var(--roast);border-color:var(--roast);box-shadow:inset 0 0 0 4px var(--bg-2)}
+.ob-summary{margin-top:8px;padding:16px;border-radius:18px;border:1px solid var(--line);background:var(--panel)}
+.ob-summary .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.ob-summary .row:last-child{border:none}
+.ob-summary .row span{color:var(--muted)}
+.ob-summary .row b{font-weight:700;text-align:right;max-width:55%}
+</style>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow"><span class="kage-logo"><svg><use href="#kage-icon"/></svg></span> Kagevo · Voice-First Companion</div>
+    <h1>Make your <span class="grad">kage</span>,<br/>assign your alter ego.</h1>
+    <p>A voice-first AI companion where you shape a shadow-self that talks back — brutally honest, roasting, motivating, or supportive. Try onboarding below, or browse all screens.</p>
+    <div class="legend">
+      <span class="chip"><i style="background:var(--brutal)"></i>Brutal Honesty</span>
+      <span class="chip"><i style="background:var(--roast)"></i>Roast</span>
+      <span class="chip"><i style="background:var(--motiv)"></i>Motivation</span>
+      <span class="chip"><i style="background:var(--support)"></i>Emotional Support</span>
+    </div>
+  </header>
+
+  <div class="demo-banner">
+    <div>
+      <div class="tag">// Interactive prototype</div>
+      <h2>Try the onboarding engine</h2>
+      <p>Step through questions, make your kage from scratch, or assign a pre-built anime alter ego.</p>
+    </div>
+    <button type="button" id="restartOnboard" class="mini-btn fill" style="padding:12px 20px;font-size:14px">Restart flow</button>
+  </div>
+
+  <div class="demo-wrap">
+    <div class="phone" id="onboardPhone">
+      <div class="island"></div>
+      <div class="screen onboard" id="onboardApp">
+        <div class="statusbar"><span>9:12</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+        <div class="ob-top">
+          <div class="ob-nav">
+            <button type="button" class="ob-back hidden" id="obBack" aria-label="Back">←</button>
+            <button type="button" class="ob-skip" id="obSkip">Skip for now</button>
+          </div>
+          <div class="ob-progress" id="obProgress"></div>
+          <div class="ob-step-label" id="obStepLabel">// Step 1 of 8</div>
+        </div>
+        <div class="ob-body" id="obBody"></div>
+        <div class="ob-foot">
+          <button type="button" id="obNext" disabled>Continue</button>
+        </div>
+      </div>
+    </div>
+    <div class="hint">Click options · use Continue · or assign an anime kage to skip setup</div>
+  </div>
+
+  <div class="demo-banner" style="margin-top:0">
+    <div>
+      <div class="tag">// Goals · tap + to add</div>
+      <h2>Daily &amp; weekly goals · rename or delete only</h2>
+      <p>+ opens Add Goal screen. Repeat every day/week. Try editing a locked field — your kage blocks you.</p>
+    </div>
+    <button type="button" id="goalsShowList" class="mini-btn" style="padding:12px 20px;font-size:14px">Back to list</button>
+  </div>
+
+  <div class="demo-wrap">
+    <div class="phone" id="goalsPhone">
+      <div class="island"></div>
+      <div class="screen" style="position:relative">
+        <div class="statusbar"><span>10:02</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+
+        <!-- LIST VIEW (default) -->
+        <div class="goals-view" id="goalsListView">
+          <div class="greet" style="padding-bottom:4px">
+            <div class="meta"><h2 style="margin:0;font-size:23px">Goals</h2><div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div></div>
+          </div>
+          <div class="cadence-tabs" id="goalsTabs">
+            <button type="button" class="c-tab on" data-list="daily">Daily <span class="cnt" id="dailyCnt">2/3</span></button>
+            <button type="button" class="c-tab" data-list="weekly">Weekly <span class="cnt" id="weeklyCnt">2/5</span></button>
+          </div>
+          <div class="scroll" style="padding-bottom:80px">
+            <div class="slot-bar" id="goalsSlotBar"></div>
+            <div class="sec-label"><span id="goalsListLabel">// Daily goals</span></div>
+            <div class="card" id="goalsList"></div>
+            <p style="padding:8px 22px 0;font-size:11px;color:var(--faint);line-height:1.5">Rename only · no editing cadence or deadline · tap ⋮ to delete</p>
+          </div>
+          <button type="button" class="add-fab" id="goalsAddFab" title="Add goal">+</button>
+        </div>
+
+        <!-- ADD VIEW (+ button) -->
+        <div class="goals-view hidden" id="goalsAddView">
+          <div class="add-head">
+            <div class="row"><button type="button" class="ob-back" id="goalsAddBack">←</button><button type="button" class="ob-skip" id="goalsAddCancel">Cancel</button></div>
+            <span class="add-step-tag">// Step 1 · Pick cadence</span>
+            <h2>Add goal</h2>
+          </div>
+          <div class="add-body" id="goalsAddBody"></div>
+          <div class="add-foot">
+            <button type="button" id="goalsSaveBtn" disabled>Commit goal →</button>
+            <div class="limit-note" id="goalsAddNote"></div>
+          </div>
+        </div>
+
+        <!-- BRUTAL EDIT BLOCKED -->
+        <div class="brutal-modal-overlay" id="brutalModal">
+          <div class="brutal-modal">
+            <div class="from"><span style="width:7px;height:7px;border-radius:50%;background:var(--roast);display:inline-block"></span> NOVA · brutal honesty</div>
+            <h3 id="brutalTitle">You don't get to rewrite history.</h3>
+            <p id="brutalMsg">You committed to this goal. Rename it if you want — or delete it and start over like an adult.</p>
+            <div class="acts">
+              <button type="button" class="primary" id="brutalOk">Fine, rename only</button>
+              <button type="button" class="ghost" id="brutalDismiss">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hint">Tap + · try ⋮ menu · tap a deadline to trigger brutal popup</div>
+  </div>
+
+  <div class="demo-banner" style="margin-top:0">
+    <div>
+      <div class="tag">// P0 · Ship-blocking</div>
+      <h2>Notifications · crisis safety · privacy</h2>
+      <p>Trust layer screens required before public beta. Toggle settings · simulate crisis flow.</p>
+    </div>
+    <button type="button" id="p0SimCrisis" class="mini-btn fill" style="padding:12px 20px;font-size:14px;background:#6B21A8;border-color:transparent;color:#fff">Simulate crisis</button>
+  </div>
+
+  <div class="demo-wrap">
+    <div class="phone" id="p0Phone">
+      <div class="island"></div>
+      <div class="screen settings-view" id="p0App">
+        <div class="statusbar"><span>10:30</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+        <div class="greet" style="padding-bottom:4px">
+          <div class="meta"><h2 style="margin:0;font-size:23px">Settings</h2><div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div></div>
+        </div>
+        <div class="settings-tabs" id="p0Tabs">
+          <button type="button" class="s-tab on" data-p0="notif">Notifications</button>
+          <button type="button" class="s-tab" data-p0="safety">Safety</button>
+          <button type="button" class="s-tab" data-p0="privacy">Privacy</button>
+        </div>
+        <div class="settings-body" id="p0Body"></div>
+      </div>
+      <!-- Crisis overlay (full screen) -->
+      <div class="screen crisis-screen hidden" id="p0Crisis" style="position:absolute;inset:11px;border-radius:42px;z-index:50">
+        <div class="statusbar"><span>10:31</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+        <div class="support-banner"><span style="width:8px;height:8px;border-radius:50%;background:var(--support);box-shadow:0 0 10px var(--support);display:inline-block"></span> Support mode · all roast/brutal off</div>
+        <div class="crisis-body">
+          <div class="crisis-orb"><svg><use href="#kage-icon"/></svg></div>
+          <div class="crisis-msg">
+            <div class="who">NOVA · emotional support</div>
+            Hey. I hear you, and I'm not going to roast you right now. What you're feeling matters. You don't have to go through this alone — reaching out is strength, not weakness.
+          </div>
+          <p class="crisis-disclaimer">Kagevo is not a medical or mental-health professional. If you're in crisis, please contact a qualified service below.</p>
+          <button type="button" class="helpline"><h4>988 Suicide &amp; Crisis Lifeline</h4><p>Free · 24/7 · US</p><div class="num">Call or text 988</div></button>
+          <button type="button" class="helpline"><h4>Crisis Text Line</h4><p>Text with a trained counselor</p><div class="num">Text HOME to 741741</div></button>
+          <button type="button" class="helpline"><h4>International Association for Suicide Prevention</h4><p>Find help in your country</p><div class="num">https://www.iasp.info/resources/Crisis_Centres/</div></button>
+        </div>
+        <div class="crisis-foot">
+          <button type="button" id="p0CrisisClose">I'm okay for now — return to app</button>
+        </div>
+      </div>
+      <div class="share-toast" id="p0Toast"></div>
+    </div>
+    <div class="hint">Switch tabs · toggle notifications · Simulate crisis for safety flow</div>
+  </div>
+
+  <div class="demo-banner" style="margin-top:0">
+    <div>
+      <div class="tag">// Share like Spotify</div>
+      <h2>Share your Wrapped · streaks · persona</h2>
+      <p>Beautiful share cards, copy link, Instagram Stories, WhatsApp — same flow as Spotify share.</p>
+    </div>
+    <button type="button" id="openShareDemo" class="mini-btn fill" style="padding:12px 20px;font-size:14px">Open share sheet</button>
+  </div>
+
+  <div class="demo-wrap">
+    <div class="phone" id="sharePhone">
+      <div class="island"></div>
+      <div class="screen" style="position:relative">
+        <div class="statusbar"><span>9:41</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+        <div class="scroll" style="padding-bottom:20px">
+          <div class="greet">
+            <div class="meta">
+              <div class="persona-tag"><span style="width:7px;height:7px;border-radius:50%;background:var(--roast);display:inline-block"></span> Kage · <b>NOVA</b></div>
+              <div class="meta-actions"><button type="button" class="share-btn" id="shareTrigger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button><div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div></div>
+            </div>
+            <h2 style="font-size:22px">Week 14 Wrapped<br/><span class="soft">Ready to share</span></h2>
+          </div>
+          <div class="share-promo" style="margin-top:12px">
+            <div class="txt"><h4>86% main tasks logged</h4><p>Tap Share ↑ or the button below</p></div>
+            <button type="button" id="shareTrigger2" style="padding:8px 14px;border-radius:100px;background:var(--ink);color:#0b0b12;font-size:12px;font-weight:700">Share</button>
+          </div>
+        </div>
+        <div class="share-sheet-overlay" id="shareOverlay"></div>
+        <div class="share-sheet" id="shareSheet">
+          <div class="share-handle"></div>
+          <h3>Share</h3>
+          <p class="share-sub">Your kage stats · public link optional</p>
+          <div class="share-types" id="shareTypes">
+            <button type="button" class="share-type on" data-type="wrapped">Week Wrapped</button>
+            <button type="button" class="share-type" data-type="streak">Streak</button>
+            <button type="button" class="share-type" data-type="persona">My kage</button>
+          </div>
+          <div class="share-card-preview story" id="shareCardPreview"></div>
+          <div class="share-row">
+            <button type="button" class="share-target" data-action="copy"><span class="ic link">🔗</span><span>Copy link</span></button>
+            <button type="button" class="share-target" data-action="ig"><span class="ic ig">📷</span><span>Stories</span></button>
+            <button type="button" class="share-target" data-action="wa"><span class="ic wa">💬</span><span>WhatsApp</span></button>
+            <button type="button" class="share-target" data-action="x"><span class="ic">𝕏</span><span>Post</span></button>
+            <button type="button" class="share-target" data-action="more"><span class="ic">•••</span><span>More</span></button>
+          </div>
+          <div class="share-copy-row">
+            <input type="text" id="shareLink" readonly value="https://kagevo.app/w/kanishk-w14" />
+            <button type="button" id="shareCopyBtn">Copy</button>
+          </div>
+        </div>
+        <div class="share-toast" id="shareToast">Link copied!</div>
+      </div>
+    </div>
+    <div class="hint">Switch card type · copy link · tap share targets</div>
+  </div>
+
+  <div class="gallery">
+    <!-- ───── 1. HOME DASHBOARD ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="scroll">
+            <div class="greet">
+              <div class="meta">
+                <div class="persona-tag"><span style="width:7px;height:7px;border-radius:50%;background:var(--roast);box-shadow:0 0 8px var(--roast);display:inline-block"></span> Kage · <b>NOVA</b></div>
+                <div class="meta-actions">
+                  <button class="share-btn" type="button" aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>
+                  <div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div>
+                </div>
+              </div>
+              <h2>Morning, Kanishk.<br/><span class="soft">Day 14 of not lying to yourself.</span></h2>
+            </div>
+            <div class="orb-stage">
+              <div class="orb">
+                <span class="ring"></span><span class="ring"></span><span class="ring"></span>
+                <span class="core"></span>
+              </div>
+              <div class="orb-hint"><span class="live"></span> Tap to talk · Roast mode</div>
+            </div>
+            <div class="mode-rail">
+              <button class="mode-pill active roast" data-m="roast"><i style="background:var(--roast)"></i>Roast</button>
+              <button class="mode-pill" data-m="brutal"><i style="background:var(--brutal)"></i>Brutal</button>
+              <button class="mode-pill" data-m="motiv"><i style="background:var(--motiv)"></i>Motivate</button>
+              <button class="mode-pill" data-m="support"><i style="background:var(--support)"></i>Support</button>
+            </div>
+            <div class="nudge">
+              <div class="from"><span style="width:7px;height:7px;border-radius:50%;background:var(--roast);display:inline-block"></span> NOVA · proactive nudge</div>
+              <p>“You snoozed the 6AM run twice this week. Either move the alarm or stop calling yourself a runner. Your call.”</p>
+              <div class="act"><button class="mini-btn fill">Reply by voice</button><button class="mini-btn">Snooze</button></div>
+            </div>
+            <div class="sec-label"><span>// Today · Main tasks</span><a>All →</a></div>
+            <div class="share-promo">
+              <div class="txt"><h4>Week 14 Wrapped</h4><p>86% logged · Roast mode dominant · share like Spotify</p></div>
+              <button type="button" class="share-open-btn">Share</button>
+            </div>
+            <div class="parkinson">
+              <div class="label">Parkinson window · daily log closes in</div>
+              <div class="timer">3h 12m</div>
+              <div class="sub">Work expands to fill time. Log before 11 PM or it auto-misses — NOVA won't remind you twice.</div>
+              <div class="bar"><i style="width:62%"></i></div>
+            </div>
+            <div class="card">
+              <div class="habit main">
+                <div class="check"></div>
+                <div class="body"><h4><span class="badge-main">Main</span> Ship demo deck <span class="cadence-tag">Daily</span></h4><div class="sub"><span class="deadline">Due 6 PM · 45 min block</span></div></div>
+                <button class="mini-btn fill" style="flex-shrink:0;font-size:11px;padding:6px 12px">Log</button>
+              </div>
+              <div class="habit main">
+                <div class="check miss">✕</div>
+                <div class="body"><h4><span class="badge-main">Main</span> 6AM deep work run <span class="cadence-tag">Daily</span></h4><div class="sub"><span class="deadline">Missed · window closed 8 AM</span></div></div>
+              </div>
+              <div class="habit main">
+                <div class="check done">✓</div>
+                <div class="body"><h4><span class="badge-main">Main</span> MVP auth slice <span class="cadence-tag">Weekly</span></h4><div class="sub"><span class="deadline ok">Logged · Sun 11:59 PM deadline</span></div></div>
+              </div>
+            </div>
+            <div class="sec-label"><span>// Goal · in focus</span></div>
+            <div class="card goal-card">
+              <div class="ring">
+                <svg width="74" height="74"><circle cx="37" cy="37" r="31" stroke="rgba(255,255,255,.08)" stroke-width="7" fill="none"/><circle cx="37" cy="37" r="31" stroke="var(--motiv)" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="195" stroke-dashoffset="64"/></svg>
+                <div class="pct">67%</div>
+              </div>
+              <div class="info">
+                <h4>Ship the MVP</h4>
+                <p>9 of 14 milestones cleared. Two are overdue.</p>
+                <div class="date">▸ TARGET · AUG 30</div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <a class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat</a>
+            <a><div class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></div></a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Habits</a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>You</a>
+          </div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">01 / HOME</div><h3>Voice-First Dashboard</h3><span>Orb to talk · modes · grounded nudges</span></div>
+    </div>
+    <!-- ───── 2. ACTIVE VOICE ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen voice-screen">
+          <div class="statusbar"><span>9:42</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="voice-top">
+            <button class="x-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+            <div class="mode-now"><i style="width:7px;height:7px;border-radius:50%;background:var(--roast);display:inline-block"></i> ROAST · intensity 7</div>
+            <button class="x-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+          <div class="big-orb-stage">
+            <div class="big-orb">
+              <span class="ring"></span><span class="ring"></span><span class="ring"></span>
+              <span class="core"></span>
+            </div>
+            <div class="wave">
+              <span style="animation-delay:0s"></span><span style="animation-delay:.1s"></span><span style="animation-delay:.25s"></span><span style="animation-delay:.15s"></span><span style="animation-delay:.35s"></span><span style="animation-delay:.05s"></span><span style="animation-delay:.3s"></span><span style="animation-delay:.2s"></span><span style="animation-delay:.4s"></span><span style="animation-delay:.1s"></span><span style="animation-delay:.28s"></span><span style="animation-delay:.18s"></span>
+            </div>
+            <div class="orb-hint"><span class="live"></span> Listening… tap orb to interrupt</div>
+          </div>
+          <div class="transcript">
+            <div class="t-label">// Live transcript</div>
+            <div class="bubble user"><div class="who">You · 9:42</div>I skipped the run again, don't lecture me.</div>
+            <div class="bubble ego"><div class="who">NOVA · roast</div>Skipped the run AND skipped the excuse this time — efficiency! Three days, zero kilometres. Lace up or change the goal, champ.</div>
+          </div>
+          <div class="voice-controls">
+            <button class="vc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 9h6v6H9z"/></svg></button>
+            <button class="vc end"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.46l-5.27-.61-2.52 2.52a15.05 15.05 0 0 1-6.59-6.59l2.53-2.53L8.54 3H3.03A18 18 0 0 0 21 20.97z"/></svg></button>
+            <button class="vc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">02 / VOICE</div><h3>Live Conversation</h3><span>STT + TTS · barge-in · transcript</span></div>
+    </div>
+    <!-- ───── 3. CHAT ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:48</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="chat-head">
+            <div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div>
+            <div class="who"><h4>NOVA</h4><span><i></i>Motivation · shared memory</span></div>
+            <button class="x-btn" style="margin-left:auto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+          </div>
+          <div class="mode-rail" style="border-bottom:1px solid var(--line)">
+            <button class="mode-pill" data-m="roast"><i style="background:var(--roast)"></i>Roast</button>
+            <button class="mode-pill" data-m="brutal"><i style="background:var(--brutal)"></i>Brutal</button>
+            <button class="mode-pill active motiv" data-m="motiv"><i style="background:var(--motiv)"></i>Motivate</button>
+            <button class="mode-pill" data-m="support"><i style="background:var(--support)"></i>Support</button>
+          </div>
+          <div class="intensity">
+            <div class="top"><span>Intensity</span><b>7 / 10 · Sharp</b></div>
+            <div class="track"><div class="fill" style="inset:0 30% 0 0"></div><div class="knob" style="left:70%"></div></div>
+            <div class="ticks"><span>Gentle</span><span>Balanced</span><span>Brutal</span></div>
+          </div>
+          <div class="chat-body">
+            <div class="c-time">TODAY · 9:46 AM</div>
+            <div class="c-bub me">Pep talk before the demo, please.</div>
+            <div class="c-bub ai">You shipped 9 milestones in 3 weeks while doubting every one of them. The demo is just you, talking about work you already did. Walk in like it.</div>
+            <div class="c-bub me">…okay that helped.</div>
+            <div class="c-bub ai">Good. Now close this and go practice the opening line out loud. Once. Then text me how it went.</div>
+          </div>
+          <div class="suggest">
+            <button>🔥 Roast my excuse</button>
+            <button>🎯 Review my goal</button>
+            <button>💬 Just vent</button>
+          </div>
+          <div class="composer">
+            <div class="field">Message your kage…</div>
+            <button class="send"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">03 / CHAT</div><h3>Text + Mode Control</h3><span>Switch mode · intensity dial · same memory</span></div>
+    </div>
+    <!-- ───── 4. GOALS LIST (DAILY / WEEKLY) ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen" style="position:relative">
+          <div class="statusbar"><span>10:02</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="greet" style="padding-bottom:4px">
+            <div class="meta"><h2 style="margin:0;font-size:23px">Goals</h2><div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div></div>
+          </div>
+          <div class="cadence-tabs">
+            <button class="c-tab on">Daily <span class="cnt">2/3</span></button>
+            <button class="c-tab">Weekly <span class="cnt">2/5</span></button>
+          </div>
+          <div class="scroll">
+            <div class="slot-bar">
+              <div class="top"><span>// Daily slots</span><b>2 of 3 used</b></div>
+              <div class="slots"><i class="used"></i><i class="used"></i><i></i></div>
+            </div>
+            <div class="parkinson">
+              <div class="label">Log window closes</div>
+              <div class="timer">3h 12m</div>
+              <div class="sub">Repeating goals reset at midnight. Log before 11 PM.</div>
+              <div class="bar"><i style="width:62%"></i></div>
+            </div>
+            <div class="sec-label"><span>// Daily goals</span></div>
+            <div class="card">
+              <div class="goal-row">
+                <div class="check"></div>
+                <div class="body"><h4>Ship demo deck <span class="repeat-badge">↻ Every day</span></h4><div class="sub">45 min · 6 PM · <button type="button" style="color:var(--roast);font-weight:600;font-size:12px;text-decoration:underline">edit deadline</button></div></div>
+                <button class="menu-btn" type="button">⋮</button>
+              </div>
+              <div class="goal-row">
+                <div class="check miss">✕</div>
+                <div class="body"><h4>6AM deep work <span class="repeat-badge">↻ Every day</span></h4><div class="sub">Missed · auto-resets tomorrow</div></div>
+                <button class="menu-btn" type="button">⋮</button>
+              </div>
+              <div class="goal-row">
+                <div class="check done">✓</div>
+                <div class="body"><h4>Investor email draft <span class="repeat-badge once">Once · today</span></h4><div class="sub">One-off · logged 2:14 PM</div></div>
+                <button class="menu-btn" type="button">⋮</button>
+              </div>
+            </div>
+            <div class="sec-label"><span>// Weekly goals</span><span style="font-size:10px;color:var(--muted)">switch tab ↑</span></div>
+            <div class="card" style="opacity:.55">
+              <div class="goal-row"><div class="check"></div><div class="body"><h4>MVP auth slice <span class="repeat-badge">↻ Every week</span></h4><div class="sub">Due Sun 11:59 PM</div></div></div>
+            </div>
+          </div>
+          <button class="add-fab" type="button" title="Opens Add Goal screen">+</button>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">04 / GOALS</div><h3>Daily &amp; Weekly Lists</h3><span>Repeat every day/week · rename · delete · no edit</span></div>
+    </div>
+    <!-- ───── 5. PERSONA CONFIG ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:30</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="cfg-head">
+            <div class="step">// STEP 4 OF 5 · CONFIGURE PERSONA</div>
+            <h2>How should your<br/>kage talk to you?</h2>
+            <p>Enable the modes you want. NOVA picks the right one from context — your assigned alter ego, always in character.</p>
+          </div>
+          <div class="scroll">
+            <div class="mode-grid">
+              <div class="mode-card brutal on">
+                <span class="tog"></span>
+                <div class="ic">🪞</div><h4>Brutal Honesty</h4>
+                <p>Direct, no sugar-coating, grounded in your goals.</p>
+              </div>
+              <div class="mode-card roast on">
+                <span class="tog"></span>
+                <div class="ic">🔥</div><h4>Roast</h4>
+                <p>Sharp, funny callouts when you slack off.</p>
+              </div>
+              <div class="mode-card motiv on">
+                <span class="tog"></span>
+                <div class="ic">⚡</div><h4>Motivation</h4>
+                <p>Encouragement and action prompts toward goals.</p>
+              </div>
+              <div class="mode-card support">
+                <span class="tog"></span>
+                <div class="ic">◐</div><h4>Emotional Support</h4>
+                <p>Empathetic, validating, calming responses.</p>
+              </div>
+            </div>
+            <div class="intensity" style="margin-top:8px">
+              <div class="top"><span>Default intensity</span><b style="color:var(--motiv)">5 / 10 · Balanced</b></div>
+              <div class="track"><div class="fill" style="inset:0 50% 0 0;background:linear-gradient(90deg,var(--motiv),var(--support))"></div><div class="knob" style="left:50%"></div></div>
+              <div class="ticks"><span>Gentle</span><span>Balanced</span><span>Brutal</span></div>
+            </div>
+            <div class="sec-label" style="margin-top:14px"><span>// Assistant voice</span><a>Preview all</a></div>
+            <div class="voice-row sel">
+              <button class="play"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+              <div class="vinfo"><h4>Nova — Warm Alto</h4><span>Female · neutral accent · medium pace</span></div>
+              <div class="radio"></div>
+            </div>
+            <div class="voice-row">
+              <button class="play"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+              <div class="vinfo"><h4>Atlas — Dry Baritone</h4><span>Male · British · slow pace</span></div>
+              <div class="radio"></div>
+            </div>
+            <div class="safety">
+              <span class="sh"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+              <span>Hard safety limits stay on at every intensity. If NOVA detects distress, it switches to support and shares help resources — regardless of mode.</span>
+            </div>
+            <div class="cfg-cta"><button>Assign my kage →</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">05 / SETUP</div><h3>Persona Configuration</h3><span>Modes · intensity · voice · safety</span></div>
+    </div>
+
+    <!-- ───── 6. ONBOARD PATH ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen onboard">
+          <div class="statusbar"><span>9:12</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="ob-top">
+            <div class="ob-nav"><button class="ob-back hidden">←</button><button class="ob-skip">Skip for now</button></div>
+            <div class="ob-progress"><span class="done"></span><span class="active"></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="ob-step-label">// Step 2 of 8 · Choose path</div>
+          </div>
+          <div class="ob-body">
+            <h2>How will you make your kage?</h2>
+            <p class="sub">Craft your shadow-self from scratch, or assign a legendary anime alter ego with preset modes and tone.</p>
+            <div class="path-grid">
+              <button class="path-card sel">
+                <span class="badge">Recommended</span>
+                <h3>✨ Make your kage</h3>
+                <p>Answer a few questions, pick an avatar, and assign your alter ego from scratch.</p>
+                <span class="arrow">→</span>
+              </button>
+              <button class="path-card">
+                <span class="badge" style="background:rgba(255,107,53,.16);color:var(--roast)">Quick start</span>
+                <h3>⚡ Assign an anime kage</h3>
+                <p>Skip the questionnaire. Choose Naruto, Vegeta, Goku, Luffy &amp; more — pre-configured alter egos.</p>
+                <span class="arrow">→</span>
+              </button>
+            </div>
+          </div>
+          <div class="ob-foot"><button>Continue</button></div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">06 / ONBOARD</div><h3>Make Your Kage</h3><span>Custom build vs assign anime alter ego</span></div>
+    </div>
+
+    <!-- ───── 7. QUESTION ENGINE ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen onboard">
+          <div class="statusbar"><span>9:14</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="ob-top">
+            <div class="ob-nav"><button class="ob-back">←</button><button class="ob-skip">Skip</button></div>
+            <div class="ob-progress"><span class="done"></span><span class="done"></span><span class="done"></span><span class="active"></span><span></span><span></span><span></span><span></span></div>
+            <div class="ob-step-label">// Step 4 of 8 · Habits</div>
+          </div>
+          <div class="ob-body">
+            <h2>What habits do you want to build?</h2>
+            <p class="sub">Pick all that apply. Your kage will track these and call you out when you slip.</p>
+            <div class="ob-options">
+              <button class="ob-opt multi sel"><span class="ic">🏃</span><span class="txt"><h4>Morning movement</h4><p>Run, gym, yoga — before the day steals your energy.</p></span><span class="check">✓</span></button>
+              <button class="ob-opt multi sel"><span class="ic">📚</span><span class="txt"><h4>Daily learning</h4><p>Read, study, or skill-build for 20+ minutes.</p></span><span class="check">✓</span></button>
+              <button class="ob-opt multi"><span class="ic">💧</span><span class="txt"><h4>Hydration &amp; sleep</h4><p>Water targets and a consistent wind-down routine.</p></span><span class="check"></span></button>
+              <button class="ob-opt multi"><span class="ic">📵</span><span class="txt"><h4>Digital boundaries</h4><p>No phone after a set time, fewer doom-scrolls.</p></span><span class="check"></span></button>
+            </div>
+          </div>
+          <div class="ob-foot"><button>Continue</button></div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">07 / ONBOARD</div><h3>Question Engine</h3><span>Multi-select habits · goals · personality next</span></div>
+    </div>
+
+    <!-- ───── 8. AVATAR + NAME ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen onboard">
+          <div class="statusbar"><span>9:16</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="ob-top">
+            <div class="ob-nav"><button class="ob-back">←</button><button class="ob-skip">Skip</button></div>
+            <div class="ob-progress"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="active"></span><span></span><span></span></div>
+            <div class="ob-step-label">// Step 6 of 8 · Avatar &amp; name</div>
+          </div>
+          <div class="ob-body">
+            <h2>Name your kage</h2>
+            <p class="sub">Assign your alter ego a look and a name. This is who talks back.</p>
+            <div class="av-preview">
+              <div class="big kage-av"><svg><use href="#kage-icon"/></svg></div>
+              <div class="name">Meet <span>NOVA</span></div>
+            </div>
+            <input class="ob-input" type="text" value="NOVA" placeholder="Kage name…" />
+            <div class="sec-label" style="padding:16px 0 8px;margin:0"><span>// Choose avatar</span></div>
+            <div class="av-grid">
+              <div class="av-item" style="background:linear-gradient(140deg,#FF6B35,#C2410C)">🔥</div>
+              <div class="av-item sel kage-shadow kage-av"><svg><use href="#kage-icon"/></svg></div>
+              <div class="av-item" style="background:linear-gradient(140deg,#34D399,#059669)">⚡</div>
+              <div class="av-item" style="background:linear-gradient(140deg,#6366F1,#312E81)">🪞</div>
+              <div class="av-item" style="background:linear-gradient(140deg,#F59E0B,#B45309)">☀️</div>
+              <div class="av-item" style="background:linear-gradient(140deg,#EC4899,#831843)">💜</div>
+              <div class="av-item" style="background:linear-gradient(140deg,#14B8A6,#134E4A)">🌊</div>
+              <div class="av-item" style="background:linear-gradient(140deg,#64748B,#1E293B)">🖤</div>
+            </div>
+          </div>
+          <div class="ob-foot"><button>Continue</button></div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">08 / ONBOARD</div><h3>Avatar &amp; Name</h3><span>Make your kage · assign alter ego identity</span></div>
+    </div>
+
+    <!-- ───── 9. ANIME ROSTER ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen onboard">
+          <div class="statusbar"><span>9:13</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="ob-top">
+            <div class="ob-nav"><button class="ob-back">←</button><button class="ob-skip" style="visibility:hidden">Skip</button></div>
+            <div class="ob-progress"><span class="done"></span><span class="active"></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="ob-step-label">// Step 2 of 8 · Anime kages</div>
+          </div>
+          <div class="ob-body" style="padding-bottom:4px">
+            <h2>Assign your alter ego</h2>
+            <p class="sub">Pre-built kages inspired by legendary characters. Modes, intensity, and voice preset — no questionnaire needed.</p>
+            <div class="anime-grid">
+              <button class="anime-card">
+                <span class="sel-mark"></span>
+                <div class="face" style="background:linear-gradient(140deg,#FF7A00,#F97316)">🍥</div>
+                <h4>Naruto</h4><div class="show">Never give up</div>
+                <div class="vibe"><i class="motiv">Motivate</i><i class="brutal">Brutal</i></div>
+                <div class="quote">“Believe it — but actually do the work.”</div>
+              </button>
+              <button class="anime-card sel">
+                <span class="sel-mark"></span>
+                <div class="face" style="background:linear-gradient(140deg,#3B82F6,#1E3A8A)">👑</div>
+                <h4>Vegeta</h4><div class="show">Pride &amp; discipline</div>
+                <div class="vibe"><i class="roast">Roast</i><i class="brutal">Brutal</i></div>
+                <div class="quote">“A warrior doesn't skip leg day. Pathetic.”</div>
+              </button>
+              <button class="anime-card">
+                <span class="sel-mark"></span>
+                <div class="face" style="background:linear-gradient(140deg,#F97316,#111827)">🥋</div>
+                <h4>Goku</h4><div class="show">Pure drive</div>
+                <div class="vibe"><i class="motiv">Motivate</i><i class="support">Support</i></div>
+                <div class="quote">“Let's go another round — you're getting stronger.”</div>
+              </button>
+              <button class="anime-card">
+                <span class="sel-mark"></span>
+                <div class="face" style="background:linear-gradient(140deg,#EF4444,#991B1B)">⛵</div>
+                <h4>Luffy</h4><div class="show">Freedom &amp; grit</div>
+                <div class="vibe"><i class="motiv">Motivate</i><i class="roast">Roast</i></div>
+                <div class="quote">“You're gonna be king of your goals or what?”</div>
+              </button>
+              <button class="anime-card">
+                <span class="sel-mark"></span>
+                <div class="face" style="background:linear-gradient(140deg,#6B7280,#111827)">⚔️</div>
+                <h4>Levi</h4><div class="show">Zero excuses</div>
+                <div class="vibe"><i class="brutal">Brutal</i><i class="roast">Roast</i></div>
+                <div class="quote">“Clean your room. Then your habits.”</div>
+              </button>
+              <button class="anime-card">
+                <span class="sel-mark"></span>
+                <div class="face" style="background:linear-gradient(140deg,#059669,#064E3B)">🗡️</div>
+                <h4>Tanjiro</h4><div class="show">Steady heart</div>
+                <div class="vibe"><i class="support">Support</i><i class="motiv">Motivate</i></div>
+                <div class="quote">“Breathe. You're doing better than you think.”</div>
+              </button>
+            </div>
+          </div>
+          <div class="ob-foot"><button>Use Vegeta as my kage →</button></div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">09 / ONBOARD</div><h3>Anime Kages</h3><span>Assign alter ego · preset modes &amp; tone</span></div>
+    </div>
+
+    <!-- ───── 10. ADD GOAL (+ BUTTON) ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen onboard">
+          <div class="statusbar"><span>10:18</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="add-head">
+            <div class="row"><button class="ob-back">←</button><button class="ob-skip">Cancel</button></div>
+            <span class="add-step-tag">// Opens when you tap +</span>
+            <h2>Add goal</h2>
+          </div>
+          <div class="add-body">
+            <label class="field-label">// 1 · Daily or weekly</label>
+            <div class="cadence-pick-2">
+              <button class="c-pick-lg sel"><span class="c-name">Daily</span><span class="c-slots">2 / 3 slots</span><span class="c-desc">Resets every midnight</span></button>
+              <button class="c-pick-lg"><span class="c-name">Weekly</span><span class="c-slots">2 / 5 slots</span><span class="c-desc">Resets every Sunday</span></button>
+            </div>
+            <label class="field-label">// 2 · Goal name</label>
+            <input class="ob-input" type="text" value="Ship auth slice" placeholder="Main task name…" />
+            <label class="field-label">// 3 · Repeat</label>
+            <div class="repeat-toggle">
+              <button class="on">↻ Repeat every day</button>
+              <button>Once only</button>
+            </div>
+            <label class="field-label">// 4 · Why it matters</label>
+            <input class="ob-input" type="text" value="Unblocks beta launch" style="font-size:14px;font-weight:500" />
+            <label class="field-label">// 5 · Time-box + deadline</label>
+            <div class="time-box"><input type="text" value="90" /><select><option>min</option></select></div>
+            <div class="time-box"><input type="text" value="11:59 PM" readonly style="opacity:.7" /><select><option>Daily log closes</option></select></div>
+          </div>
+          <div class="add-foot">
+            <button>Commit goal →</button>
+            <div class="limit-note">Locked after save · rename or delete only</div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">10 / ADD +</div><h3>Add Goal Screen</h3><span>Shown when + is tapped · cadence · repeat · commit</span></div>
+    </div>
+
+    <!-- ───── 13. BRUTAL EDIT BLOCKED ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen" style="position:relative;background:#0a0a10">
+          <div class="statusbar"><span>10:02</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div style="flex:1;opacity:.3;padding:24px"><h2 style="font-size:22px;font-weight:800">Goals</h2></div>
+          <div class="brutal-modal-overlay open">
+            <div class="brutal-modal">
+              <div class="from"><span style="width:7px;height:7px;border-radius:50%;background:var(--roast);display:inline-block"></span> NOVA · brutal honesty</div>
+              <h3>You don't get to rewrite history.</h3>
+              <p>You committed to "Ship demo deck" every day at 6 PM. Want a different deadline? Delete it and make a new one. Rename is fine — weasel editing is not.</p>
+              <div class="acts">
+                <button class="primary">Fine, rename only</button>
+                <button class="ghost">Delete goal instead</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">13 / BLOCK</div><h3>Brutal Edit Popup</h3><span>No cadence/deadline edits · rename or delete</span></div>
+    </div>
+
+    <!-- ───── 11. SHARE SHEET (SPOTIFY-STYLE) ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen" style="position:relative;background:#0a0a10">
+          <div class="statusbar"><span>9:41</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div style="flex:1;opacity:.35;padding:24px"><h2 style="font-size:22px;font-weight:800">Week 14<br/>Wrapped</h2></div>
+          <div class="share-sheet-overlay open" style="opacity:1;visibility:visible"></div>
+          <div class="share-sheet open">
+            <div class="share-handle"></div>
+            <h3>Share</h3>
+            <p class="share-sub">Week Wrapped · Jun 2026</p>
+            <div class="share-types">
+              <button class="share-type on">Week Wrapped</button>
+              <button class="share-type">Streak</button>
+              <button class="share-type">My kage</button>
+            </div>
+            <div class="share-card-preview story">
+              <div class="share-card-inner">
+                <div><div class="brand">Kagevo · Week 14</div><div class="headline">Kanishk's Kage<em>with NOVA · Roast mode</em></div></div>
+                <div class="share-card-stats">
+                  <div><b>86%</b><span>Tasks logged</span></div>
+                  <div><b>Roast</b><span>Top mode</span></div>
+                  <div><b>22</b><span>Best streak</span></div>
+                  <div><b>47</b><span>Voice talks</span></div>
+                </div>
+                <div class="share-card-quote">"Day 14 of not lying to yourself."</div>
+                <div class="share-card-footer"><span>kagevo.app/w/kanishk</span><span>◐ NOVA</span></div>
+              </div>
+            </div>
+            <div class="share-row">
+              <div class="share-target"><span class="ic link">🔗</span><span>Copy link</span></div>
+              <div class="share-target"><span class="ic ig">📷</span><span>Stories</span></div>
+              <div class="share-target"><span class="ic wa">💬</span><span>WhatsApp</span></div>
+              <div class="share-target"><span class="ic">𝕏</span><span>Post</span></div>
+              <div class="share-target"><span class="ic">•••</span><span>More</span></div>
+            </div>
+            <div class="share-copy-row">
+              <input readonly value="https://kagevo.app/w/kanishk-w14" />
+              <button>Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">11 / SHARE</div><h3>Spotify-Style Share</h3><span>Wrapped card · Stories · copy link · social row</span></div>
+    </div>
+
+    <!-- ───── 12. SHARE CARD TYPES ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen onboard">
+          <div class="statusbar"><span>9:41</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="add-head" style="border:none"><h2>Share card types</h2></div>
+          <div class="add-body">
+            <label class="field-label">// Week wrapped · square</label>
+            <div class="share-card-preview" style="aspect-ratio:1;margin-bottom:16px">
+              <div class="share-card-inner" style="background:linear-gradient(145deg,#1a1030,#FF6B35 50%,#34D399)">
+                <div><div class="brand">Kagevo Wrapped</div><div class="headline" style="font-size:22px">Week 14<em>86% main tasks logged</em></div></div>
+                <div class="share-card-stats"><div><b>47</b><span>Voice sessions</span></div><div><b>Roast</b><span>Dominant mode</span></div></div>
+                <div class="share-card-footer"><span>kagevo.app</span><span>Share →</span></div>
+              </div>
+            </div>
+            <label class="field-label">// Streak milestone</label>
+            <div class="share-card-preview" style="aspect-ratio:1;margin-bottom:16px">
+              <div class="share-card-inner" style="background:linear-gradient(145deg,#172554,#5B8DEF 60%,#B794F6)">
+                <div><div class="brand">Streak unlocked</div><div class="headline" style="font-size:28px">🔥 22 days<em>Ship MVP · daily main task</em></div></div>
+                <div class="share-card-quote">"NOVA didn't have to roast you once this week. Suspicious."</div>
+                <div class="share-card-footer"><span>kagevo.app/s/22</span><span>NOVA</span></div>
+              </div>
+            </div>
+            <label class="field-label">// Kage persona</label>
+            <div class="share-card-preview" style="aspect-ratio:1">
+              <div class="share-card-inner" style="background:linear-gradient(145deg,#1E3A8A,#3B82F6 40%,#111827)">
+                <div><div class="brand">My kage</div><div class="headline" style="font-size:24px">👑 VEGETA<em>Roast · Brutal · Intensity 8</em></div></div>
+                <div class="share-card-quote">"A warrior doesn't skip leg day."</div>
+                <div class="share-card-footer"><span>Make your kage on Kagevo</span><span>→</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">12 / SHARE</div><h3>Share Card Gallery</h3><span>Wrapped · streak · persona · story format</span></div>
+    </div>
+
+    <!-- ───── 14. NOTIFICATION SETTINGS (P0) ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen settings-view">
+          <div class="statusbar"><span>10:30</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="greet" style="padding-bottom:4px"><div class="meta"><h2 style="margin:0;font-size:23px">Notifications</h2><div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div></div></div>
+          <div class="settings-body">
+            <span class="p0-badge">P0 · FR-6.4</span>
+            <div class="set-group">
+              <span class="set-group-title">// Nudge categories</span>
+              <div class="set-row"><div class="info"><h4>Goal reminders</h4><p>Daily/weekly log window alerts</p></div><div class="toggle on"></div></div>
+              <div class="set-row"><div class="info"><h4>Proactive nudges</h4><p>Your kage reaches out in character</p></div><div class="toggle on"></div></div>
+              <div class="set-row"><div class="info"><h4>Roast / brutal nudges</h4><p>Accountability when you slip</p></div><div class="toggle on"></div></div>
+              <div class="set-row"><div class="info"><h4>Morning check-in</h4><p>Persona-flavored start to day</p></div><div class="toggle"></div></div>
+            </div>
+            <div class="set-group">
+              <span class="set-group-title">// Quiet hours</span>
+              <div class="quiet-hours"><select><option>10:00 PM</option></select><span style="color:var(--muted);padding-top:11px">→</span><select><option>7:00 AM</option></select></div>
+            </div>
+            <div class="set-group">
+              <span class="set-group-title">// Frequency cap</span>
+              <div class="freq-slider"><div class="top"><span>Max nudges per day</span><b>5</b></div><div class="track"><div class="fill" style="inset:0 50% 0 0"></div><div class="knob" style="left:50%"></div></div></div>
+            </div>
+            <button class="set-btn warn">Snooze your kage for 24 hours</button>
+            <button class="set-btn">Turn off all notifications</button>
+          </div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">14 / P0</div><h3>Notification Settings</h3><span>Quiet hours · caps · per-category · snooze</span></div>
+    </div>
+
+    <!-- ───── 15. CRISIS SAFETY (P0) ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen crisis-screen">
+          <div class="statusbar"><span>10:31</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="support-banner"><span style="width:8px;height:8px;border-radius:50%;background:var(--support);display:inline-block"></span> Support mode · roast/brutal disabled</div>
+          <div class="crisis-body">
+            <div class="crisis-orb"><svg><use href="#kage-icon"/></svg></div>
+            <div class="crisis-msg"><div class="who">NOVA · emotional support</div>Hey. I hear you. I'm not going to roast you right now. Reaching out is strength — you don't have to do this alone.</div>
+            <p class="crisis-disclaimer">Kagevo is not a medical or mental-health professional.</p>
+            <div class="helpline"><h4>988 Suicide &amp; Crisis Lifeline</h4><p>Free · 24/7</p><div class="num">Call or text 988</div></div>
+            <div class="helpline"><h4>Crisis Text Line</h4><p>Text with a counselor</p><div class="num">Text HOME to 741741</div></div>
+          </div>
+          <div class="crisis-foot"><button>I'm okay for now</button></div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">15 / P0</div><h3>Crisis Safety Flow</h3><span>Auto support mode · helplines · FR-9</span></div>
+    </div>
+
+    <!-- ───── 16. PRIVACY & CONSENT (P0) ───── -->
+    <div class="frame-wrap">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="screen settings-view">
+          <div class="statusbar"><span>10:32</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+          <div class="greet" style="padding-bottom:4px"><div class="meta"><h2 style="margin:0;font-size:23px">Privacy</h2><div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div></div></div>
+          <div class="settings-body">
+            <span class="p0-badge">P0 · FR-8.3 · NFR-5</span>
+            <div class="set-group">
+              <span class="set-group-title">// AI &amp; data consent</span>
+              <div class="consent-box"><h4>Send conversations to cloud AI</h4><p>Required for voice &amp; chat. Encrypted in transit.</p><div class="provider">Voice path: Groq (no training) · Chat: Gemini</div><div style="margin-top:10px;display:flex;justify-content:flex-end"><div class="toggle on"></div></div></div>
+              <div class="consent-box"><h4>Store memories &amp; goals</h4><p>Powers persona consistency across sessions.</p><div style="margin-top:10px;display:flex;justify-content:flex-end"><div class="toggle on"></div></div></div>
+            </div>
+            <div class="set-group">
+              <span class="set-group-title">// Retention</span>
+              <div class="retention-row"><span>Chat history</span><b>90 days</b></div>
+            </div>
+            <div class="set-group">
+              <span class="set-group-title">// Your data</span>
+              <button class="set-btn">Export all data (JSON)</button>
+              <button class="set-btn">View stored memories</button>
+              <button class="set-btn danger">Delete account &amp; all data</button>
+            </div>
+            <p style="font-size:11px;color:var(--faint);line-height:1.5;margin-top:8px">Share cards include stats only — never private chat content.</p>
+          </div>
+        </div>
+      </div>
+      <div class="frame-cap"><div class="num">16 / P0</div><h3>Privacy &amp; Consent</h3><span>Export · delete · retention · AI consent</span></div>
+    </div>
+  </div>
+  <div class="foot-note">// KAGEVO — concept UI · not a medical or mental-health service</div>
+</div>
+<script>
+document.querySelectorAll('.mode-pill').forEach(p=>p.addEventListener('click',()=>{
+  const rail=p.parentElement;rail.querySelectorAll('.mode-pill').forEach(x=>x.classList.remove('active','roast','brutal','motiv','support'));
+  p.classList.add('active',p.dataset.m);
+}));
+document.querySelectorAll('.mode-card').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('on')));
+
+const AVATARS=[
+  {e:'🔥',bg:'linear-gradient(140deg,#FF6B35,#C2410C)'},
+  {shadow:true,bg:'linear-gradient(140deg,#312e81,#0a0a0f)'},
+  {e:'⚡',bg:'linear-gradient(140deg,#34D399,#059669)'},
+  {e:'🪞',bg:'linear-gradient(140deg,#6366F1,#312E81)'},
+  {e:'☀️',bg:'linear-gradient(140deg,#F59E0B,#B45309)'},
+  {e:'💜',bg:'linear-gradient(140deg,#EC4899,#831843)'},
+  {e:'🌊',bg:'linear-gradient(140deg,#14B8A6,#134E3B)'},
+  {e:'🖤',bg:'linear-gradient(140deg,#64748B,#1E293B)'}
+];
+const KAGE_MARK='<svg viewBox="0 0 24 24" fill="currentColor"><use href="#kage-icon"/></svg>';
+function avFace(a,cls='big'){return a.shadow?`<div class="${cls} kage-av kage-shadow">${KAGE_MARK}</div>`:`<div class="${cls}" style="background:${a.bg}">${a.e}</div>`;}
+
+const ANIME=[
+  {id:'naruto',name:'Naruto',show:'Never give up',e:'🍥',bg:'linear-gradient(140deg,#FF7A00,#F97316)',modes:['motiv','brutal'],quote:'Believe it — but actually do the work.',intensity:6},
+  {id:'vegeta',name:'Vegeta',show:'Pride & discipline',e:'👑',bg:'linear-gradient(140deg,#3B82F6,#1E3A8A)',modes:['roast','brutal'],quote:"A warrior doesn't skip leg day. Pathetic.",intensity:8},
+  {id:'goku',name:'Goku',show:'Pure drive',e:'🥋',bg:'linear-gradient(140deg,#F97316,#111827)',modes:['motiv','support'],quote:"Let's go another round — you're getting stronger.",intensity:5},
+  {id:'luffy',name:'Luffy',show:'Freedom & grit',e:'⛵',bg:'linear-gradient(140deg,#EF4444,#991B1B)',modes:['motiv','roast'],quote:"You're gonna be king of your goals or what?",intensity:7},
+  {id:'levi',name:'Levi',show:'Zero excuses',e:'⚔️',bg:'linear-gradient(140deg,#6B7280,#111827)',modes:['brutal','roast'],quote:'Clean your room. Then your habits.',intensity:9},
+  {id:'tanjiro',name:'Tanjiro',show:'Steady heart',e:'🗡️',bg:'linear-gradient(140deg,#059669,#064E3B)',modes:['support','motiv'],quote:"Breathe. You're doing better than you think.",intensity:4}
+];
+
+const CUSTOM_STEPS=[
+  {id:'welcome',title:'Welcome to Kagevo',sub:'Make your kage — a shadow-self that talks back. Brutally honest, motivating, or supportive.',type:'info'},
+  {id:'path',title:'How will you make your kage?',sub:'Craft from scratch, or assign a legendary anime alter ego with preset modes.',type:'path'},
+  {id:'habits-build',title:'What habits do you want to build?',sub:'Pick all that apply. Your kage tracks these and holds you accountable.',type:'multi',options:[
+    {id:'move',ic:'🏃',t:'Morning movement',d:'Run, gym, yoga — before the day steals your energy.'},
+    {id:'learn',ic:'📚',t:'Daily learning',d:'Read, study, or skill-build for 20+ minutes.'},
+    {id:'health',ic:'💧',t:'Hydration & sleep',d:'Water targets and a consistent wind-down routine.'},
+    {id:'digital',ic:'📵',t:'Digital boundaries',d:'No phone after a set time, fewer doom-scrolls.'}
+  ]},
+  {id:'habits-break',title:'Anything you want to break?',sub:'Bad habits your kage should call out when they creep back.',type:'multi',options:[
+    {id:'snooze',ic:'😴',t:'Snoozing alarms',d:'Hitting snooze and missing morning commitments.'},
+    {id:'scroll',ic:'📱',t:'Doom-scrolling',d:'Late-night reels, feeds, and mindless scrolling.'},
+    {id:'junk',ic:'🍔',t:'Junk food loops',d:'Stress eating or skipping meals entirely.'},
+    {id:'avoid',ic:'🫥',t:'Avoidance',d:'Putting off hard tasks until panic sets in.'}
+  ]},
+  {id:'goal',title:'What\'s your main goal right now?',sub:'Short or long-term — your kage grounds every conversation in this.',type:'single',options:[
+    {id:'career',ic:'🚀',t:'Career / ship something',d:'Launch a project, land a role, finish the MVP.'},
+    {id:'fitness',ic:'💪',t:'Get physically stronger',d:'Consistency over intensity — build the body.'},
+    {id:'mind',ic:'🧠',t:'Mental clarity',d:'Less anxiety, more focus, better routines.'},
+    {id:'relationships',ic:'🤝',t:'Show up for people',d:'Be present — friends, family, partner.'}
+  ]},
+  {id:'motivation',title:'How do you respond to pressure?',sub:'This shapes default mode and intensity for your assigned alter ego.',type:'single',options:[
+    {id:'tough',ic:'🔥',t:'Tough love works',d:'Roast me, be direct — I need a kick.'},
+    {id:'balanced',ic:'⚖️',t:'Mix of push and support',d:'Motivate first, get honest when I slip.'},
+    {id:'gentle',ic:'◐',t:'Go easy on me',d:'Encouragement and empathy over harshness.'}
+  ]},
+  {id:'avatar',title:'Name your kage',sub:'Assign your alter ego a look and a name.',type:'avatar'},
+  {id:'summary',title:'Your kage is assigned',sub:'Review your setup. You can change anything later in Settings.',type:'summary'}
+];
+
+const ANIME_STEPS=[
+  {id:'welcome',title:'Welcome to Kagevo',sub:'Make your kage — a shadow-self that talks back. Brutally honest, motivating, or supportive.',type:'info'},
+  {id:'path',title:'How will you make your kage?',sub:'Craft from scratch, or assign a legendary anime alter ego with preset modes.',type:'path'},
+  {id:'anime',title:'Assign your alter ego',sub:'Pre-built kages inspired by legendary characters. Modes, intensity, and voice preset included.',type:'anime'},
+  {id:'summary',title:'Your kage is assigned',sub:'Review your setup. You can change anything later in Settings.',type:'summary'}
+];
+
+const state={path:'custom',step:0,answers:{},animeId:'vegeta',avatarIdx:1,name:'NOVA'};
+function steps(){return state.path==='anime'?ANIME_STEPS:CUSTOM_STEPS;}
+function cur(){return steps()[state.step];}
+function canContinue(){
+  const s=cur();if(!s)return false;
+  if(['info','path','summary'].includes(s.type))return s.type!=='path'||!!state.path;
+  if(s.type==='path')return !!state.path;
+  if(s.type==='multi'){const a=state.answers[s.id];return Array.isArray(a)&&a.length>0;}
+  if(s.type==='single')return !!state.answers[s.id];
+  if(s.type==='avatar')return (state.name||'').trim().length>=2;
+  if(s.type==='anime')return !!state.animeId;
+  return false;
+}
+function renderProgress(){
+  const list=steps();
+  document.getElementById('obProgress').innerHTML=list.map((_,i)=>`<span class="${i<state.step?'done':i===state.step?'active':''}"></span>`).join('');
+  document.getElementById('obStepLabel').textContent=`// Step ${state.step+1} of ${list.length} · ${cur().id.replace(/-/g,' ')}`;
+  document.getElementById('obBack').classList.toggle('hidden',state.step===0);
+}
+function modeTag(m){return `<i class="${m}">${{brutal:'Brutal',roast:'Roast',motiv:'Motivate',support:'Support'}[m]}</i>`;}
+function renderBody(){
+  const s=cur(),body=document.getElementById('obBody');
+  let html=`<h2>${s.title}</h2><p class="sub">${s.sub}</p>`;
+  if(s.type==='info')html+=`<div class="ob-summary"><div class="row"><span>Journey</span><b>~3 min custom · 30 sec anime</b></div><div class="row"><span>Modes</span><b>Brutal · Roast · Motivate · Support</b></div><div class="row"><span>Safety</span><b>Always on · not medical advice</b></div></div>`;
+  if(s.type==='path')html+=`<div class="path-grid"><button type="button" class="path-card ${state.path==='custom'?'sel':''}" data-path="custom"><span class="badge">Recommended</span><h3>✨ Make your kage</h3><p>Answer questions, pick an avatar, and assign your alter ego.</p><span class="arrow">→</span></button><button type="button" class="path-card ${state.path==='anime'?'sel':''}" data-path="anime"><span class="badge" style="background:rgba(255,107,53,.16);color:var(--roast)">Quick start</span><h3>⚡ Assign an anime kage</h3><p>Skip the questionnaire. Naruto, Vegeta, Goku, Luffy & more.</p><span class="arrow">→</span></button></div>`;
+  if(s.type==='multi'||s.type==='single'){
+    const sel=state.answers[s.id],arr=s.type==='multi'?(sel||[]):[sel];
+    html+=`<div class="ob-options">${s.options.map(o=>{const on=s.type==='multi'?arr.includes(o.id):sel===o.id;return `<button type="button" class="ob-opt ${s.type==='multi'?'multi':''} ${on?'sel':''}" data-id="${o.id}"><span class="ic">${o.ic}</span><span class="txt"><h4>${o.t}</h4><p>${o.d}</p></span>${s.type==='multi'?`<span class="check">${on?'✓':''}</span>`:''}</button>`;}).join('')}</div>`;
+  }
+  if(s.type==='avatar'){
+    const av=AVATARS[state.avatarIdx];
+    html+=`<div class="av-preview">${avFace(av)}<div class="name">Meet <span id="previewName">${state.name||'…'}</span></div></div><input class="ob-input" id="egoName" type="text" maxlength="20" placeholder="Kage name…" value="${state.name}" /><div class="sec-label" style="padding:16px 0 8px;margin:0"><span>// Choose avatar</span></div><div class="av-grid">${AVATARS.map((a,i)=>`<button type="button" class="av-item ${i===state.avatarIdx?'sel':''}${a.shadow?' kage-shadow kage-av':''}" ${a.shadow?'':'style="background:'+a.bg+'"'} data-av="${i}">${a.shadow?KAGE_MARK:a.e}</button>`).join('')}</div>`;
+  }
+  if(s.type==='anime')html+=`<div class="anime-grid">${ANIME.map(a=>`<button type="button" class="anime-card ${state.animeId===a.id?'sel':''}" data-anime="${a.id}"><span class="sel-mark"></span><div class="face" style="background:${a.bg}">${a.e}</div><h4>${a.name}</h4><div class="show">${a.show}</div><div class="vibe">${a.modes.map(modeTag).join('')}</div><div class="quote">“${a.quote}”</div></button>`).join('')}</div>`;
+  if(s.type==='summary'){
+    if(state.path==='anime'){
+      const a=ANIME.find(x=>x.id===state.animeId);
+      html+=`<div class="av-preview"><div class="big" style="background:${a.bg}">${a.e}</div><div class="name"><span>${a.name}</span></div></div><div class="ob-summary"><div class="row"><span>Path</span><b>Anime quick-start</b></div><div class="row"><span>Persona</span><b>${a.name}</b></div><div class="row"><span>Modes</span><b>${a.modes.join(' · ')}</b></div><div class="row"><span>Intensity</span><b>${a.intensity} / 10</b></div><div class="row"><span>Questionnaire</span><b>Skipped</b></div></div>`;
+    }else{
+      const av=AVATARS[state.avatarIdx];
+      html+=`<div class="av-preview">${avFace(av)}<div class="name"><span>${state.name}</span></div></div><div class="ob-summary"><div class="row"><span>Path</span><b>Custom kage</b></div><div class="row"><span>Name</span><b>${state.name}</b></div><div class="row"><span>Build habits</span><b>${(state.answers['habits-build']||[]).length} selected</b></div><div class="row"><span>Break habits</span><b>${(state.answers['habits-break']||[]).length} selected</b></div><div class="row"><span>Main goal</span><b>${labelFor('goal')}</b></div><div class="row"><span>Style</span><b>${labelFor('motivation')}</b></div></div>`;
+    }
+  }
+  body.innerHTML=html;bindStepEvents();
+}
+function labelFor(key){const s=CUSTOM_STEPS.find(x=>x.id===key),id=state.answers[key];if(!s||!id)return '—';const o=s.options.find(x=>x.id===id);return o?o.t:'—';}
+function bindStepEvents(){
+  document.querySelectorAll('[data-path]').forEach(b=>b.addEventListener('click',()=>{state.path=b.dataset.path;renderProgress();renderBody();updateNext();}));
+  const s=cur();
+  if(s.type==='multi')document.querySelectorAll('.ob-opt[data-id]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id,a=state.answers[s.id]||[];state.answers[s.id]=a.includes(id)?a.filter(x=>x!==id):[...a,id];renderBody();updateNext();}));
+  if(s.type==='single')document.querySelectorAll('.ob-opt[data-id]').forEach(b=>b.addEventListener('click',()=>{state.answers[s.id]=b.dataset.id;renderBody();updateNext();}));
+  if(s.type==='avatar'){
+    const inp=document.getElementById('egoName');
+    inp.addEventListener('input',()=>{state.name=inp.value;document.getElementById('previewName').textContent=state.name||'…';updateNext();});
+    document.querySelectorAll('[data-av]').forEach(b=>b.addEventListener('click',()=>{state.avatarIdx=+b.dataset.av;renderBody();updateNext();}));
+  }
+  if(s.type==='anime')document.querySelectorAll('[data-anime]').forEach(b=>b.addEventListener('click',()=>{state.animeId=b.dataset.anime;renderBody();updateNext();}));
+}
+function updateNext(){
+  const btn=document.getElementById('obNext'),s=cur();
+  btn.disabled=!canContinue();
+  btn.textContent=s.type==='summary'?(state.path==='anime'?`Start with ${ANIME.find(a=>a.id===state.animeId).name} →`:`Wake up ${state.name} →`):'Continue';
+}
+function nextStep(){
+  if(state.step<steps().length-1){state.step++;renderProgress();renderBody();updateNext();}
+  else{const msg=state.path==='anime'?`${ANIME.find(a=>a.id===state.animeId).name} is your kage!`:`${state.name} is assigned. Open Kagevo to talk.`;alert('🎉 '+msg);}
+}
+function prevStep(){if(state.step>0){state.step--;renderProgress();renderBody();updateNext();}}
+function resetOnboard(){state.path='custom';state.step=0;state.answers={};state.animeId='vegeta';state.avatarIdx=1;state.name='NOVA';renderProgress();renderBody();updateNext();}
+document.getElementById('obNext').addEventListener('click',nextStep);
+document.getElementById('obBack').addEventListener('click',prevStep);
+document.getElementById('obSkip').addEventListener('click',()=>{state.path='anime';state.step=2;renderProgress();renderBody();updateNext();});
+document.getElementById('restartOnboard').addEventListener('click',resetOnboard);
+resetOnboard();
+
+const GOAL_LIMITS={daily:3,weekly:5};
+let goalsData={
+  daily:[
+    {id:1,name:'Ship demo deck',repeat:true,status:'pending',sub:'45 min · 6 PM'},
+    {id:2,name:'6AM deep work',repeat:true,status:'miss',sub:'Missed · resets tomorrow'},
+    {id:3,name:'Investor email draft',repeat:false,status:'done',sub:'Logged 2:14 PM'}
+  ],
+  weekly:[
+    {id:4,name:'MVP auth slice',repeat:true,status:'pending',sub:'Due Sun 11:59 PM'},
+    {id:5,name:'User testing round',repeat:false,status:'pending',sub:'This week only'}
+  ]
+};
+let goalsTab='daily';
+let addState={cadence:'daily',title:'',why:'',repeat:true,duration:60};
+let openMenuId=null;
+
+function slotsUsed(c){return goalsData[c].length;}
+function slotsLeft(c){return GOAL_LIMITS[c]-slotsUsed(c);}
+
+function showGoalsList(){
+  document.getElementById('goalsListView').classList.remove('hidden');
+  document.getElementById('goalsAddView').classList.add('hidden');
+  renderGoalsList();
+}
+function showGoalsAdd(){
+  document.getElementById('goalsListView').classList.add('hidden');
+  document.getElementById('goalsAddView').classList.remove('hidden');
+  addState={cadence:goalsTab,title:'',why:'',repeat:true,duration:60};
+  renderAddForm();
+}
+function showBrutal(msg){
+  document.getElementById('brutalMsg').textContent=msg||'You committed to this goal. Rename it if you want — or delete it and start over like an adult.';
+  document.getElementById('brutalModal').classList.add('open');
+}
+
+function renderGoalsList(){
+  const list=goalsData[goalsTab],u=slotsUsed(goalsTab),l=GOAL_LIMITS[goalsTab];
+  document.getElementById('dailyCnt').textContent=`${goalsData.daily.length}/${GOAL_LIMITS.daily}`;
+  document.getElementById('weeklyCnt').textContent=`${goalsData.weekly.length}/${GOAL_LIMITS.weekly}`;
+  document.getElementById('goalsListLabel').textContent=`// ${goalsTab.charAt(0).toUpperCase()+goalsTab.slice(1)} goals`;
+  document.getElementById('goalsSlotBar').innerHTML=`<div class="top"><span>// ${goalsTab} slots</span><b class="${u>=l?'warn':''}">${u} of ${l} used</b></div><div class="slots">${Array.from({length:l},(_,i)=>`<i class="${i<u?'used':''}"></i>`).join('')}</div>`;
+  document.querySelectorAll('#goalsTabs .c-tab').forEach(t=>t.classList.toggle('on',t.dataset.list===goalsTab));
+  const el=document.getElementById('goalsList');
+  if(!list.length){el.innerHTML=`<div class="empty-goals"><b>No ${goalsTab} goals yet</b>Tap + to add one</div>`;return;}
+  el.innerHTML=list.map(g=>`
+    <div class="goal-row" data-id="${g.id}">
+      <div class="check ${g.status==='done'?'done':g.status==='miss'?'miss':''}">${g.status==='done'?'✓':g.status==='miss'?'✕':''}</div>
+      <div class="body">
+        <h4 class="goal-name">${g.name} <span class="repeat-badge ${g.repeat?'':'once'}">${g.repeat?(goalsTab==='daily'?'↻ Every day':'↻ Every week'):'Once only'}</span></h4>
+        <div class="sub">${g.sub} · <button type="button" class="edit-lock" data-id="${g.id}" style="color:var(--roast);font-weight:600;font-size:11px">edit deadline</button></div>
+      </div>
+      <button type="button" class="menu-btn goal-menu" data-id="${g.id}">⋮</button>
+      <div class="goal-actions-menu" id="menu-${g.id}">
+        <button type="button" class="goal-rename" data-id="${g.id}">Rename</button>
+        <button type="button" class="goal-delete danger" data-id="${g.id}">Delete</button>
+      </div>
+    </div>`).join('');
+  bindListEvents();
+}
+
+function bindListEvents(){
+  document.querySelectorAll('.goal-menu').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();const id=+b.dataset.id;
+    document.querySelectorAll('.goal-actions-menu').forEach(m=>m.classList.remove('open'));
+    openMenuId=openMenuId===id?null:id;
+    if(openMenuId)document.getElementById('menu-'+id).classList.add('open');
+  }));
+  document.querySelectorAll('.goal-rename').forEach(b=>b.addEventListener('click',()=>{
+    const id=+b.dataset.id,g=[...goalsData.daily,...goalsData.weekly].find(x=>x.id===id);
+    const row=document.querySelector(`.goal-row[data-id="${id}"] .goal-name`);
+    row.innerHTML=`<input class="rename-input" value="${g.name}" data-id="${id}" />`;
+    row.querySelector('input').focus();
+    row.querySelector('input').addEventListener('blur',e=>{g.name=e.target.value.trim()||g.name;renderGoalsList();});
+    row.querySelector('input').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
+    document.querySelectorAll('.goal-actions-menu').forEach(m=>m.classList.remove('open'));
+  }));
+  document.querySelectorAll('.goal-delete').forEach(b=>b.addEventListener('click',()=>{
+    const id=+b.dataset.id;
+    ['daily','weekly'].forEach(c=>{goalsData[c]=goalsData[c].filter(g=>g.id!==id);});
+    renderGoalsList();
+  }));
+  document.querySelectorAll('.edit-lock').forEach(b=>b.addEventListener('click',()=>{
+    const id=+b.dataset.id;
+    const cad=goalsData.daily.some(x=>x.id===id)?'daily':'weekly';
+    const g=[...goalsData.daily,...goalsData.weekly].find(x=>x.id===id);
+    showBrutal(`You committed to "${g.name}" ${g.repeat?(cad==='daily'?'every day':'every week'):'once'}. Want a different deadline? Delete it and make a new one. Rename is fine — weasel editing is not.`);
+  }));
+  document.addEventListener('click',()=>document.querySelectorAll('.goal-actions-menu').forEach(m=>m.classList.remove('open')),{once:true});
+}
+
+function renderAddForm(){
+  const c=addState.cadence,u=slotsUsed(c),l=GOAL_LIMITS[c];
+  document.getElementById('goalsAddBody').innerHTML=`
+    <label class="field-label">// 1 · Daily or weekly</label>
+    <div class="cadence-pick-2">
+      <button type="button" class="c-pick-lg ${c==='daily'?'sel':''}" data-cad="daily"><span class="c-name">Daily</span><span class="c-slots">${goalsData.daily.length} / ${GOAL_LIMITS.daily}</span><span class="c-desc">Resets every midnight</span></button>
+      <button type="button" class="c-pick-lg ${c==='weekly'?'sel':''}" data-cad="weekly"><span class="c-name">Weekly</span><span class="c-slots">${goalsData.weekly.length} / ${GOAL_LIMITS.weekly}</span><span class="c-desc">Resets every Sunday</span></button>
+    </div>
+    <label class="field-label">// 2 · Goal name</label>
+    <input class="ob-input" id="gTitle" type="text" placeholder="Ship auth slice…" value="${addState.title}" />
+    <label class="field-label">// 3 · Repeat</label>
+    <div class="repeat-toggle" id="gRepeat">
+      <button type="button" class="${addState.repeat?'on':''}" data-r="1">${c==='daily'?'↻ Repeat every day':'↻ Repeat every week'}</button>
+      <button type="button" class="${!addState.repeat?'on':''}" data-r="0">Once only</button>
+    </div>
+    <label class="field-label">// 4 · Why it matters</label>
+    <input class="ob-input" id="gWhy" type="text" placeholder="Moves the needle because…" value="${addState.why}" style="font-size:14px;font-weight:500" />
+    <label class="field-label">// 5 · Time-box (locked after save)</label>
+    <div class="time-box"><input id="gDur" type="number" min="15" max="240" value="${addState.duration}" /><select disabled><option>minutes</option></select></div>
+    <p style="font-size:11px;color:var(--faint);margin-top:12px;line-height:1.5">After commit: rename ✓ · delete ✓ · edit cadence/deadline ✕ → brutal popup</p>`;
+  document.querySelectorAll('#goalsAddBody [data-cad]').forEach(b=>b.addEventListener('click',()=>{if(slotsLeft(b.dataset.cad)<=0&&addState.cadence!==b.dataset.cad)return;addState.cadence=b.dataset.cad;renderAddForm();}));
+  document.getElementById('gTitle').addEventListener('input',e=>{addState.title=e.target.value;updateAddSave();});
+  document.getElementById('gWhy').addEventListener('input',e=>{addState.why=e.target.value;updateAddSave();});
+  document.getElementById('gDur').addEventListener('input',e=>{addState.duration=+e.target.value;});
+  document.querySelectorAll('#gRepeat button').forEach(b=>b.addEventListener('click',()=>{addState.repeat=b.dataset.r==='1';renderAddForm();}));
+  updateAddSave();
+}
+
+function canSaveGoal(){return addState.title.trim().length>=4&&addState.why.trim().length>=8&&slotsLeft(addState.cadence)>0;}
+function updateAddSave(){
+  const btn=document.getElementById('goalsSaveBtn'),note=document.getElementById('goalsAddNote');
+  btn.disabled=!canSaveGoal();
+  const c=addState.cadence;
+  note.textContent=`${c}: ${slotsUsed(c)}/${GOAL_LIMITS[c]} slots · Locked after save · rename or delete only`;
+  document.querySelectorAll('#gRepeat button').forEach((b,i)=>{if(i===0)b.textContent=addState.cadence==='daily'?'↻ Repeat every day':'↻ Repeat every week';});
+}
+
+document.getElementById('goalsAddFab').addEventListener('click',showGoalsAdd);
+document.getElementById('goalsAddBack').addEventListener('click',showGoalsList);
+document.getElementById('goalsAddCancel').addEventListener('click',showGoalsList);
+document.getElementById('goalsShowList').addEventListener('click',showGoalsList);
+document.getElementById('goalsTabs').addEventListener('click',e=>{const t=e.target.closest('[data-list]');if(!t)return;goalsTab=t.dataset.list;renderGoalsList();});
+document.getElementById('goalsSaveBtn').addEventListener('click',()=>{
+  if(!canSaveGoal())return;
+  const id=Date.now();
+  goalsData[addState.cadence].push({id,name:addState.title.trim(),repeat:addState.repeat,status:'pending',sub:`${addState.duration} min · ${addState.cadence==='daily'?'11:59 PM daily':'Sun 11:59 PM'}`});
+  showGoalsList();
+});
+document.getElementById('brutalOk').addEventListener('click',()=>document.getElementById('brutalModal').classList.remove('open'));
+document.getElementById('brutalDismiss').addEventListener('click',()=>document.getElementById('brutalModal').classList.remove('open'));
+showGoalsList();
+
+const SHARE_CARDS={
+  wrapped:{link:'https://kagevo.app/w/kanishk-w14',html:`<div class="share-card-inner"><div><div class="brand">Kagevo · Week 14</div><div class="headline">Kanishk's Kage<em>with NOVA · Roast mode</em></div></div><div class="share-card-stats"><div><b>86%</b><span>Tasks logged</span></div><div><b>Roast</b><span>Top mode</span></div><div><b>22</b><span>Best streak</span></div><div><b>47</b><span>Voice talks</span></div></div><div class="share-card-quote">"Day 14 of not lying to yourself."</div><div class="share-card-footer"><span>kagevo.app/w/kanishk</span><span>◐ NOVA</span></div></div>`},
+  streak:{link:'https://kagevo.app/s/kanishk-22',html:`<div class="share-card-inner" style="background:linear-gradient(145deg,#172554,#5B8DEF 55%,#B794F6)"><div><div class="brand">Streak milestone</div><div class="headline">🔥 22 days<em>Ship MVP · daily main task</em></div></div><div class="share-card-stats"><div><b>22</b><span>Day streak</span></div><div><b>86%</b><span>Log rate</span></div></div><div class="share-card-quote">"NOVA didn't roast you once this week. Suspicious."</div><div class="share-card-footer"><span>kagevo.app/s/22</span><span>NOVA</span></div></div>`},
+  persona:{link:'https://kagevo.app/p/nova-kanishk',html:`<div class="share-card-inner" style="background:linear-gradient(145deg,#7C2D12,#FF6B35 45%,#5B8DEF)"><div><div class="brand">My kage</div><div class="headline">◐ NOVA<em>Roast · Brutal · Motivate</em></div></div><div class="share-card-stats"><div><b>14</b><span>Days together</span></div><div><b>7</b><span>Intensity</span></div></div><div class="share-card-quote">"Either move the alarm or stop calling yourself a runner."</div><div class="share-card-footer"><span>Make your kage</span><span>kagevo.app</span></div></div>`}
+};
+let shareType='wrapped';
+
+function renderShareCard(){
+  const c=SHARE_CARDS[shareType];
+  document.getElementById('shareCardPreview').innerHTML=c.html;
+  document.getElementById('shareLink').value=c.link;
+}
+function openShare(){document.getElementById('shareOverlay').classList.add('open');document.getElementById('shareSheet').classList.add('open');renderShareCard();}
+function closeShare(){document.getElementById('shareOverlay').classList.remove('open');document.getElementById('shareSheet').classList.remove('open');}
+function showShareToast(msg){const t=document.getElementById('shareToast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+
+['shareTrigger','shareTrigger2','openShareDemo'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('click',openShare);});
+document.getElementById('shareOverlay').addEventListener('click',closeShare);
+document.querySelectorAll('#shareTypes .share-type').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#shareTypes .share-type').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');shareType=b.dataset.type;renderShareCard();
+}));
+document.getElementById('shareCopyBtn').addEventListener('click',()=>{
+  navigator.clipboard?.writeText(document.getElementById('shareLink').value);
+  showShareToast('Link copied!');
+});
+document.querySelectorAll('#shareSheet .share-target').forEach(b=>b.addEventListener('click',()=>{
+  const a=b.dataset.action,map={copy:'Link copied!',ig:'Opening Instagram Stories…',wa:'Opening WhatsApp…',x:'Opening X…',more:'System share sheet…'};
+  if(a==='copy')navigator.clipboard?.writeText(document.getElementById('shareLink').value);
+  showShareToast(map[a]||'Shared!');
+}));
+renderShareCard();
+
+const p0State={
+  tab:'notif',
+  notif:{goals:true,proactive:true,roast:true,morning:false,quietStart:'22:00',quietEnd:'07:00',maxNudges:5,snoozed:false},
+  privacy:{cloudAI:true,memories:true,retention:'90 days'}
+};
+
+function showP0Toast(msg){
+  const t=document.getElementById('p0Toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+function p0Toggle(key,box){
+  if(box==='notif')p0State.notif[key]=!p0State.notif[key];
+  else p0State.privacy[key]=!p0State.privacy[key];
+  renderP0();
+}
+
+function renderNotif(){
+  const n=p0State.notif;
+  const rows=[
+    {k:'goals',h:'Goal reminders',p:'Daily/weekly log window alerts'},
+    {k:'proactive',h:'Proactive nudges',p:'Your kage reaches out in character'},
+    {k:'roast',h:'Roast / brutal nudges',p:'Accountability when you slip'},
+    {k:'morning',h:'Morning check-in',p:'Persona-flavored start to day'}
+  ];
+  return `<span class="p0-badge">P0 · FR-6.4</span>
+    <div class="set-group"><span class="set-group-title">// Nudge categories</span>
+      ${rows.map(r=>`<div class="set-row"><div class="info"><h4>${r.h}</h4><p>${r.p}</p></div><button type="button" class="toggle${n[r.k]?' on':''}" data-p0-toggle="notif:${r.k}"></button></div>`).join('')}
+    </div>
+    <div class="set-group"><span class="set-group-title">// Quiet hours</span>
+      <div class="quiet-hours">
+        <select id="p0QuietStart">${['9:00 PM','10:00 PM','11:00 PM'].map(t=>`<option${t.startsWith('10')?' selected':''}>${t}</option>`).join('')}</select>
+        <span style="color:var(--muted);padding-top:11px">→</span>
+        <select id="p0QuietEnd">${['6:00 AM','7:00 AM','8:00 AM'].map(t=>`<option${t.startsWith('7')?' selected':''}>${t}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="set-group"><span class="set-group-title">// Frequency cap</span>
+      <div class="freq-slider"><div class="top"><span>Max nudges per day</span><b id="p0MaxLabel">${n.maxNudges}</b></div>
+        <input type="range" id="p0MaxRange" min="1" max="10" value="${n.maxNudges}" style="width:100%;accent-color:var(--motiv)">
+      </div>
+    </div>
+    ${n.snoozed?'<p style="font-size:12px;color:var(--roast);margin-bottom:8px">Your kage is snoozed until tomorrow 10:30 AM</p>':''}
+    <button type="button" class="set-btn warn" id="p0Snooze">${n.snoozed?'Cancel snooze':'Snooze your kage for 24 hours'}</button>
+    <button type="button" class="set-btn" id="p0AllOff">Turn off all notifications</button>`;
+}
+
+function renderSafety(){
+  return `<span class="p0-badge">P0 · FR-9</span>
+    <div class="set-group"><span class="set-group-title">// Crisis detection</span>
+      <div class="consent-box"><h4>Auto support mode</h4><p>When distress signals are detected in voice or chat, NOVA switches to emotional support — roast and brutal modes disabled.</p></div>
+      <div class="set-row"><div class="info"><h4>Crisis detection</h4><p>Cannot be disabled — required for safety</p></div><div class="toggle on" style="opacity:.5;pointer-events:none"></div></div>
+    </div>
+    <div class="set-group"><span class="set-group-title">// Helplines shown</span>
+      <div class="helpline" style="margin-bottom:8px"><h4>988 Suicide &amp; Crisis Lifeline</h4><p>US · free · 24/7</p><div class="num">Call or text 988</div></div>
+      <div class="helpline"><h4>Crisis Text Line</h4><p>Text with a trained counselor</p><div class="num">Text HOME to 741741</div></div>
+    </div>
+    <button type="button" class="set-btn" id="p0TestCrisis" style="margin-top:12px;background:rgba(183,148,246,.12);border-color:rgba(183,148,246,.35);color:var(--support)">Preview crisis flow</button>
+    <p style="font-size:11px;color:var(--faint);line-height:1.5;margin-top:12px">Kagevo is not a medical or mental-health service. Always contact qualified professionals in an emergency.</p>`;
+}
+
+function renderPrivacy(){
+  const p=p0State.privacy;
+  return `<span class="p0-badge">P0 · FR-8.3 · NFR-5</span>
+    <div class="set-group"><span class="set-group-title">// AI &amp; data consent</span>
+      <div class="consent-box"><h4>Send conversations to cloud AI</h4><p>Required for voice &amp; chat. Encrypted in transit.</p><div class="provider">Voice: Groq (no training) · Chat: Gemini</div>
+        <div style="margin-top:10px;display:flex;justify-content:flex-end"><button type="button" class="toggle${p.cloudAI?' on':''}" data-p0-toggle="privacy:cloudAI"></button></div></div>
+      <div class="consent-box"><h4>Store memories &amp; goals</h4><p>Powers persona consistency across sessions.</p>
+        <div style="margin-top:10px;display:flex;justify-content:flex-end"><button type="button" class="toggle${p.memories?' on':''}" data-p0-toggle="privacy:memories"></button></div></div>
+    </div>
+    <div class="set-group"><span class="set-group-title">// Retention</span>
+      <div class="retention-row"><span>Chat history</span><b>${p.retention}</b></div>
+    </div>
+    <div class="set-group"><span class="set-group-title">// Your data</span>
+      <button type="button" class="set-btn" id="p0Export">Export all data (JSON)</button>
+      <button type="button" class="set-btn" id="p0Memories">View stored memories</button>
+      <button type="button" class="set-btn danger" id="p0Delete">Delete account &amp; all data</button>
+    </div>
+    <p style="font-size:11px;color:var(--faint);line-height:1.5;margin-top:8px">Share cards include stats only — never private chat content.</p>`;
+}
+
+function renderP0(){
+  const body=document.getElementById('p0Body');
+  body.innerHTML=p0State.tab==='notif'?renderNotif():p0State.tab==='safety'?renderSafety():renderPrivacy();
+  document.querySelectorAll('#p0Tabs .s-tab').forEach(t=>t.classList.toggle('on',t.dataset.p0===p0State.tab));
+  body.querySelectorAll('[data-p0-toggle]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const [box,key]=btn.dataset.p0Toggle.split(':');
+      p0Toggle(key,box);
+    });
+  });
+  const range=document.getElementById('p0MaxRange');
+  if(range){
+    range.addEventListener('input',()=>{
+      p0State.notif.maxNudges=+range.value;
+      document.getElementById('p0MaxLabel').textContent=range.value;
+    });
+  }
+  document.getElementById('p0Snooze')?.addEventListener('click',()=>{
+    p0State.notif.snoozed=!p0State.notif.snoozed;
+    showP0Toast(p0State.notif.snoozed?'Kage snoozed for 24h':'Snooze cancelled');
+    renderP0();
+  });
+  document.getElementById('p0AllOff')?.addEventListener('click',()=>{
+    Object.keys(p0State.notif).forEach(k=>{if(typeof p0State.notif[k]==='boolean')p0State.notif[k]=false;});
+    showP0Toast('All notifications off');
+    renderP0();
+  });
+  document.getElementById('p0TestCrisis')?.addEventListener('click',openP0Crisis);
+  document.getElementById('p0Export')?.addEventListener('click',()=>showP0Toast('Export queued — email in ~5 min'));
+  document.getElementById('p0Memories')?.addEventListener('click',()=>showP0Toast('Memory viewer — P1'));
+  document.getElementById('p0Delete')?.addEventListener('click',()=>showP0Toast('Confirm delete — P0 flow'));
+}
+
+function openP0Crisis(){
+  document.getElementById('p0Crisis').classList.remove('hidden');
+  document.getElementById('p0App').style.visibility='hidden';
+}
+function closeP0Crisis(){
+  document.getElementById('p0Crisis').classList.add('hidden');
+  document.getElementById('p0App').style.visibility='';
+}
+
+document.getElementById('p0Tabs').addEventListener('click',e=>{
+  const t=e.target.closest('[data-p0]');
+  if(!t)return;
+  p0State.tab=t.dataset.p0;
+  renderP0();
+});
+document.getElementById('p0SimCrisis').addEventListener('click',openP0Crisis);
+document.getElementById('p0CrisisClose').addEventListener('click',closeP0Crisis);
+renderP0();
+</script>
+</body>
+</html>
