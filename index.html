@@ -6,7 +6,7 @@
 <title>Kagevo — Assign Your Kage</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 </head>
 <body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
@@ -17,51 +17,52 @@
 </svg>
 <style>
 :root{
-  --bg:#08080C; --bg-2:#0E0E15; --panel:rgba(255,255,255,0.045);
-  --panel-2:rgba(255,255,255,0.07); --line:rgba(255,255,255,0.09);
-  --line-2:rgba(255,255,255,0.14); --ink:#F6F6F8; --muted:#9A9AA8; --faint:#62626E;
-  --brutal:#5B8DEF; --roast:#FF6B35; --motiv:#34D399; --support:#B794F6;
-  --mono:'JetBrains Mono',ui-monospace,monospace;
-  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --bg:#0c0b0a; --bg-2:#141210; --panel:rgba(255,255,255,0.03);
+  --panel-2:rgba(255,255,255,0.055); --line:rgba(255,255,255,0.08);
+  --line-2:rgba(255,255,255,0.13); --ink:#ece8e3; --muted:#8f8983; --faint:#5a5550;
+  --brutal:#8fa4b8; --roast:#d9562b; --motiv:#5d9470; --support:#9a88b0;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+  --display:'Syne',var(--sans);
+  --r-sm:6px; --r-md:10px; --r-lg:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(60% 50% at 18% 8%,rgba(91,141,239,.16),transparent 60%),
-  radial-gradient(50% 45% at 88% 22%,rgba(183,148,246,.14),transparent 60%),
-  radial-gradient(60% 55% at 50% 110%,rgba(52,211,153,.10),transparent 60%)}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-size:180px 180px}
 a{color:inherit;text-decoration:none}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .wrap{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:64px 28px 120px}
 </style>
 <style>
 /* ── Header ── */
-.hero{margin-bottom:64px;max-width:760px}
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:10px;margin-bottom:22px}
-.eyebrow .kage-logo{width:24px;height:24px;border-radius:8px;background:linear-gradient(145deg,#312e81 0%,#0a0a0f 100%);display:flex;align-items:center;justify-content:center;border:1px solid rgba(99,102,241,.35);box-shadow:0 0 16px rgba(99,102,241,.25)}
-.eyebrow .kage-logo svg{width:14px;height:14px;color:#a5b4fc;filter:drop-shadow(2px 3px 4px rgba(0,0,0,.9))}
-.hero h1{font-size:clamp(38px,6vw,72px);font-weight:800;letter-spacing:-.04em;line-height:.98}
-.hero h1 .grad{background:linear-gradient(110deg,var(--brutal),var(--support) 40%,var(--roast) 72%,var(--motiv));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{margin-top:22px;font-size:18px;line-height:1.65;color:var(--muted);max-width:620px}
-.demo-banner{margin:36px 0 48px;padding:28px 32px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(135deg,rgba(91,141,239,.08),rgba(183,148,246,.06));display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
-.demo-banner h2{font-size:22px;font-weight:800;letter-spacing:-.02em}
-.demo-banner p{font-size:14px;color:var(--muted);margin-top:6px;max-width:480px}
-.demo-banner .tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--motiv);margin-bottom:8px}
-.demo-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:80px;gap:24px}
-.demo-wrap .hint{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
-.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
-.legend .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);border-radius:100px;font-size:13px;font-weight:600;background:var(--panel)}
-.legend .chip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.hero{margin-bottom:56px;max-width:680px;padding-top:8px}
+.eyebrow{font-size:13px;font-weight:500;color:var(--muted);display:inline-flex;align-items:center;gap:10px;margin-bottom:28px}
+.eyebrow .kage-logo{width:22px;height:22px;border-radius:4px;background:var(--bg-2);display:flex;align-items:center;justify-content:center;border:1px solid var(--line-2)}
+.eyebrow .kage-logo svg{width:13px;height:13px;color:var(--roast)}
+.hero h1{font-family:var(--display);font-size:clamp(36px,5.5vw,64px);font-weight:800;letter-spacing:-.03em;line-height:1.02}
+.hero h1 .kage-word{color:var(--roast);font-style:italic;font-weight:700}
+.hero p{margin-top:20px;font-size:17px;line-height:1.6;color:var(--muted);max-width:540px;font-weight:400}
+.demo-banner{margin:32px 0 40px;padding:22px 26px;border:1px solid var(--line);border-left:3px solid var(--roast);border-radius:0;background:var(--bg-2);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
+.demo-banner h2{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:-.01em}
+.demo-banner p{font-size:14px;color:var(--muted);margin-top:5px;max-width:460px;line-height:1.5}
+.demo-banner .tag{font-size:12px;font-weight:600;color:var(--roast);margin-bottom:6px}
+.demo-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:72px;gap:18px}
+.demo-wrap .hint{font-size:13px;color:var(--faint)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:26px;font-size:14px;color:var(--muted)}
+.legend .chip{display:inline-flex;align-items:center;gap:7px;padding:0;border:none;background:none;font-weight:500}
+.legend .chip i{width:5px;height:5px;border-radius:1px;display:inline-block;flex-shrink:0}
 /* ── Gallery ── */
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:60px 40px;align-items:start}
 .frame-wrap{display:flex;flex-direction:column;align-items:center;gap:20px}
 .frame-cap{text-align:center}
-.frame-cap .num{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--faint)}
-.frame-cap h3{font-size:17px;font-weight:700;letter-spacing:-.01em;margin-top:4px}
+.frame-cap .num{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.frame-cap h3{font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:-.01em;margin-top:4px}
 .frame-cap span{display:block;font-size:13px;color:var(--muted);margin-top:3px}
 /* ── Phone frame ── */
-.phone{width:330px;height:700px;border-radius:52px;background:#000;padding:11px;position:relative;
-  box-shadow:0 0 0 2px rgba(255,255,255,.06),0 40px 80px -20px rgba(0,0,0,.8),0 0 90px -30px rgba(91,141,239,.4)}
+.phone{width:330px;height:700px;border-radius:44px;background:#080807;padding:10px;position:relative;
+  box-shadow:0 28px 56px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.07)}
 .phone .island{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:96px;height:30px;background:#000;border-radius:100px;z-index:40}
 .screen{width:100%;height:100%;border-radius:42px;overflow:hidden;position:relative;background:var(--bg-2);display:flex;flex-direction:column;font-size:14px}
 .screen::-webkit-scrollbar{display:none}
@@ -76,33 +77,31 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 /* greeting */
 .greet{padding:6px 24px 0;flex-shrink:0}
 .greet .meta{display:flex;align-items:center;justify-content:space-between}
-.persona-tag{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:7px}
+.persona-tag{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:7px}
 .persona-tag b{color:var(--ink);font-weight:700}
 .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,var(--support),var(--brutal));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#0b0b12}
-.avatar.kage{background:linear-gradient(145deg,#1e1e2e 0%,#0a0a10 100%);border:1px solid rgba(99,102,241,.22)}
-.avatar.kage .kage-icon{width:18px;height:18px;color:#818cf8;filter:drop-shadow(2px 4px 6px rgba(0,0,0,.85))}
-.kage-av{background:linear-gradient(145deg,#312e81 0%,#0a0a0f 100%)!important;display:flex;align-items:center;justify-content:center}
-.kage-av svg,.av-item.kage-shadow svg{width:44px;height:44px;color:#a5b4fc;filter:drop-shadow(0 8px 14px rgba(0,0,0,.85))}
+.avatar.kage{background:var(--bg-2);border:1px solid var(--line-2)}
+.avatar.kage .kage-icon{width:18px;height:18px;color:var(--roast)}
+.kage-av{background:var(--bg-2)!important;border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center}
+.kage-av svg,.av-item.kage-shadow svg{width:44px;height:44px;color:var(--roast)}
 .av-item.kage-shadow svg{width:28px;height:28px}
 .greet h2{font-size:25px;font-weight:800;letter-spacing:-.03em;margin-top:14px;line-height:1.12}
 .greet h2 .soft{color:var(--faint)}
 /* orb */
 .orb-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 0 8px;flex-shrink:0}
 .orb{width:176px;height:176px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.orb .core{width:128px;height:128px;border-radius:50%;position:relative;z-index:3;
-  background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.12) 0%,#6366f1 28%,#312e81 58%,#0a0a0f 100%);
-  box-shadow:0 0 60px -6px rgba(99,102,241,.55),0 24px 48px -12px rgba(0,0,0,.85),inset 0 0 30px rgba(255,255,255,.06)}
-.orb .core.brutal{background:radial-gradient(circle at 35% 30%,#fff,#5B8DEF 32%,#1E40AF 72%,#172554);box-shadow:0 0 60px -6px var(--brutal),inset 0 0 30px rgba(255,255,255,.25)}
-.orb .ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(99,102,241,.45);animation:ripple 3s ease-out infinite}
-.orb .ring:nth-child(2){animation-delay:1s}
-.orb .ring:nth-child(3){animation-delay:2s}
-@keyframes ripple{0%{transform:scale(.72);opacity:.9}100%{transform:scale(1.25);opacity:0}}
-.orb-hint{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:18px;display:flex;align-items:center;gap:8px}
-.orb-hint .live{width:7px;height:7px;border-radius:50%;background:var(--roast);box-shadow:0 0 10px var(--roast);animation:pulse 1.4s infinite}
+.orb .core{width:120px;height:120px;border-radius:50%;position:relative;z-index:3;
+  background:var(--bg);border:2px solid var(--roast);
+  box-shadow:inset 0 0 0 6px rgba(217,86,43,.08)}
+.orb .core.brutal{border-color:var(--brutal);box-shadow:inset 0 0 0 6px rgba(143,164,184,.1)}
+.orb .ring{position:absolute;inset:8px;border-radius:50%;border:1px solid rgba(217,86,43,.2)}
+.orb .ring:nth-child(2),.orb .ring:nth-child(3){display:none}
+.orb-hint{font-size:12px;color:var(--muted);margin-top:16px;display:flex;align-items:center;gap:8px}
+.orb-hint .live{width:6px;height:6px;border-radius:50%;background:var(--roast);animation:pulse 1.6s infinite}
 /* mode rail */
 .mode-rail{display:flex;gap:8px;padding:14px 24px;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
 .mode-rail::-webkit-scrollbar{display:none}
-.mode-pill{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:100px;border:1px solid var(--line);font-size:12.5px;font-weight:600;color:var(--muted);background:var(--panel);white-space:nowrap;transition:.2s}
+.mode-pill{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:var(--r-sm);border:1px solid var(--line);font-size:12px;font-weight:600;color:var(--muted);background:var(--panel);white-space:nowrap;transition:.15s}
 .mode-pill i{width:8px;height:8px;border-radius:50%}
 .mode-pill.active{color:#0b0b12;border-color:transparent}
 .mode-pill.active.roast{background:var(--roast)}
@@ -110,14 +109,14 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .mode-pill.active.motiv{background:var(--motiv)}
 .mode-pill.active.support{background:var(--support)}
 /* cards */
-.sec-label{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);padding:0 24px;margin:6px 0 10px;display:flex;justify-content:space-between;align-items:center}
+.sec-label{font-size:11px;font-weight:600;color:var(--faint);padding:0 24px;margin:6px 0 10px;display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.04em}
 .sec-label a{color:var(--brutal)}
-.card{margin:0 24px 12px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px}
-.nudge{margin:0 24px 14px;border-radius:20px;padding:16px 18px;background:linear-gradient(135deg,rgba(255,107,53,.16),rgba(183,148,246,.10));border:1px solid rgba(255,107,53,.28);position:relative;overflow:hidden}
-.nudge .from{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--roast);display:flex;align-items:center;gap:7px;font-weight:600}
+.card{margin:0 24px 12px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);padding:16px}
+.nudge{margin:0 24px 14px;border-radius:var(--r-md);padding:16px 18px;background:rgba(217,86,43,.07);border:1px solid rgba(217,86,43,.22);position:relative;overflow:hidden}
+.nudge .from{font-size:11px;color:var(--roast);display:flex;align-items:center;gap:7px;font-weight:600}
 .nudge p{font-size:14.5px;line-height:1.5;margin-top:9px;color:var(--ink);font-weight:500}
 .nudge .act{display:flex;gap:8px;margin-top:14px}
-.mini-btn{font-size:12px;font-weight:600;padding:8px 14px;border-radius:100px;border:1px solid var(--line-2)}
+.mini-btn{font-size:12px;font-weight:600;padding:8px 14px;border-radius:var(--r-sm);border:1px solid var(--line-2)}
 .mini-btn.fill{background:var(--ink);color:#0b0b12;border-color:transparent}
 </style>
 <style>
@@ -144,22 +143,21 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .dock a{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--faint);letter-spacing:.02em}
 .dock a.on{color:var(--ink)}
 .dock svg{width:22px;height:22px}
-.dock .mic{width:52px;height:52px;border-radius:50%;margin-top:-24px;background:radial-gradient(circle at 35% 30%,#fff,var(--roast) 45%,#C2410C);display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px -4px var(--roast),0 8px 20px rgba(0,0,0,.5);color:#0b0b12}
+.dock .mic{width:52px;height:52px;border-radius:50%;margin-top:-24px;background:var(--roast);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.4);color:var(--bg)}
 /* ── Active voice screen ── */
-.voice-screen{background:radial-gradient(70% 50% at 50% 26%,rgba(255,107,53,.20),transparent 70%),var(--bg-2)}
+.voice-screen{background:var(--bg-2)}
 .voice-top{display:flex;align-items:center;justify-content:space-between;padding:8px 24px}
 .voice-top .mode-now{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:100px;background:rgba(255,107,53,.16);border:1px solid rgba(255,107,53,.4);font-size:12px;font-weight:700;color:var(--roast)}
 .x-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted)}
 .big-orb-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;padding:10px 0}
 .big-orb{width:210px;height:210px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
-.big-orb .core{width:150px;height:150px;border-radius:50%;z-index:3;background:radial-gradient(circle at 36% 28%,rgba(255,255,255,.12),#6366f1 32%,#312e81 62%,#0a0a0f);box-shadow:0 0 80px -4px rgba(99,102,241,.6),0 28px 56px -14px rgba(0,0,0,.9),inset 0 0 40px rgba(255,255,255,.06);animation:breathe 3.4s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-.big-orb .ring{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(99,102,241,.4);animation:ripple 3s ease-out infinite}
-.big-orb .ring:nth-child(2){animation-delay:1s}
-.big-orb .ring:nth-child(3){animation-delay:2s}
+.big-orb .core{width:140px;height:140px;border-radius:50%;z-index:3;background:var(--bg);border:2px solid var(--roast);animation:breathe 3.4s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.big-orb .ring{position:absolute;inset:10px;border-radius:50%;border:1px solid rgba(217,86,43,.18)}
+.big-orb .ring:nth-child(2),.big-orb .ring:nth-child(3){display:none}
 /* waveform */
 .wave{display:flex;align-items:center;gap:4px;height:42px}
-.wave span{width:4px;border-radius:4px;background:linear-gradient(var(--roast),var(--support));animation:wv 1s ease-in-out infinite}
+.wave span{width:3px;border-radius:2px;background:var(--roast);animation:wv 1s ease-in-out infinite}
 @keyframes wv{0%,100%{height:8px}50%{height:38px}}
 </style>
 <style>
@@ -168,7 +166,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .t-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);text-align:center;margin-bottom:2px}
 .bubble{max-width:82%;padding:11px 15px;border-radius:18px;font-size:14px;line-height:1.45}
 .bubble.user{align-self:flex-end;background:var(--panel-2);border:1px solid var(--line);border-bottom-right-radius:5px}
-.bubble.ego{align-self:flex-start;background:linear-gradient(135deg,rgba(255,107,53,.18),rgba(124,45,18,.18));border:1px solid rgba(255,107,53,.3);border-bottom-left-radius:5px;font-weight:500}
+.bubble.ego{align-self:flex-start;background:rgba(217,86,43,.1);border:1px solid rgba(217,86,43,.25);border-bottom-left-radius:5px;font-weight:500}
 .bubble .who{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:5px}
 .voice-controls{display:flex;align-items:center;justify-content:center;gap:18px;padding:14px 24px 30px}
 .vc{width:54px;height:54px;border-radius:50%;border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;color:var(--ink);background:var(--panel)}
@@ -204,8 +202,8 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 <style>
 /* persona config */
 .cfg-head{padding:8px 24px 4px;flex-shrink:0}
-.cfg-head .step{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
-.cfg-head h2{font-size:23px;font-weight:800;letter-spacing:-.03em;margin-top:8px;line-height:1.15}
+.cfg-head .step{font-size:11px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.04em}
+.cfg-head h2{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.02em;margin-top:8px;line-height:1.15}
 .cfg-head p{font-size:13.5px;color:var(--muted);margin-top:8px;line-height:1.5}
 .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 24px}
 .mode-card{border:1px solid var(--line);border-radius:18px;padding:14px;background:var(--panel);position:relative}
@@ -240,7 +238,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .cfg-cta button{width:100%;padding:15px;border-radius:16px;background:var(--ink);color:#0b0b12;font-weight:700;font-size:15px}
 .safety{margin:0 24px 16px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);font-size:11.5px;color:var(--muted);line-height:1.5;display:flex;gap:10px}
 .safety .sh{color:var(--support);flex-shrink:0}
-.foot-note{text-align:center;color:var(--faint);font-size:13px;margin-top:80px;font-family:var(--mono);letter-spacing:.08em}
+.foot-note{text-align:center;color:var(--faint);font-size:12px;margin-top:80px;line-height:1.6;max-width:420px;margin-left:auto;margin-right:auto}
 @media(max-width:680px){.phone{transform:scale(.92)}.wrap{padding:40px 14px 80px}}
 /* habits screen */
 .hstats{display:flex;gap:10px;padding:8px 24px 14px}
@@ -273,8 +271,8 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .slots i{flex:1;height:6px;border-radius:6px;background:var(--panel-2);border:1px solid var(--line)}
 .slots i.used{background:var(--motiv);border-color:var(--motiv)}
 .slots i.warn{background:var(--roast);border-color:var(--roast)}
-.parkinson{margin:0 22px 12px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,rgba(255,107,53,.12),rgba(91,141,239,.08));border:1px solid rgba(255,107,53,.25)}
-.parkinson .label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--roast);font-weight:600}
+.parkinson{margin:0 22px 12px;padding:12px 14px;border-radius:var(--r-md);background:rgba(217,86,43,.06);border:1px solid rgba(217,86,43,.2)}
+.parkinson .label{font-size:10px;color:var(--roast);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 .parkinson .timer{font-size:22px;font-weight:800;letter-spacing:-.03em;margin:4px 0 2px;font-variant-numeric:tabular-nums}
 .parkinson .sub{font-size:11.5px;color:var(--muted);line-height:1.4}
 .parkinson .bar{height:4px;border-radius:4px;background:rgba(255,255,255,.08);margin-top:10px;overflow:hidden}
@@ -290,7 +288,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .add-head h2{font-size:20px;font-weight:800;letter-spacing:-.02em;margin-top:8px}
 .add-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:14px 22px}
 .add-body::-webkit-scrollbar{display:none}
-.field-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:14px 0 8px;display:block}
+.field-label{font-size:11px;font-weight:600;color:var(--faint);margin:14px 0 8px;display:block;text-transform:uppercase;letter-spacing:.04em}
 .field-label:first-child{margin-top:0}
 .cadence-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .c-pick{padding:12px 8px;border-radius:14px;border:1px solid var(--line);background:var(--panel);text-align:center;transition:.2s;width:100%}
@@ -330,7 +328,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .share-sheet .share-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:16px}
 .share-card-preview{border-radius:20px;overflow:hidden;margin-bottom:18px;aspect-ratio:1/1;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.5)}
 .share-card-preview.story{aspect-ratio:9/16;max-height:280px;margin-left:auto;margin-right:auto}
-.share-card-inner{position:absolute;inset:0;padding:22px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,#1a1030 0%,#FF6B35 45%,#5B8DEF 100%)}
+.share-card-inner{position:absolute;inset:0;padding:22px;display:flex;flex-direction:column;justify-content:space-between;background:#1a1512}
 .share-card-inner .brand{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;opacity:.85}
 .share-card-inner .headline{font-size:26px;font-weight:900;letter-spacing:-.04em;line-height:1.05;margin-top:8px}
 .share-card-inner .headline em{font-style:normal;color:rgba(255,255,255,.75);font-size:16px;font-weight:600;display:block;margin-top:6px}
@@ -381,7 +379,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .repeat-toggle button{flex:1;padding:12px 8px;font-size:12px;font-weight:700;color:var(--muted);background:var(--panel);border-right:1px solid var(--line);transition:.2s}
 .repeat-toggle button:last-child{border-right:none}
 .repeat-toggle button.on{background:rgba(52,211,153,.14);color:var(--motiv)}
-.add-step-tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--brutal);margin-bottom:6px;display:block}
+.add-step-tag{font-size:11px;font-weight:600;color:var(--roast);margin-bottom:6px;display:block}
 .cadence-pick-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .c-pick-lg{padding:20px 16px;border-radius:18px;border:1px solid var(--line);background:var(--panel);text-align:left;width:100%;transition:.2s}
 .c-pick-lg.sel{border-color:var(--motiv);background:rgba(52,211,153,.10)}
@@ -390,8 +388,8 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .c-pick-lg .c-desc{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.4;display:block}
 .brutal-modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.7);z-index:40;display:none;align-items:center;justify-content:center;padding:24px}
 .brutal-modal-overlay.open{display:flex}
-.brutal-modal{background:linear-gradient(145deg,#1a0a0a,#2d1515);border:1px solid rgba(255,107,53,.45);border-radius:22px;padding:22px;max-width:280px;width:100%;box-shadow:0 0 60px rgba(255,107,53,.25)}
-.brutal-modal .from{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--roast);display:flex;align-items:center;gap:8px;font-weight:700}
+.brutal-modal{background:var(--bg-2);border:1px solid rgba(217,86,43,.35);border-radius:var(--r-lg);padding:22px;max-width:280px;width:100%;box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.brutal-modal .from{font-size:11px;color:var(--roast);display:flex;align-items:center;gap:8px;font-weight:600}
 .brutal-modal h3{font-size:18px;font-weight:800;letter-spacing:-.02em;margin:12px 0 8px;line-height:1.2}
 .brutal-modal p{font-size:13px;color:var(--muted);line-height:1.55}
 .brutal-modal .acts{display:flex;flex-direction:column;gap:8px;margin-top:18px}
@@ -409,7 +407,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .settings-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 22px 28px}
 .settings-body::-webkit-scrollbar{display:none}
 .set-group{margin-bottom:20px}
-.set-group-title{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;display:block}
+.set-group-title{font-size:11px;font-weight:600;color:var(--faint);margin-bottom:10px;display:block;text-transform:uppercase;letter-spacing:.04em}
 .set-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
 .set-row:last-child{border-bottom:none}
 .set-row .info h4{font-size:14px;font-weight:600;letter-spacing:-.01em}
@@ -433,13 +431,13 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .retention-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:14px;background:var(--panel);border:1px solid var(--line);font-size:13px}
 .retention-row b{font-weight:700}
 /* crisis safety screen */
-.crisis-screen{background:linear-gradient(180deg,#0f0a18 0%,#1a1030 40%,#0E0E15 100%);height:100%;display:flex;flex-direction:column}
+.crisis-screen{background:var(--bg-2);height:100%;display:flex;flex-direction:column}
 .crisis-screen.hidden{display:none!important}
 .crisis-screen .support-banner{margin:12px 22px;padding:12px 14px;border-radius:14px;background:rgba(183,148,246,.12);border:1px solid rgba(183,148,246,.35);font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--support);font-weight:700;display:flex;align-items:center;gap:8px}
 .crisis-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:8px 22px 20px;display:flex;flex-direction:column;gap:16px}
 .crisis-body::-webkit-scrollbar{display:none}
-.crisis-orb{width:80px;height:80px;border-radius:50%;margin:8px auto;background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.1),#6366f1 35%,#312e81 65%,#0a0a0f);box-shadow:0 0 40px rgba(99,102,241,.35),0 12px 24px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}
-.crisis-orb svg{width:36px;height:36px;color:#c4b5fd;filter:drop-shadow(2px 6px 8px rgba(0,0,0,.9))}
+.crisis-orb{width:80px;height:80px;border-radius:50%;margin:8px auto;background:var(--bg);border:2px solid var(--support);display:flex;align-items:center;justify-content:center}
+.crisis-orb svg{width:36px;height:36px;color:var(--support)}
 .crisis-msg{padding:16px 18px;border-radius:20px;background:rgba(183,148,246,.10);border:1px solid rgba(183,148,246,.25);font-size:15px;line-height:1.55;font-weight:500}
 .crisis-msg .who{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--support);margin-bottom:8px;font-weight:700}
 .crisis-disclaimer{font-size:11px;color:var(--faint);line-height:1.5;text-align:center;padding:0 12px}
@@ -462,7 +460,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .ob-progress span{flex:1;height:4px;border-radius:4px;background:var(--panel-2);transition:.3s}
 .ob-progress span.done{background:var(--motiv)}
 .ob-progress span.active{background:linear-gradient(90deg,var(--brutal),var(--support))}
-.ob-step-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.ob-step-label{font-size:12px;color:var(--faint)}
 .ob-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:8px 22px 12px;display:flex;flex-direction:column}
 .ob-body::-webkit-scrollbar{display:none}
 .ob-body h2{font-size:24px;font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-bottom:8px}
@@ -490,7 +488,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .path-grid{display:grid;grid-template-columns:1fr;gap:12px}
 .path-card{padding:20px;border-radius:20px;border:1px solid var(--line);background:var(--panel);text-align:left;position:relative;overflow:hidden;transition:.2s;width:100%}
 .path-card.sel{border-color:var(--support);background:rgba(183,148,246,.10)}
-.path-card .badge{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:5px 10px;border-radius:100px;background:rgba(183,148,246,.16);color:var(--support);display:inline-block;margin-bottom:12px}
+.path-card .badge{font-size:10px;font-weight:600;padding:4px 8px;border-radius:var(--r-sm);background:rgba(217,86,43,.1);color:var(--roast);display:inline-block;margin-bottom:12px}
 .path-card h3{font-size:18px;font-weight:800;letter-spacing:-.02em}
 .path-card p{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5}
 .path-card .arrow{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--faint)}
@@ -525,25 +523,37 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .ob-summary .row:last-child{border:none}
 .ob-summary .row span{color:var(--muted)}
 .ob-summary .row b{font-weight:700;text-align:right;max-width:55%}
+.fixed-goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px}
+.fixed-goal{padding:11px 10px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--panel);font-size:12px;font-weight:700;color:var(--muted);text-align:left}
+.fixed-goal.sel{border-color:var(--roast);background:rgba(217,86,43,.09);color:var(--ink)}
+.goal-track{display:inline-flex;align-items:center;gap:5px;margin-right:6px;padding:3px 7px;border-radius:var(--r-sm);background:rgba(217,86,43,.10);color:var(--roast);font-size:10px;font-weight:700}
+.intel-card{margin:0 22px 12px;padding:15px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--panel)}
+.intel-card h4{font-size:15px;font-weight:800;margin-bottom:8px}
+.persona-row,.metric-row,.timeline-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.persona-row:last-child,.metric-row:last-child,.timeline-row:last-child{border-bottom:none}
+.persona-row b,.metric-row b,.timeline-row b{font-size:13px}
+.persona-row span,.metric-row span,.timeline-row span{font-size:11px;color:var(--muted)}
+.metric-row strong{font-size:18px;color:var(--roast)}
+.timeline-dot{width:8px;height:8px;border-radius:50%;background:var(--roast);flex-shrink:0}
 </style>
 <div class="wrap">
   <header class="hero">
-    <div class="eyebrow"><span class="kage-logo"><svg><use href="#kage-icon"/></svg></span> Kagevo · Voice-First Companion</div>
-    <h1>Make your <span class="grad">kage</span>,<br/>assign your alter ego.</h1>
-    <p>A voice-first AI companion where you shape a shadow-self that talks back — brutally honest, roasting, motivating, or supportive. Try onboarding below, or browse all screens.</p>
+    <div class="eyebrow"><span class="kage-logo"><svg><use href="#kage-icon"/></svg></span> Kagevo</div>
+    <h1>Your life, argued back.<br/>Build your <span class="kage-word">kage</span>.</h1>
+    <p>Voice-first personal intelligence: personas debate, fixed goals track habits, and the Reality Engine compares promises against actions.</p>
     <div class="legend">
-      <span class="chip"><i style="background:var(--brutal)"></i>Brutal Honesty</span>
-      <span class="chip"><i style="background:var(--roast)"></i>Roast</span>
-      <span class="chip"><i style="background:var(--motiv)"></i>Motivation</span>
-      <span class="chip"><i style="background:var(--support)"></i>Emotional Support</span>
+      <span class="chip"><i style="background:var(--brutal)"></i>Multi-persona</span>
+      <span class="chip"><i style="background:var(--roast)"></i>Reality Engine</span>
+      <span class="chip"><i style="background:var(--motiv)"></i>Fixed goals</span>
+      <span class="chip"><i style="background:var(--support)"></i>Life timeline</span>
     </div>
   </header>
 
   <div class="demo-banner">
     <div>
-      <div class="tag">// Interactive prototype</div>
-      <h2>Try the onboarding engine</h2>
-      <p>Step through questions, make your kage from scratch, or assign a pre-built anime alter ego.</p>
+      <div class="tag">Onboarding</div>
+      <h2>Make or assign a kage</h2>
+      <p>Custom questionnaire, or pick a preset anime alter ego.</p>
     </div>
     <button type="button" id="restartOnboard" class="mini-btn fill" style="padding:12px 20px;font-size:14px">Restart flow</button>
   </div>
@@ -559,7 +569,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
             <button type="button" class="ob-skip" id="obSkip">Skip for now</button>
           </div>
           <div class="ob-progress" id="obProgress"></div>
-          <div class="ob-step-label" id="obStepLabel">// Step 1 of 8</div>
+          <div class="ob-step-label" id="obStepLabel">Step 1 of 8</div>
         </div>
         <div class="ob-body" id="obBody"></div>
         <div class="ob-foot">
@@ -567,16 +577,16 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
         </div>
       </div>
     </div>
-    <div class="hint">Click options · use Continue · or assign an anime kage to skip setup</div>
+    <div class="hint">Tap through the flow, or skip to anime presets</div>
   </div>
 
   <div class="demo-banner" style="margin-top:0">
     <div>
-      <div class="tag">// Goals · tap + to add</div>
-      <h2>Daily &amp; weekly goals · rename or delete only</h2>
-      <p>+ opens Add Goal screen. Repeat every day/week. Try editing a locked field — your kage blocks you.</p>
+      <div class="tag">Goals</div>
+      <h2>Fixed goals · flexible habits</h2>
+      <p>Top-level goals are fixed life tracks. Add habits, promises, and tasks underneath them.</p>
     </div>
-    <button type="button" id="goalsShowList" class="mini-btn" style="padding:12px 20px;font-size:14px">Back to list</button>
+    <button type="button" id="goalsShowList" class="mini-btn" style="padding:12px 20px;font-size:14px">Back to habits</button>
   </div>
 
   <div class="demo-wrap">
@@ -588,31 +598,31 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
         <!-- LIST VIEW (default) -->
         <div class="goals-view" id="goalsListView">
           <div class="greet" style="padding-bottom:4px">
-            <div class="meta"><h2 style="margin:0;font-size:23px">Goals</h2><div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div></div>
+            <div class="meta"><h2 style="margin:0;font-size:23px">Fixed Goals</h2><div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div></div>
           </div>
           <div class="cadence-tabs" id="goalsTabs">
-            <button type="button" class="c-tab on" data-list="daily">Daily <span class="cnt" id="dailyCnt">2/3</span></button>
-            <button type="button" class="c-tab" data-list="weekly">Weekly <span class="cnt" id="weeklyCnt">2/5</span></button>
+            <button type="button" class="c-tab on" data-list="daily">Today <span class="cnt" id="dailyCnt">2/3</span></button>
+            <button type="button" class="c-tab" data-list="weekly">This week <span class="cnt" id="weeklyCnt">2/5</span></button>
           </div>
           <div class="scroll" style="padding-bottom:80px">
             <div class="slot-bar" id="goalsSlotBar"></div>
-            <div class="sec-label"><span id="goalsListLabel">// Daily goals</span></div>
+            <div class="sec-label"><span id="goalsListLabel">Today habits</span></div>
             <div class="card" id="goalsList"></div>
-            <p style="padding:8px 22px 0;font-size:11px;color:var(--faint);line-height:1.5">Rename only · no editing cadence or deadline · tap ⋮ to delete</p>
+            <p style="padding:8px 22px 0;font-size:11px;color:var(--faint);line-height:1.5">Career, Fitness, Finance, Relationships, Mental Health, Productivity, Discipline, and Consistency are fixed. Habits underneath can change.</p>
           </div>
-          <button type="button" class="add-fab" id="goalsAddFab" title="Add goal">+</button>
+          <button type="button" class="add-fab" id="goalsAddFab" title="Add habit">+</button>
         </div>
 
         <!-- ADD VIEW (+ button) -->
         <div class="goals-view hidden" id="goalsAddView">
           <div class="add-head">
             <div class="row"><button type="button" class="ob-back" id="goalsAddBack">←</button><button type="button" class="ob-skip" id="goalsAddCancel">Cancel</button></div>
-            <span class="add-step-tag">// Step 1 · Pick cadence</span>
-            <h2>Add goal</h2>
+            <span class="add-step-tag">Pick fixed goal</span>
+            <h2>Add habit</h2>
           </div>
           <div class="add-body" id="goalsAddBody"></div>
           <div class="add-foot">
-            <button type="button" id="goalsSaveBtn" disabled>Commit goal →</button>
+            <button type="button" id="goalsSaveBtn" disabled>Commit habit →</button>
             <div class="limit-note" id="goalsAddNote"></div>
           </div>
         </div>
@@ -624,23 +634,23 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
             <h3 id="brutalTitle">You don't get to rewrite history.</h3>
             <p id="brutalMsg">You committed to this goal. Rename it if you want — or delete it and start over like an adult.</p>
             <div class="acts">
-              <button type="button" class="primary" id="brutalOk">Fine, rename only</button>
+              <button type="button" class="primary" id="brutalOk">Fine, edit habit only</button>
               <button type="button" class="ghost" id="brutalDismiss">Close</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="hint">Tap + · try ⋮ menu · tap a deadline to trigger brutal popup</div>
+    <div class="hint">+ to add · ⋮ to rename/delete · tap deadline for the block</div>
   </div>
 
   <div class="demo-banner" style="margin-top:0">
     <div>
-      <div class="tag">// P0 · Ship-blocking</div>
-      <h2>Notifications · crisis safety · privacy</h2>
-      <p>Trust layer screens required before public beta. Toggle settings · simulate crisis flow.</p>
+      <div class="tag">P0 · ship blockers</div>
+      <h2>Notifications, safety, privacy</h2>
+      <p>Required before beta. Toggle settings or run the crisis flow.</p>
     </div>
-    <button type="button" id="p0SimCrisis" class="mini-btn fill" style="padding:12px 20px;font-size:14px;background:#6B21A8;border-color:transparent;color:#fff">Simulate crisis</button>
+    <button type="button" id="p0SimCrisis" class="mini-btn fill" style="padding:12px 20px;font-size:14px;background:var(--support);border-color:transparent;color:var(--bg)">Simulate crisis</button>
   </div>
 
   <div class="demo-wrap">
@@ -679,14 +689,14 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
       </div>
       <div class="share-toast" id="p0Toast"></div>
     </div>
-    <div class="hint">Switch tabs · toggle notifications · Simulate crisis for safety flow</div>
+    <div class="hint">Switch tabs · toggle notifications · preview crisis flow</div>
   </div>
 
   <div class="demo-banner" style="margin-top:0">
     <div>
-      <div class="tag">// Share like Spotify</div>
-      <h2>Share your Wrapped · streaks · persona</h2>
-      <p>Beautiful share cards, copy link, Instagram Stories, WhatsApp — same flow as Spotify share.</p>
+      <div class="tag">Share</div>
+      <h2>Wrapped cards &amp; streaks</h2>
+      <p>Spotify-style sheet — copy link, Stories, WhatsApp.</p>
     </div>
     <button type="button" id="openShareDemo" class="mini-btn fill" style="padding:12px 20px;font-size:14px">Open share sheet</button>
   </div>
@@ -738,6 +748,59 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
     <div class="hint">Switch card type · copy link · tap share targets</div>
   </div>
 
+  <div class="demo-banner" style="margin-top:0">
+    <div>
+      <div class="tag">V2 · personal intelligence</div>
+      <h2>Personas, fixed goals, reality timeline</h2>
+      <p>The product is no longer just chat. It tracks who you are, what you promised, what happened, and what patterns repeat.</p>
+    </div>
+  </div>
+
+  <div class="demo-wrap">
+    <div class="phone">
+      <div class="island"></div>
+      <div class="screen">
+        <div class="statusbar"><span>8:08</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
+        <div class="scroll" style="padding-bottom:24px">
+          <div class="greet">
+            <div class="meta">
+              <div class="persona-tag"><span style="width:7px;height:7px;border-radius:50%;background:var(--roast);display:inline-block"></span> Reality Engine</div>
+              <div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div>
+            </div>
+            <h2 style="font-size:23px">Your promises<br/><span class="soft">vs your life</span></h2>
+          </div>
+          <div class="intel-card">
+            <h4>Persona council</h4>
+            <div class="persona-row"><div><b>Brutal Coach</b><br/><span>You missed the gym twice.</span></div><span>votes no</span></div>
+            <div class="persona-row"><div><b>CEO Me</b><br/><span>Protect the morning block.</span></div><span>votes yes</span></div>
+            <div class="persona-row"><div><b>Therapist</b><br/><span>Sleep debt is driving avoidance.</span></div><span>moderates</span></div>
+          </div>
+          <div class="intel-card">
+            <h4>Fixed goal tracks</h4>
+            <div class="fixed-goal-grid" style="margin-bottom:0">
+              <div class="fixed-goal sel">Career<br/><span style="font-weight:500;color:var(--muted)">82% execution</span></div>
+              <div class="fixed-goal">Fitness<br/><span style="font-weight:500;color:var(--muted)">41% execution</span></div>
+              <div class="fixed-goal">Finance<br/><span style="font-weight:500;color:var(--muted)">66% execution</span></div>
+              <div class="fixed-goal">Relationships<br/><span style="font-weight:500;color:var(--muted)">58% execution</span></div>
+            </div>
+          </div>
+          <div class="intel-card">
+            <h4>Reality score</h4>
+            <div class="metric-row"><span>Promise accuracy</span><strong>63%</strong></div>
+            <div class="metric-row"><span>Consistency score</span><strong>47</strong></div>
+            <div class="metric-row"><span>Growth trend</span><strong>+8%</strong></div>
+          </div>
+          <div class="intel-card">
+            <h4>Timeline</h4>
+            <div class="timeline-row"><span class="timeline-dot"></span><div style="flex:1"><b>Started Kagevo</b><br/><span>First mentioned startup idea</span></div><span>Jun 2026</span></div>
+            <div class="timeline-row"><span class="timeline-dot"></span><div style="flex:1"><b>Failed Uber interview</b><br/><span>Pattern: under-prepared mocks</span></div><span>Mar 2026</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hint">Multi-agent advice · fixed goals · reality scores · life timeline</div>
+  </div>
+
   <div class="gallery">
     <!-- ───── 1. HOME DASHBOARD ───── -->
     <div class="frame-wrap">
@@ -774,7 +837,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
               <p>“You snoozed the 6AM run twice this week. Either move the alarm or stop calling yourself a runner. Your call.”</p>
               <div class="act"><button class="mini-btn fill">Reply by voice</button><button class="mini-btn">Snooze</button></div>
             </div>
-            <div class="sec-label"><span>// Today · Main tasks</span><a>All →</a></div>
+            <div class="sec-label"><span>Today · main tasks</span><a>All →</a></div>
             <div class="share-promo">
               <div class="txt"><h4>Week 14 Wrapped</h4><p>86% logged · Roast mode dominant · share like Spotify</p></div>
               <button type="button" class="share-open-btn">Share</button>
@@ -800,7 +863,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
                 <div class="body"><h4><span class="badge-main">Main</span> MVP auth slice <span class="cadence-tag">Weekly</span></h4><div class="sub"><span class="deadline ok">Logged · Sun 11:59 PM deadline</span></div></div>
               </div>
             </div>
-            <div class="sec-label"><span>// Goal · in focus</span></div>
+            <div class="sec-label"><span>Goal in focus</span></div>
             <div class="card goal-card">
               <div class="ring">
                 <svg width="74" height="74"><circle cx="37" cy="37" r="31" stroke="rgba(255,255,255,.08)" stroke-width="7" fill="none"/><circle cx="37" cy="37" r="31" stroke="var(--motiv)" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="195" stroke-dashoffset="64"/></svg>
@@ -846,7 +909,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
             <div class="orb-hint"><span class="live"></span> Listening… tap orb to interrupt</div>
           </div>
           <div class="transcript">
-            <div class="t-label">// Live transcript</div>
+            <div class="t-label">Live transcript</div>
             <div class="bubble user"><div class="who">You · 9:42</div>I skipped the run again, don't lecture me.</div>
             <div class="bubble ego"><div class="who">NOVA · roast</div>Skipped the run AND skipped the excuse this time — efficiency! Three days, zero kilometres. Lace up or change the goal, champ.</div>
           </div>
@@ -901,57 +964,63 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
       </div>
       <div class="frame-cap"><div class="num">03 / CHAT</div><h3>Text + Mode Control</h3><span>Switch mode · intensity dial · same memory</span></div>
     </div>
-    <!-- ───── 4. GOALS LIST (DAILY / WEEKLY) ───── -->
+    <!-- ───── 4. FIXED GOALS + HABITS ───── -->
     <div class="frame-wrap">
       <div class="phone">
         <div class="island"></div>
         <div class="screen" style="position:relative">
           <div class="statusbar"><span>10:02</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
           <div class="greet" style="padding-bottom:4px">
-            <div class="meta"><h2 style="margin:0;font-size:23px">Goals</h2><div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div></div>
+            <div class="meta"><h2 style="margin:0;font-size:23px">Fixed Goals</h2><div class="avatar kage"><svg class="kage-icon"><use href="#kage-icon"/></svg></div></div>
           </div>
           <div class="cadence-tabs">
-            <button class="c-tab on">Daily <span class="cnt">2/3</span></button>
-            <button class="c-tab">Weekly <span class="cnt">2/5</span></button>
+            <button class="c-tab on">Today <span class="cnt">2/3</span></button>
+            <button class="c-tab">This week <span class="cnt">2/5</span></button>
           </div>
           <div class="scroll">
             <div class="slot-bar">
-              <div class="top"><span>// Daily slots</span><b>2 of 3 used</b></div>
-              <div class="slots"><i class="used"></i><i class="used"></i><i></i></div>
+              <div class="top"><span>Fixed goal tracks</span><b>8 total</b></div>
+              <div class="slots"><i class="used"></i><i class="used"></i><i class="used"></i><i class="used"></i><i></i><i></i><i></i><i></i></div>
             </div>
             <div class="parkinson">
               <div class="label">Log window closes</div>
               <div class="timer">3h 12m</div>
-              <div class="sub">Repeating goals reset at midnight. Log before 11 PM.</div>
+              <div class="sub">Habits reset at midnight. Goal tracks stay fixed.</div>
               <div class="bar"><i style="width:62%"></i></div>
             </div>
-            <div class="sec-label"><span>// Daily goals</span></div>
+            <div class="fixed-goal-grid" style="margin:0 22px 14px">
+              <div class="fixed-goal sel">Career<br/><span style="font-weight:500;color:var(--muted)">2 habits</span></div>
+              <div class="fixed-goal">Fitness<br/><span style="font-weight:500;color:var(--muted)">1 habit</span></div>
+              <div class="fixed-goal">Finance<br/><span style="font-weight:500;color:var(--muted)">0 habits</span></div>
+              <div class="fixed-goal">Mental Health<br/><span style="font-weight:500;color:var(--muted)">1 habit</span></div>
+            </div>
+            <div class="sec-label"><span>Today habits</span></div>
             <div class="card">
               <div class="goal-row">
                 <div class="check"></div>
-                <div class="body"><h4>Ship demo deck <span class="repeat-badge">↻ Every day</span></h4><div class="sub">45 min · 6 PM · <button type="button" style="color:var(--roast);font-weight:600;font-size:12px;text-decoration:underline">edit deadline</button></div></div>
+                <div class="body"><h4><span class="goal-track">Career</span>90 min deep work <span class="repeat-badge">↻ Every day</span></h4><div class="sub">6 PM · <button type="button" style="color:var(--roast);font-weight:600;font-size:12px;text-decoration:underline">edit habit</button></div></div>
                 <button class="menu-btn" type="button">⋮</button>
               </div>
               <div class="goal-row">
                 <div class="check miss">✕</div>
-                <div class="body"><h4>6AM deep work <span class="repeat-badge">↻ Every day</span></h4><div class="sub">Missed · auto-resets tomorrow</div></div>
+                <div class="body"><h4><span class="goal-track">Fitness</span>Gym before work <span class="repeat-badge">↻ Every day</span></h4><div class="sub">Missed · Reality score -4</div></div>
                 <button class="menu-btn" type="button">⋮</button>
               </div>
               <div class="goal-row">
                 <div class="check done">✓</div>
-                <div class="body"><h4>Investor email draft <span class="repeat-badge once">Once · today</span></h4><div class="sub">One-off · logged 2:14 PM</div></div>
+                <div class="body"><h4><span class="goal-track">Mental Health</span>10 min journal <span class="repeat-badge once">Once · today</span></h4><div class="sub">Logged 2:14 PM</div></div>
                 <button class="menu-btn" type="button">⋮</button>
               </div>
             </div>
-            <div class="sec-label"><span>// Weekly goals</span><span style="font-size:10px;color:var(--muted)">switch tab ↑</span></div>
+            <div class="sec-label"><span>This week</span><span style="font-size:10px;color:var(--muted)">fixed tracks stay on</span></div>
             <div class="card" style="opacity:.55">
-              <div class="goal-row"><div class="check"></div><div class="body"><h4>MVP auth slice <span class="repeat-badge">↻ Every week</span></h4><div class="sub">Due Sun 11:59 PM</div></div></div>
+              <div class="goal-row"><div class="check"></div><div class="body"><h4><span class="goal-track">Career</span>MVP auth slice <span class="repeat-badge">↻ Every week</span></h4><div class="sub">Due Sun 11:59 PM</div></div></div>
             </div>
           </div>
-          <button class="add-fab" type="button" title="Opens Add Goal screen">+</button>
+          <button class="add-fab" type="button" title="Add habit under fixed goal">+</button>
         </div>
       </div>
-      <div class="frame-cap"><div class="num">04 / GOALS</div><h3>Daily &amp; Weekly Lists</h3><span>Repeat every day/week · rename · delete · no edit</span></div>
+      <div class="frame-cap"><div class="num">04 / GOALS</div><h3>Fixed Goals + Habits</h3><span>8 goal tracks · habits underneath · reality score</span></div>
     </div>
     <!-- ───── 5. PERSONA CONFIG ───── -->
     <div class="frame-wrap">
@@ -960,7 +1029,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
         <div class="screen">
           <div class="statusbar"><span>9:30</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
           <div class="cfg-head">
-            <div class="step">// STEP 4 OF 5 · CONFIGURE PERSONA</div>
+            <div class="step">Step 4 of 5 · configure persona</div>
             <h2>How should your<br/>kage talk to you?</h2>
             <p>Enable the modes you want. NOVA picks the right one from context — your assigned alter ego, always in character.</p>
           </div>
@@ -992,7 +1061,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
               <div class="track"><div class="fill" style="inset:0 50% 0 0;background:linear-gradient(90deg,var(--motiv),var(--support))"></div><div class="knob" style="left:50%"></div></div>
               <div class="ticks"><span>Gentle</span><span>Balanced</span><span>Brutal</span></div>
             </div>
-            <div class="sec-label" style="margin-top:14px"><span>// Assistant voice</span><a>Preview all</a></div>
+            <div class="sec-label" style="margin-top:14px"><span>Assistant voice</span><a>Preview all</a></div>
             <div class="voice-row sel">
               <button class="play"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
               <div class="vinfo"><h4>Nova — Warm Alto</h4><span>Female · neutral accent · medium pace</span></div>
@@ -1023,7 +1092,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
           <div class="ob-top">
             <div class="ob-nav"><button class="ob-back hidden">←</button><button class="ob-skip">Skip for now</button></div>
             <div class="ob-progress"><span class="done"></span><span class="active"></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-            <div class="ob-step-label">// Step 2 of 8 · Choose path</div>
+            <div class="ob-step-label">Step 2 of 8 · choose path</div>
           </div>
           <div class="ob-body">
             <h2>How will you make your kage?</h2>
@@ -1058,7 +1127,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
           <div class="ob-top">
             <div class="ob-nav"><button class="ob-back">←</button><button class="ob-skip">Skip</button></div>
             <div class="ob-progress"><span class="done"></span><span class="done"></span><span class="done"></span><span class="active"></span><span></span><span></span><span></span><span></span></div>
-            <div class="ob-step-label">// Step 4 of 8 · Habits</div>
+            <div class="ob-step-label">Step 4 of 8 · habits</div>
           </div>
           <div class="ob-body">
             <h2>What habits do you want to build?</h2>
@@ -1085,7 +1154,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
           <div class="ob-top">
             <div class="ob-nav"><button class="ob-back">←</button><button class="ob-skip">Skip</button></div>
             <div class="ob-progress"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="active"></span><span></span><span></span></div>
-            <div class="ob-step-label">// Step 6 of 8 · Avatar &amp; name</div>
+            <div class="ob-step-label">Step 6 of 8 · avatar &amp; name</div>
           </div>
           <div class="ob-body">
             <h2>Name your kage</h2>
@@ -1095,7 +1164,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
               <div class="name">Meet <span>NOVA</span></div>
             </div>
             <input class="ob-input" type="text" value="NOVA" placeholder="Kage name…" />
-            <div class="sec-label" style="padding:16px 0 8px;margin:0"><span>// Choose avatar</span></div>
+            <div class="sec-label" style="padding:16px 0 8px;margin:0"><span>Choose avatar</span></div>
             <div class="av-grid">
               <div class="av-item" style="background:linear-gradient(140deg,#FF6B35,#C2410C)">🔥</div>
               <div class="av-item sel kage-shadow kage-av"><svg><use href="#kage-icon"/></svg></div>
@@ -1122,7 +1191,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
           <div class="ob-top">
             <div class="ob-nav"><button class="ob-back">←</button><button class="ob-skip" style="visibility:hidden">Skip</button></div>
             <div class="ob-progress"><span class="done"></span><span class="active"></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-            <div class="ob-step-label">// Step 2 of 8 · Anime kages</div>
+            <div class="ob-step-label">Step 2 of 8 · anime kages</div>
           </div>
           <div class="ob-body" style="padding-bottom:4px">
             <h2>Assign your alter ego</h2>
@@ -1178,7 +1247,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
       <div class="frame-cap"><div class="num">09 / ONBOARD</div><h3>Anime Kages</h3><span>Assign alter ego · preset modes &amp; tone</span></div>
     </div>
 
-    <!-- ───── 10. ADD GOAL (+ BUTTON) ───── -->
+    <!-- ───── 10. ADD HABIT (+ BUTTON) ───── -->
     <div class="frame-wrap">
       <div class="phone">
         <div class="island"></div>
@@ -1186,35 +1255,46 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
           <div class="statusbar"><span>10:18</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
           <div class="add-head">
             <div class="row"><button class="ob-back">←</button><button class="ob-skip">Cancel</button></div>
-            <span class="add-step-tag">// Opens when you tap +</span>
-            <h2>Add goal</h2>
+            <span class="add-step-tag">Opens when you tap +</span>
+            <h2>Add habit</h2>
           </div>
           <div class="add-body">
-            <label class="field-label">// 1 · Daily or weekly</label>
-            <div class="cadence-pick-2">
-              <button class="c-pick-lg sel"><span class="c-name">Daily</span><span class="c-slots">2 / 3 slots</span><span class="c-desc">Resets every midnight</span></button>
-              <button class="c-pick-lg"><span class="c-name">Weekly</span><span class="c-slots">2 / 5 slots</span><span class="c-desc">Resets every Sunday</span></button>
+            <label class="field-label">1 · Fixed goal track</label>
+            <div class="fixed-goal-grid">
+              <button class="fixed-goal sel">Career</button>
+              <button class="fixed-goal">Fitness</button>
+              <button class="fixed-goal">Finance</button>
+              <button class="fixed-goal">Relationships</button>
+              <button class="fixed-goal">Mental Health</button>
+              <button class="fixed-goal">Productivity</button>
+              <button class="fixed-goal">Discipline</button>
+              <button class="fixed-goal">Consistency</button>
             </div>
-            <label class="field-label">// 2 · Goal name</label>
-            <input class="ob-input" type="text" value="Ship auth slice" placeholder="Main task name…" />
-            <label class="field-label">// 3 · Repeat</label>
+            <label class="field-label">2 · Habit / promise</label>
+            <input class="ob-input" type="text" value="90 min deep work" placeholder="Habit name…" />
+            <label class="field-label">3 · Cadence</label>
+            <div class="cadence-pick-2">
+              <button class="c-pick-lg sel"><span class="c-name">Daily</span><span class="c-slots">Resets midnight</span><span class="c-desc">Best for habits</span></button>
+              <button class="c-pick-lg"><span class="c-name">Weekly</span><span class="c-slots">Resets Sunday</span><span class="c-desc">Best for milestones</span></button>
+            </div>
+            <label class="field-label">4 · Repeat</label>
             <div class="repeat-toggle">
               <button class="on">↻ Repeat every day</button>
               <button>Once only</button>
             </div>
-            <label class="field-label">// 4 · Why it matters</label>
-            <input class="ob-input" type="text" value="Unblocks beta launch" style="font-size:14px;font-weight:500" />
-            <label class="field-label">// 5 · Time-box + deadline</label>
+            <label class="field-label">5 · Why it matters</label>
+            <input class="ob-input" type="text" value="Builds the Career track" style="font-size:14px;font-weight:500" />
+            <label class="field-label">6 · Time-box + deadline</label>
             <div class="time-box"><input type="text" value="90" /><select><option>min</option></select></div>
             <div class="time-box"><input type="text" value="11:59 PM" readonly style="opacity:.7" /><select><option>Daily log closes</option></select></div>
           </div>
           <div class="add-foot">
-            <button>Commit goal →</button>
-            <div class="limit-note">Locked after save · rename or delete only</div>
+            <button>Commit habit →</button>
+            <div class="limit-note">Goal tracks are fixed · habits can be archived</div>
           </div>
         </div>
       </div>
-      <div class="frame-cap"><div class="num">10 / ADD +</div><h3>Add Goal Screen</h3><span>Shown when + is tapped · cadence · repeat · commit</span></div>
+      <div class="frame-cap"><div class="num">10 / ADD +</div><h3>Add Habit Screen</h3><span>Pick fixed goal · cadence · repeat · commit</span></div>
     </div>
 
     <!-- ───── 13. BRUTAL EDIT BLOCKED ───── -->
@@ -1295,25 +1375,25 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
           <div class="statusbar"><span>9:41</span><span class="ico">●●●● &nbsp;✦ &nbsp;▮▮▮▰</span></div>
           <div class="add-head" style="border:none"><h2>Share card types</h2></div>
           <div class="add-body">
-            <label class="field-label">// Week wrapped · square</label>
+            <label class="field-label">Week wrapped</label>
             <div class="share-card-preview" style="aspect-ratio:1;margin-bottom:16px">
-              <div class="share-card-inner" style="background:linear-gradient(145deg,#1a1030,#FF6B35 50%,#34D399)">
+              <div class="share-card-inner" style="background:#1c1612">
                 <div><div class="brand">Kagevo Wrapped</div><div class="headline" style="font-size:22px">Week 14<em>86% main tasks logged</em></div></div>
                 <div class="share-card-stats"><div><b>47</b><span>Voice sessions</span></div><div><b>Roast</b><span>Dominant mode</span></div></div>
                 <div class="share-card-footer"><span>kagevo.app</span><span>Share →</span></div>
               </div>
             </div>
-            <label class="field-label">// Streak milestone</label>
+            <label class="field-label">Streak milestone</label>
             <div class="share-card-preview" style="aspect-ratio:1;margin-bottom:16px">
-              <div class="share-card-inner" style="background:linear-gradient(145deg,#172554,#5B8DEF 60%,#B794F6)">
+              <div class="share-card-inner" style="background:#141820">
                 <div><div class="brand">Streak unlocked</div><div class="headline" style="font-size:28px">🔥 22 days<em>Ship MVP · daily main task</em></div></div>
                 <div class="share-card-quote">"NOVA didn't have to roast you once this week. Suspicious."</div>
                 <div class="share-card-footer"><span>kagevo.app/s/22</span><span>NOVA</span></div>
               </div>
             </div>
-            <label class="field-label">// Kage persona</label>
+            <label class="field-label">Kage persona</label>
             <div class="share-card-preview" style="aspect-ratio:1">
-              <div class="share-card-inner" style="background:linear-gradient(145deg,#1E3A8A,#3B82F6 40%,#111827)">
+              <div class="share-card-inner" style="background:#121820">
                 <div><div class="brand">My kage</div><div class="headline" style="font-size:24px">👑 VEGETA<em>Roast · Brutal · Intensity 8</em></div></div>
                 <div class="share-card-quote">"A warrior doesn't skip leg day."</div>
                 <div class="share-card-footer"><span>Make your kage on Kagevo</span><span>→</span></div>
@@ -1335,18 +1415,18 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
           <div class="settings-body">
             <span class="p0-badge">P0 · FR-6.4</span>
             <div class="set-group">
-              <span class="set-group-title">// Nudge categories</span>
+              <span class="set-group-title">Nudge categories</span>
               <div class="set-row"><div class="info"><h4>Goal reminders</h4><p>Daily/weekly log window alerts</p></div><div class="toggle on"></div></div>
               <div class="set-row"><div class="info"><h4>Proactive nudges</h4><p>Your kage reaches out in character</p></div><div class="toggle on"></div></div>
               <div class="set-row"><div class="info"><h4>Roast / brutal nudges</h4><p>Accountability when you slip</p></div><div class="toggle on"></div></div>
               <div class="set-row"><div class="info"><h4>Morning check-in</h4><p>Persona-flavored start to day</p></div><div class="toggle"></div></div>
             </div>
             <div class="set-group">
-              <span class="set-group-title">// Quiet hours</span>
+              <span class="set-group-title">Quiet hours</span>
               <div class="quiet-hours"><select><option>10:00 PM</option></select><span style="color:var(--muted);padding-top:11px">→</span><select><option>7:00 AM</option></select></div>
             </div>
             <div class="set-group">
-              <span class="set-group-title">// Frequency cap</span>
+              <span class="set-group-title">Frequency cap</span>
               <div class="freq-slider"><div class="top"><span>Max nudges per day</span><b>5</b></div><div class="track"><div class="fill" style="inset:0 50% 0 0"></div><div class="knob" style="left:50%"></div></div></div>
             </div>
             <button class="set-btn warn">Snooze your kage for 24 hours</button>
@@ -1387,16 +1467,16 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
           <div class="settings-body">
             <span class="p0-badge">P0 · FR-8.3 · NFR-5</span>
             <div class="set-group">
-              <span class="set-group-title">// AI &amp; data consent</span>
+              <span class="set-group-title">AI &amp; data consent</span>
               <div class="consent-box"><h4>Send conversations to cloud AI</h4><p>Required for voice &amp; chat. Encrypted in transit.</p><div class="provider">Voice path: Groq (no training) · Chat: Gemini</div><div style="margin-top:10px;display:flex;justify-content:flex-end"><div class="toggle on"></div></div></div>
               <div class="consent-box"><h4>Store memories &amp; goals</h4><p>Powers persona consistency across sessions.</p><div style="margin-top:10px;display:flex;justify-content:flex-end"><div class="toggle on"></div></div></div>
             </div>
             <div class="set-group">
-              <span class="set-group-title">// Retention</span>
+              <span class="set-group-title">Retention</span>
               <div class="retention-row"><span>Chat history</span><b>90 days</b></div>
             </div>
             <div class="set-group">
-              <span class="set-group-title">// Your data</span>
+              <span class="set-group-title">Your data</span>
               <button class="set-btn">Export all data (JSON)</button>
               <button class="set-btn">View stored memories</button>
               <button class="set-btn danger">Delete account &amp; all data</button>
@@ -1408,7 +1488,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
       <div class="frame-cap"><div class="num">16 / P0</div><h3>Privacy &amp; Consent</h3><span>Export · delete · retention · AI consent</span></div>
     </div>
   </div>
-  <div class="foot-note">// KAGEVO — concept UI · not a medical or mental-health service</div>
+  <div class="foot-note">Kagevo concept UI — not a medical or mental-health service.</div>
 </div>
 <script>
 document.querySelectorAll('.mode-pill').forEach(p=>p.addEventListener('click',()=>{
@@ -1419,7 +1499,7 @@ document.querySelectorAll('.mode-card').forEach(c=>c.addEventListener('click',()
 
 const AVATARS=[
   {e:'🔥',bg:'linear-gradient(140deg,#FF6B35,#C2410C)'},
-  {shadow:true,bg:'linear-gradient(140deg,#312e81,#0a0a0f)'},
+  {shadow:true,bg:'#141210'},
   {e:'⚡',bg:'linear-gradient(140deg,#34D399,#059669)'},
   {e:'🪞',bg:'linear-gradient(140deg,#6366F1,#312E81)'},
   {e:'☀️',bg:'linear-gradient(140deg,#F59E0B,#B45309)'},
@@ -1454,11 +1534,15 @@ const CUSTOM_STEPS=[
     {id:'junk',ic:'🍔',t:'Junk food loops',d:'Stress eating or skipping meals entirely.'},
     {id:'avoid',ic:'🫥',t:'Avoidance',d:'Putting off hard tasks until panic sets in.'}
   ]},
-  {id:'goal',title:'What\'s your main goal right now?',sub:'Short or long-term — your kage grounds every conversation in this.',type:'single',options:[
-    {id:'career',ic:'🚀',t:'Career / ship something',d:'Launch a project, land a role, finish the MVP.'},
-    {id:'fitness',ic:'💪',t:'Get physically stronger',d:'Consistency over intensity — build the body.'},
-    {id:'mind',ic:'🧠',t:'Mental clarity',d:'Less anxiety, more focus, better routines.'},
-    {id:'relationships',ic:'🤝',t:'Show up for people',d:'Be present — friends, family, partner.'}
+  {id:'goal',title:'Pick your fixed goal tracks',sub:'Kagevo keeps these top-level tracks fixed. You add habits, promises, and tasks underneath them.',type:'multi',options:[
+    {id:'career',ic:'🚀',t:'Career',d:'Work, craft, business, interviews, shipping.'},
+    {id:'fitness',ic:'💪',t:'Fitness / Health',d:'Training, food, sleep, recovery, body.'},
+    {id:'finance',ic:'💰',t:'Finance',d:'Saving, earning, spending, investing.'},
+    {id:'relationships',ic:'🤝',t:'Relationships',d:'Family, friends, partner, social effort.'},
+    {id:'mental',ic:'🧠',t:'Mental Health',d:'Stress, burnout, confidence, emotional baseline.'},
+    {id:'productivity',ic:'⚙️',t:'Productivity',d:'Focus, deep work, planning, execution.'},
+    {id:'discipline',ic:'🪨',t:'Discipline',d:'Follow-through, discomfort, self-control.'},
+    {id:'consistency',ic:'📈',t:'Consistency',d:'Streaks, repetition, showing up.'}
   ]},
   {id:'motivation',title:'How do you respond to pressure?',sub:'This shapes default mode and intensity for your assigned alter ego.',type:'single',options:[
     {id:'tough',ic:'🔥',t:'Tough love works',d:'Roast me, be direct — I need a kick.'},
@@ -1492,7 +1576,7 @@ function canContinue(){
 function renderProgress(){
   const list=steps();
   document.getElementById('obProgress').innerHTML=list.map((_,i)=>`<span class="${i<state.step?'done':i===state.step?'active':''}"></span>`).join('');
-  document.getElementById('obStepLabel').textContent=`// Step ${state.step+1} of ${list.length} · ${cur().id.replace(/-/g,' ')}`;
+  document.getElementById('obStepLabel').textContent=`Step ${state.step+1} of ${list.length}`;
   document.getElementById('obBack').classList.toggle('hidden',state.step===0);
 }
 function modeTag(m){return `<i class="${m}">${{brutal:'Brutal',roast:'Roast',motiv:'Motivate',support:'Support'}[m]}</i>`;}
@@ -1507,7 +1591,7 @@ function renderBody(){
   }
   if(s.type==='avatar'){
     const av=AVATARS[state.avatarIdx];
-    html+=`<div class="av-preview">${avFace(av)}<div class="name">Meet <span id="previewName">${state.name||'…'}</span></div></div><input class="ob-input" id="egoName" type="text" maxlength="20" placeholder="Kage name…" value="${state.name}" /><div class="sec-label" style="padding:16px 0 8px;margin:0"><span>// Choose avatar</span></div><div class="av-grid">${AVATARS.map((a,i)=>`<button type="button" class="av-item ${i===state.avatarIdx?'sel':''}${a.shadow?' kage-shadow kage-av':''}" ${a.shadow?'':'style="background:'+a.bg+'"'} data-av="${i}">${a.shadow?KAGE_MARK:a.e}</button>`).join('')}</div>`;
+    html+=`<div class="av-preview">${avFace(av)}<div class="name">Meet <span id="previewName">${state.name||'…'}</span></div></div><input class="ob-input" id="egoName" type="text" maxlength="20" placeholder="Kage name…" value="${state.name}" /><div class="sec-label" style="padding:16px 0 8px;margin:0"><span>Choose avatar</span></div><div class="av-grid">${AVATARS.map((a,i)=>`<button type="button" class="av-item ${i===state.avatarIdx?'sel':''}${a.shadow?' kage-shadow kage-av':''}" ${a.shadow?'':'style="background:'+a.bg+'"'} data-av="${i}">${a.shadow?KAGE_MARK:a.e}</button>`).join('')}</div>`;
   }
   if(s.type==='anime')html+=`<div class="anime-grid">${ANIME.map(a=>`<button type="button" class="anime-card ${state.animeId===a.id?'sel':''}" data-anime="${a.id}"><span class="sel-mark"></span><div class="face" style="background:${a.bg}">${a.e}</div><h4>${a.name}</h4><div class="show">${a.show}</div><div class="vibe">${a.modes.map(modeTag).join('')}</div><div class="quote">“${a.quote}”</div></button>`).join('')}</div>`;
   if(s.type==='summary'){
@@ -1521,7 +1605,12 @@ function renderBody(){
   }
   body.innerHTML=html;bindStepEvents();
 }
-function labelFor(key){const s=CUSTOM_STEPS.find(x=>x.id===key),id=state.answers[key];if(!s||!id)return '—';const o=s.options.find(x=>x.id===id);return o?o.t:'—';}
+function labelFor(key){
+  const s=CUSTOM_STEPS.find(x=>x.id===key),id=state.answers[key];
+  if(!s||!id)return '—';
+  if(Array.isArray(id))return id.map(x=>s.options.find(o=>o.id===x)?.t).filter(Boolean).join(' · ')||'—';
+  const o=s.options.find(x=>x.id===id);return o?o.t:'—';
+}
 function bindStepEvents(){
   document.querySelectorAll('[data-path]').forEach(b=>b.addEventListener('click',()=>{state.path=b.dataset.path;renderProgress();renderBody();updateNext();}));
   const s=cur();
@@ -1551,20 +1640,21 @@ document.getElementById('obSkip').addEventListener('click',()=>{state.path='anim
 document.getElementById('restartOnboard').addEventListener('click',resetOnboard);
 resetOnboard();
 
+const FIXED_GOALS=['Career','Fitness','Finance','Relationships','Mental Health','Productivity','Discipline','Consistency'];
 const GOAL_LIMITS={daily:3,weekly:5};
 let goalsData={
   daily:[
-    {id:1,name:'Ship demo deck',repeat:true,status:'pending',sub:'45 min · 6 PM'},
-    {id:2,name:'6AM deep work',repeat:true,status:'miss',sub:'Missed · resets tomorrow'},
-    {id:3,name:'Investor email draft',repeat:false,status:'done',sub:'Logged 2:14 PM'}
+    {id:1,track:'Career',name:'90 min deep work',repeat:true,status:'pending',sub:'45 min · 6 PM'},
+    {id:2,track:'Fitness',name:'Gym before work',repeat:true,status:'miss',sub:'Missed · Reality score -4'},
+    {id:3,track:'Mental Health',name:'10 min journal',repeat:false,status:'done',sub:'Logged 2:14 PM'}
   ],
   weekly:[
-    {id:4,name:'MVP auth slice',repeat:true,status:'pending',sub:'Due Sun 11:59 PM'},
-    {id:5,name:'User testing round',repeat:false,status:'pending',sub:'This week only'}
+    {id:4,track:'Career',name:'MVP auth slice',repeat:true,status:'pending',sub:'Due Sun 11:59 PM'},
+    {id:5,track:'Relationships',name:'Call parents',repeat:false,status:'pending',sub:'This week only'}
   ]
 };
 let goalsTab='daily';
-let addState={cadence:'daily',title:'',why:'',repeat:true,duration:60};
+let addState={track:'Career',cadence:'daily',title:'',why:'',repeat:true,duration:60};
 let openMenuId=null;
 
 function slotsUsed(c){return goalsData[c].length;}
@@ -1578,11 +1668,11 @@ function showGoalsList(){
 function showGoalsAdd(){
   document.getElementById('goalsListView').classList.add('hidden');
   document.getElementById('goalsAddView').classList.remove('hidden');
-  addState={cadence:goalsTab,title:'',why:'',repeat:true,duration:60};
+  addState={track:'Career',cadence:goalsTab,title:'',why:'',repeat:true,duration:60};
   renderAddForm();
 }
 function showBrutal(msg){
-  document.getElementById('brutalMsg').textContent=msg||'You committed to this goal. Rename it if you want — or delete it and start over like an adult.';
+  document.getElementById('brutalMsg').textContent=msg||'The top-level goal track is fixed. Edit the habit, archive it, or create a better one.';
   document.getElementById('brutalModal').classList.add('open');
 }
 
@@ -1590,17 +1680,17 @@ function renderGoalsList(){
   const list=goalsData[goalsTab],u=slotsUsed(goalsTab),l=GOAL_LIMITS[goalsTab];
   document.getElementById('dailyCnt').textContent=`${goalsData.daily.length}/${GOAL_LIMITS.daily}`;
   document.getElementById('weeklyCnt').textContent=`${goalsData.weekly.length}/${GOAL_LIMITS.weekly}`;
-  document.getElementById('goalsListLabel').textContent=`// ${goalsTab.charAt(0).toUpperCase()+goalsTab.slice(1)} goals`;
-  document.getElementById('goalsSlotBar').innerHTML=`<div class="top"><span>// ${goalsTab} slots</span><b class="${u>=l?'warn':''}">${u} of ${l} used</b></div><div class="slots">${Array.from({length:l},(_,i)=>`<i class="${i<u?'used':''}"></i>`).join('')}</div>`;
+  document.getElementById('goalsListLabel').textContent=`${goalsTab==='daily'?'Today':'This week'} habits`;
+  document.getElementById('goalsSlotBar').innerHTML=`<div class="top"><span>Fixed goal tracks</span><b>${FIXED_GOALS.length} total</b></div><div class="slots">${FIXED_GOALS.map((_,i)=>`<i class="${i<4?'used':''}"></i>`).join('')}</div>`;
   document.querySelectorAll('#goalsTabs .c-tab').forEach(t=>t.classList.toggle('on',t.dataset.list===goalsTab));
   const el=document.getElementById('goalsList');
-  if(!list.length){el.innerHTML=`<div class="empty-goals"><b>No ${goalsTab} goals yet</b>Tap + to add one</div>`;return;}
+  if(!list.length){el.innerHTML=`<div class="empty-goals"><b>No ${goalsTab} habits yet</b>Tap + to add one under a fixed goal</div>`;return;}
   el.innerHTML=list.map(g=>`
     <div class="goal-row" data-id="${g.id}">
       <div class="check ${g.status==='done'?'done':g.status==='miss'?'miss':''}">${g.status==='done'?'✓':g.status==='miss'?'✕':''}</div>
       <div class="body">
-        <h4 class="goal-name">${g.name} <span class="repeat-badge ${g.repeat?'':'once'}">${g.repeat?(goalsTab==='daily'?'↻ Every day':'↻ Every week'):'Once only'}</span></h4>
-        <div class="sub">${g.sub} · <button type="button" class="edit-lock" data-id="${g.id}" style="color:var(--roast);font-weight:600;font-size:11px">edit deadline</button></div>
+        <h4 class="goal-name"><span class="goal-track">${g.track}</span>${g.name} <span class="repeat-badge ${g.repeat?'':'once'}">${g.repeat?(goalsTab==='daily'?'↻ Every day':'↻ Every week'):'Once only'}</span></h4>
+        <div class="sub">${g.sub} · <button type="button" class="edit-lock" data-id="${g.id}" style="color:var(--roast);font-weight:600;font-size:11px">edit habit</button></div>
       </div>
       <button type="button" class="menu-btn goal-menu" data-id="${g.id}">⋮</button>
       <div class="goal-actions-menu" id="menu-${g.id}">
@@ -1636,7 +1726,7 @@ function bindListEvents(){
     const id=+b.dataset.id;
     const cad=goalsData.daily.some(x=>x.id===id)?'daily':'weekly';
     const g=[...goalsData.daily,...goalsData.weekly].find(x=>x.id===id);
-    showBrutal(`You committed to "${g.name}" ${g.repeat?(cad==='daily'?'every day':'every week'):'once'}. Want a different deadline? Delete it and make a new one. Rename is fine — weasel editing is not.`);
+    showBrutal(`"${g.name}" belongs to the fixed ${g.track} track. You can edit the habit or archive it, but the top-level goal tracks stay fixed so Reality scores remain comparable.`);
   }));
   document.addEventListener('click',()=>document.querySelectorAll('.goal-actions-menu').forEach(m=>m.classList.remove('open')),{once:true});
 }
@@ -1644,23 +1734,28 @@ function bindListEvents(){
 function renderAddForm(){
   const c=addState.cadence,u=slotsUsed(c),l=GOAL_LIMITS[c];
   document.getElementById('goalsAddBody').innerHTML=`
-    <label class="field-label">// 1 · Daily or weekly</label>
+    <label class="field-label">1 · Fixed goal track</label>
+    <div class="fixed-goal-grid">
+      ${FIXED_GOALS.map(g=>`<button type="button" class="fixed-goal ${addState.track===g?'sel':''}" data-track="${g}">${g}</button>`).join('')}
+    </div>
+    <label class="field-label">2 · Daily or weekly</label>
     <div class="cadence-pick-2">
       <button type="button" class="c-pick-lg ${c==='daily'?'sel':''}" data-cad="daily"><span class="c-name">Daily</span><span class="c-slots">${goalsData.daily.length} / ${GOAL_LIMITS.daily}</span><span class="c-desc">Resets every midnight</span></button>
       <button type="button" class="c-pick-lg ${c==='weekly'?'sel':''}" data-cad="weekly"><span class="c-name">Weekly</span><span class="c-slots">${goalsData.weekly.length} / ${GOAL_LIMITS.weekly}</span><span class="c-desc">Resets every Sunday</span></button>
     </div>
-    <label class="field-label">// 2 · Goal name</label>
-    <input class="ob-input" id="gTitle" type="text" placeholder="Ship auth slice…" value="${addState.title}" />
-    <label class="field-label">// 3 · Repeat</label>
+    <label class="field-label">3 · Habit / promise</label>
+    <input class="ob-input" id="gTitle" type="text" placeholder="90 min deep work…" value="${addState.title}" />
+    <label class="field-label">4 · Repeat</label>
     <div class="repeat-toggle" id="gRepeat">
       <button type="button" class="${addState.repeat?'on':''}" data-r="1">${c==='daily'?'↻ Repeat every day':'↻ Repeat every week'}</button>
       <button type="button" class="${!addState.repeat?'on':''}" data-r="0">Once only</button>
     </div>
-    <label class="field-label">// 4 · Why it matters</label>
-    <input class="ob-input" id="gWhy" type="text" placeholder="Moves the needle because…" value="${addState.why}" style="font-size:14px;font-weight:500" />
-    <label class="field-label">// 5 · Time-box (locked after save)</label>
+    <label class="field-label">5 · Why it matters</label>
+    <input class="ob-input" id="gWhy" type="text" placeholder="Moves the ${addState.track} track because…" value="${addState.why}" style="font-size:14px;font-weight:500" />
+    <label class="field-label">6 · Time-box</label>
     <div class="time-box"><input id="gDur" type="number" min="15" max="240" value="${addState.duration}" /><select disabled><option>minutes</option></select></div>
-    <p style="font-size:11px;color:var(--faint);margin-top:12px;line-height:1.5">After commit: rename ✓ · delete ✓ · edit cadence/deadline ✕ → brutal popup</p>`;
+    <p style="font-size:11px;color:var(--faint);margin-top:12px;line-height:1.5">Goal tracks are fixed. Habits can be edited, archived, or replaced while Reality scores stay comparable.</p>`;
+  document.querySelectorAll('#goalsAddBody [data-track]').forEach(b=>b.addEventListener('click',()=>{addState.track=b.dataset.track;renderAddForm();}));
   document.querySelectorAll('#goalsAddBody [data-cad]').forEach(b=>b.addEventListener('click',()=>{if(slotsLeft(b.dataset.cad)<=0&&addState.cadence!==b.dataset.cad)return;addState.cadence=b.dataset.cad;renderAddForm();}));
   document.getElementById('gTitle').addEventListener('input',e=>{addState.title=e.target.value;updateAddSave();});
   document.getElementById('gWhy').addEventListener('input',e=>{addState.why=e.target.value;updateAddSave();});
@@ -1674,7 +1769,7 @@ function updateAddSave(){
   const btn=document.getElementById('goalsSaveBtn'),note=document.getElementById('goalsAddNote');
   btn.disabled=!canSaveGoal();
   const c=addState.cadence;
-  note.textContent=`${c}: ${slotsUsed(c)}/${GOAL_LIMITS[c]} slots · Locked after save · rename or delete only`;
+  note.textContent=`${addState.track} · ${c}: ${slotsUsed(c)}/${GOAL_LIMITS[c]} habits · fixed goal track`;
   document.querySelectorAll('#gRepeat button').forEach((b,i)=>{if(i===0)b.textContent=addState.cadence==='daily'?'↻ Repeat every day':'↻ Repeat every week';});
 }
 
@@ -1686,7 +1781,7 @@ document.getElementById('goalsTabs').addEventListener('click',e=>{const t=e.targ
 document.getElementById('goalsSaveBtn').addEventListener('click',()=>{
   if(!canSaveGoal())return;
   const id=Date.now();
-  goalsData[addState.cadence].push({id,name:addState.title.trim(),repeat:addState.repeat,status:'pending',sub:`${addState.duration} min · ${addState.cadence==='daily'?'11:59 PM daily':'Sun 11:59 PM'}`});
+  goalsData[addState.cadence].push({id,track:addState.track,name:addState.title.trim(),repeat:addState.repeat,status:'pending',sub:`${addState.duration} min · ${addState.cadence==='daily'?'11:59 PM daily':'Sun 11:59 PM'}`});
   showGoalsList();
 });
 document.getElementById('brutalOk').addEventListener('click',()=>document.getElementById('brutalModal').classList.remove('open'));
@@ -1695,8 +1790,8 @@ showGoalsList();
 
 const SHARE_CARDS={
   wrapped:{link:'https://kagevo.app/w/kanishk-w14',html:`<div class="share-card-inner"><div><div class="brand">Kagevo · Week 14</div><div class="headline">Kanishk's Kage<em>with NOVA · Roast mode</em></div></div><div class="share-card-stats"><div><b>86%</b><span>Tasks logged</span></div><div><b>Roast</b><span>Top mode</span></div><div><b>22</b><span>Best streak</span></div><div><b>47</b><span>Voice talks</span></div></div><div class="share-card-quote">"Day 14 of not lying to yourself."</div><div class="share-card-footer"><span>kagevo.app/w/kanishk</span><span>◐ NOVA</span></div></div>`},
-  streak:{link:'https://kagevo.app/s/kanishk-22',html:`<div class="share-card-inner" style="background:linear-gradient(145deg,#172554,#5B8DEF 55%,#B794F6)"><div><div class="brand">Streak milestone</div><div class="headline">🔥 22 days<em>Ship MVP · daily main task</em></div></div><div class="share-card-stats"><div><b>22</b><span>Day streak</span></div><div><b>86%</b><span>Log rate</span></div></div><div class="share-card-quote">"NOVA didn't roast you once this week. Suspicious."</div><div class="share-card-footer"><span>kagevo.app/s/22</span><span>NOVA</span></div></div>`},
-  persona:{link:'https://kagevo.app/p/nova-kanishk',html:`<div class="share-card-inner" style="background:linear-gradient(145deg,#7C2D12,#FF6B35 45%,#5B8DEF)"><div><div class="brand">My kage</div><div class="headline">◐ NOVA<em>Roast · Brutal · Motivate</em></div></div><div class="share-card-stats"><div><b>14</b><span>Days together</span></div><div><b>7</b><span>Intensity</span></div></div><div class="share-card-quote">"Either move the alarm or stop calling yourself a runner."</div><div class="share-card-footer"><span>Make your kage</span><span>kagevo.app</span></div></div>`}
+  streak:{link:'https://kagevo.app/s/kanishk-22',html:`<div class="share-card-inner" style="background:#141820"><div><div class="brand">Streak milestone</div><div class="headline">🔥 22 days<em>Ship MVP · daily main task</em></div></div><div class="share-card-stats"><div><b>22</b><span>Day streak</span></div><div><b>86%</b><span>Log rate</span></div></div><div class="share-card-quote">"NOVA didn't roast you once this week. Suspicious."</div><div class="share-card-footer"><span>kagevo.app/s/22</span><span>NOVA</span></div></div>`},
+  persona:{link:'https://kagevo.app/p/nova-kanishk',html:`<div class="share-card-inner" style="background:#1a1510"><div><div class="brand">My kage</div><div class="headline">◐ NOVA<em>Roast · Brutal · Motivate</em></div></div><div class="share-card-stats"><div><b>14</b><span>Days together</span></div><div><b>7</b><span>Intensity</span></div></div><div class="share-card-quote">"Either move the alarm or stop calling yourself a runner."</div><div class="share-card-footer"><span>Make your kage</span><span>kagevo.app</span></div></div>`}
 };
 let shareType='wrapped';
 
@@ -1754,17 +1849,17 @@ function renderNotif(){
     {k:'morning',h:'Morning check-in',p:'Persona-flavored start to day'}
   ];
   return `<span class="p0-badge">P0 · FR-6.4</span>
-    <div class="set-group"><span class="set-group-title">// Nudge categories</span>
+    <div class="set-group"><span class="set-group-title">Nudge categories</span>
       ${rows.map(r=>`<div class="set-row"><div class="info"><h4>${r.h}</h4><p>${r.p}</p></div><button type="button" class="toggle${n[r.k]?' on':''}" data-p0-toggle="notif:${r.k}"></button></div>`).join('')}
     </div>
-    <div class="set-group"><span class="set-group-title">// Quiet hours</span>
+    <div class="set-group"><span class="set-group-title">Quiet hours</span>
       <div class="quiet-hours">
         <select id="p0QuietStart">${['9:00 PM','10:00 PM','11:00 PM'].map(t=>`<option${t.startsWith('10')?' selected':''}>${t}</option>`).join('')}</select>
         <span style="color:var(--muted);padding-top:11px">→</span>
         <select id="p0QuietEnd">${['6:00 AM','7:00 AM','8:00 AM'].map(t=>`<option${t.startsWith('7')?' selected':''}>${t}</option>`).join('')}</select>
       </div>
     </div>
-    <div class="set-group"><span class="set-group-title">// Frequency cap</span>
+    <div class="set-group"><span class="set-group-title">Frequency cap</span>
       <div class="freq-slider"><div class="top"><span>Max nudges per day</span><b id="p0MaxLabel">${n.maxNudges}</b></div>
         <input type="range" id="p0MaxRange" min="1" max="10" value="${n.maxNudges}" style="width:100%;accent-color:var(--motiv)">
       </div>
@@ -1776,11 +1871,11 @@ function renderNotif(){
 
 function renderSafety(){
   return `<span class="p0-badge">P0 · FR-9</span>
-    <div class="set-group"><span class="set-group-title">// Crisis detection</span>
+    <div class="set-group"><span class="set-group-title">Crisis detection</span>
       <div class="consent-box"><h4>Auto support mode</h4><p>When distress signals are detected in voice or chat, NOVA switches to emotional support — roast and brutal modes disabled.</p></div>
       <div class="set-row"><div class="info"><h4>Crisis detection</h4><p>Cannot be disabled — required for safety</p></div><div class="toggle on" style="opacity:.5;pointer-events:none"></div></div>
     </div>
-    <div class="set-group"><span class="set-group-title">// Helplines shown</span>
+    <div class="set-group"><span class="set-group-title">Helplines shown</span>
       <div class="helpline" style="margin-bottom:8px"><h4>988 Suicide &amp; Crisis Lifeline</h4><p>US · free · 24/7</p><div class="num">Call or text 988</div></div>
       <div class="helpline"><h4>Crisis Text Line</h4><p>Text with a trained counselor</p><div class="num">Text HOME to 741741</div></div>
     </div>
@@ -1791,16 +1886,16 @@ function renderSafety(){
 function renderPrivacy(){
   const p=p0State.privacy;
   return `<span class="p0-badge">P0 · FR-8.3 · NFR-5</span>
-    <div class="set-group"><span class="set-group-title">// AI &amp; data consent</span>
+    <div class="set-group"><span class="set-group-title">AI &amp; data consent</span>
       <div class="consent-box"><h4>Send conversations to cloud AI</h4><p>Required for voice &amp; chat. Encrypted in transit.</p><div class="provider">Voice: Groq (no training) · Chat: Gemini</div>
         <div style="margin-top:10px;display:flex;justify-content:flex-end"><button type="button" class="toggle${p.cloudAI?' on':''}" data-p0-toggle="privacy:cloudAI"></button></div></div>
       <div class="consent-box"><h4>Store memories &amp; goals</h4><p>Powers persona consistency across sessions.</p>
         <div style="margin-top:10px;display:flex;justify-content:flex-end"><button type="button" class="toggle${p.memories?' on':''}" data-p0-toggle="privacy:memories"></button></div></div>
     </div>
-    <div class="set-group"><span class="set-group-title">// Retention</span>
+    <div class="set-group"><span class="set-group-title">Retention</span>
       <div class="retention-row"><span>Chat history</span><b>${p.retention}</b></div>
     </div>
-    <div class="set-group"><span class="set-group-title">// Your data</span>
+    <div class="set-group"><span class="set-group-title">Your data</span>
       <button type="button" class="set-btn" id="p0Export">Export all data (JSON)</button>
       <button type="button" class="set-btn" id="p0Memories">View stored memories</button>
       <button type="button" class="set-btn danger" id="p0Delete">Delete account &amp; all data</button>

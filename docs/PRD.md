@@ -1,41 +1,40 @@
-# Alter EGO — Functional & Non-Functional Requirements
+# Kagevo / Alter EGO — Product Requirements V2
 
-A mobile, voice-first AI companion that acts as the user's "alter ego / inner self." After onboarding (habits, goals, questionnaire), it configures a personalized persona that switches between four guidance modes: Brutal Honesty, Roast, Motivation, and Emotional Support. Interaction happens through voice, chat, and proactive notifications. Cloud AI APIs power LLM reasoning, speech-to-text (STT), and text-to-speech (TTS).
+A mobile, voice-first personal intelligence system that helps users understand who they are, who they want to become, and whether their real-world actions match their stated intentions. Users can create multiple AI personas, let those personas collaborate, track habits against a fixed set of life goals, journal decisions, and build a long-term Reality Timeline that compounds into personal context over time.
 
-> **Note:** The working product name in the UI prototype is **Kagevo** (`kagevo.app`). This document uses the original **Alter EGO** requirements naming.
+> **Note:** The working product name in the UI prototype is **Kagevo** (`kagevo.app`). Earlier docs used **Alter EGO** as the product name.
 
 ## Build Phases
 
 | Phase | Scope |
 |-------|--------|
 | **0 — Foundation** | Turborepo (Expo app + Hono Worker + shared types), Supabase (Auth/Postgres/pgvector/Storage), streaming Gemini hello-world, Sentry + CI + EAS dev build |
-| **1 — Text persona** | Persistent history, 4 modes + intensity dial, manual mode switch, Gemini primary + Groq fallback |
-| **2 — Voice loop** | expo-audio record → Groq Whisper STT → LLM → expo-speech + Edge TTS, push-to-talk, live transcript, shared voice/chat context |
-| **3 — Onboarding** | Questionnaire + habits + goals capture, voice/name picker, generate editable persona profile |
-| **4 — Habits & memory** | Logging + streaks + progress, pgvector semantic memory recall, memory viewer with edit/delete |
-| **5 — Nudges & push** | Local scheduled reminders, server-side persona nudges via Cron + Expo Push/FCM, controls + deep-link |
-| **6 — Safety & privacy** | Roast/brutal guardrails, crisis detection + helplines, consent/export/delete, sensitive turns to no-train provider |
-| **7 — Polish & beta** | Adaptive tone, accessibility, PostHog analytics + persona A/B, cost caps/caching, closed beta (TestFlight + Play internal) |
+| **1 — Identity + Personas** | Auth, profile, goals/values/personality, multiple personas, persona editing/cloning/deleting |
+| **2 — Conversations** | Voice, text, streaming responses, conversation history, resume, interrupt, real-time transcription |
+| **3 — Memory + Reality Engine** | Long-term memory, memory CRUD/search/summarization, promise/action tracking, accountability scores |
+| **4 — Fixed Goals + Decision Journal** | Fixed goal tracks, habit tracking, reviews, milestones, decision prediction/outcome/reflection loops |
+| **5 — Proactive AI + Notifications** | AI-initiated nudges, emotion-aware triggers, reminders, weekly/monthly reports |
+| **6 — Analytics + Provider Management** | Life-area dashboard, AI routing/fallback/cost optimization, observability |
+| **7 — Privacy + Timeline + Beta** | Data export/delete/consent, Reality Timeline, accessibility, closed beta |
 
 ## 1. Product Summary
 
 - **Platforms:** iOS + Android (native or cross-platform mobile).
-- **Core loop:** Onboard → configure persona → daily voice/chat interactions + proactive nudges → track habits/goals → persona adapts over time.
-- **AI:** Cloud LLM for reasoning/persona, cloud STT for voice input, cloud TTS for spoken replies.
+- **Core loop:** Capture identity → create personas → choose fixed goal tracks → add habits/promises/tasks → track reality → learn from outcomes → update memory and timeline.
+- **AI:** Cloud and/or local AI providers for reasoning, persona orchestration, speech-to-text (STT), text-to-speech (TTS), memory summarization, and analytics.
 
 ```mermaid
 flowchart LR
-  onboard["Onboarding\n(habits, goals, questionnaire)"] --> config["Persona Config Engine"]
-  config --> persona["Alter Ego Persona\n(tone + 4 modes)"]
-  persona --> voice["Voice Assistant"]
-  persona --> chat["Chat"]
-  persona --> notif["Notifications / Nudges"]
-  voice --> memory["Memory & Context Store"]
-  chat --> memory
-  notif --> memory
-  memory --> config
-  tracker["Habit & Goal Tracker"] --> notif
-  tracker --> memory
+  identity["User Identity\n(profile, goals, values)"] --> personas["Persona Engine\n(multiple personas)"]
+  personas --> orchestration["Multi-Agent Orchestration"]
+  orchestration --> conversation["Voice + Text Conversation"]
+  conversation --> memory["Memory Engine"]
+  tracking["Reality Engine\n(promises vs actions)"] --> memory
+  journal["Decision Journal"] --> memory
+  memory --> timeline["Reality Timeline"]
+  timeline --> analytics["Analytics Dashboard"]
+  analytics --> proactive["Proactive AI + Notifications"]
+  proactive --> conversation
 ```
 
 ## 2. User Roles
@@ -45,218 +44,488 @@ flowchart LR
 
 ## 3. Functional Requirements (FR)
 
-### FR-1 Onboarding & Persona Configuration
+### FR-1 User Identity Management
 
-- FR-1.1 Capture user habits the user wants to build/break (name, frequency, target time, why it matters).
-- FR-1.2 Capture goals (short-term and long-term) with target dates and success criteria.
-- FR-1.3 Present a structured questionnaire to profile personality, motivation style, communication preferences, triggers, and emotional baseline.
-- FR-1.4 Let the user choose default persona tone/intensity and which of the 4 modes are enabled (Brutal, Roast, Motivation, Emotional Support).
-- FR-1.5 Let the user select/preview the assistant voice (gender, accent, pace) and a persona name.
-- FR-1.6 Generate a persona config profile from the above that drives system prompts, tone, mode-switching rules, and notification cadence.
-- FR-1.7 Allow re-running onboarding or editing any answer/config later from settings.
+The system shall maintain a dynamic understanding of the user.
 
-### FR-2 Voice Assistant
+#### Features
 
-- FR-2.1 Voice input: capture speech and transcribe via cloud STT (push-to-talk and/or wake/hands-free).
-- FR-2.2 Voice output: speak responses via cloud TTS in the selected persona voice.
-- FR-2.3 Maintain a continuous spoken conversation with turn-taking and barge-in (user can interrupt).
-- FR-2.4 Respect the active persona mode and intensity in spoken tone and word choice.
-- FR-2.5 Show a live transcript of the voice conversation.
-- FR-2.6 Handle no-input/low-confidence transcription gracefully (re-prompt, fallback to text).
+- User registration and authentication.
+- Profile management.
+- Personal information.
+- Goals.
+- Values.
+- Personality traits.
+- Communication preferences.
+- Life areas:
+  - Career.
+  - Fitness / Health.
+  - Finance.
+  - Relationships.
+  - Mental Health.
+  - Productivity.
+  - Discipline.
+  - Consistency.
+- Import data from external sources (future).
 
-### FR-3 Chat
+### FR-2 AI Persona Engine
 
-- FR-3.1 Text chat with the same persona/context as voice (shared memory).
-- FR-3.2 Persistent, scrollable conversation history.
-- FR-3.3 In-chat control to switch persona mode (e.g., "roast me" vs "support me") and intensity.
-- FR-3.4 Support quick actions / suggested prompts tied to active habits and goals.
-- FR-3.5 Seamless switch between voice and chat within the same session/context.
+The system shall allow users to create and interact with multiple AI personas.
 
-### FR-4 Persona Modes (Inner-Self Behavior)
+#### Features
 
-- FR-4.1 **Brutal Honesty:** direct, no-sugarcoat feedback grounded in the user's stated goals and tracked behavior.
-- FR-4.2 **Roast:** humorous, sharp callouts when the user slacks — bounded by user-set intensity and safety limits.
-- FR-4.3 **Motivation:** encouragement, reframing, and action prompts toward goals.
-- FR-4.4 **Emotional Support:** empathetic, validating, calming responses.
-- FR-4.5 Automatic and manual mode selection: persona picks an appropriate mode from context, and the user can override at any time.
-- FR-4.6 A user-controllable "intensity" dial that bounds how brutal/roasting the persona gets.
+- Create persona.
+- Delete persona.
+- Clone persona.
+- Edit personality.
+- Configure tone.
+- Configure communication style.
+- Configure aggressiveness.
+- Configure expertise.
 
-### FR-5 Habit & Goal Tracking
+#### Example Personas
 
-- FR-5.1 Log habit completions/misses (manual check-in; optional reminders).
-- FR-5.2 Track goal progress and milestones.
-- FR-5.3 Show streaks, progress summaries, and history.
-- FR-5.4 Tracking data feeds the persona so feedback is grounded in real behavior (e.g., roast when a streak breaks, support when struggling).
+- Brutal Coach.
+- Future Me.
+- CEO Me.
+- Therapist.
+- Nutritionist.
+- Stoic Philosopher.
 
-### FR-6 Notifications & Proactive Nudges
+### FR-3 Multi-Agent Orchestration
 
-- FR-6.1 Scheduled reminders for habits/goals based on configured times.
-- FR-6.2 Proactive, persona-flavored nudges (motivational push in the morning, accountability check-in if a habit is missed).
-- FR-6.3 Notification content adapts to active mode/intensity and recent behavior.
-- FR-6.4 User controls: per-category toggles, quiet hours, frequency caps, and full opt-out.
-- FR-6.5 Tapping a notification deep-links into the relevant chat/voice context.
+The system shall allow multiple personas to collaborate on solving a user's problem.
 
-### FR-7 Memory & Personalization
+#### Features
 
-- FR-7.1 Persist key facts: goals, habits, preferences, recurring themes, prior conversations.
-- FR-7.2 Use memory to keep persona consistent and context-aware across sessions and across voice/chat.
-- FR-7.3 Adapt tone/cadence over time based on engagement and outcomes.
-- FR-7.4 Let the user view, edit, and delete stored memories/facts.
+- Persona debate.
+- Persona consensus.
+- Persona voting.
+- Conflict resolution.
+- Final recommendation.
 
-### FR-8 Account, Settings & Data Control
+#### Example Flow
 
-- FR-8.1 Account creation/auth and secure sign-in.
-- FR-8.2 Settings for persona, voice, modes, intensity, notifications, and privacy.
-- FR-8.3 Export and delete account/data (privacy compliance).
-- FR-8.4 Manage AI/data consent (what is stored, what is sent to cloud AI).
+```mermaid
+flowchart TD
+  question["User question"] --> brutal["Brutal Coach"]
+  brutal --> ceo["CEO Me"]
+  ceo --> future["Future Me"]
+  future --> therapist["Therapist"]
+  therapist --> advice["Final advice"]
+```
 
-### FR-9 Safety & Wellbeing Guardrails
+### FR-4 Conversational Interface
 
-- FR-9.1 Roast/brutal modes must never cross into harassment, hate, or content targeting protected attributes.
-- FR-9.2 Detect signals of crisis/self-harm and switch to a safe, supportive response with appropriate helpline resources, regardless of active mode.
-- FR-9.3 Hard content limits independent of intensity dial; user can always dial down or pause.
-- FR-9.4 Clear disclaimer that Alter EGO is not a medical/mental-health professional.
+The system shall support multiple interaction channels.
 
-## 4. Non-Functional Requirements (NFR)
+#### Features
 
-### NFR-1 Performance & Latency
+- Voice conversation.
+- Text conversation.
+- Streaming responses.
+- Conversation history.
+- Resume previous conversation.
+- Interrupt AI.
+- Real-time transcription.
 
-- Voice round-trip (speech end → spoken reply start) target **< 1.5s p50**, **< 3s p95**.
-- Chat response start **< 1s p50**; stream tokens as generated.
-- App cold start **< 3s** on mid-tier devices.
+### FR-5 Memory Engine
 
-### NFR-2 Reliability & Availability
+The AI shall maintain persistent long-term memory.
 
-- Target **99.9% uptime** for backend AI gateway.
-- Graceful degradation: if voice/STT/TTS fails, fall back to text; queue notifications if delivery fails.
-- Offline: show cached history, habits, and allow manual check-ins; sync when back online.
+#### Memory Categories
 
-### NFR-3 Scalability
+- Identity.
+- Goals.
+- Habits.
+- Relationships.
+- Achievements.
+- Failures.
+- Preferences.
+- Beliefs.
+- Recurring issues.
+- Memories.
 
-- Stateless API gateway that scales horizontally; per-user memory store scales to large user counts.
-- Handle bursty traffic (e.g., morning notification waves) without latency regressions.
+#### Features
 
-### NFR-4 Security
+- Automatic memory creation.
+- Memory search.
+- Memory editing.
+- Memory deletion.
+- Memory summarization.
 
-- Encryption in transit (TLS) and at rest for personal data and conversation memory.
-- Secure auth (token-based), no secrets in client; least-privilege access to AI provider keys server-side.
-- Audit logging for sensitive operations and data access.
+### FR-6 Reality Engine
 
-### NFR-5 Privacy & Compliance
+This is a core USP. The system shall continuously compare the user's intentions against their real-world actions.
 
-- Privacy-by-design; explicit consent for storing conversations and sending data to cloud AI.
-- GDPR/CCPA-style rights: export, delete, and view stored data (supports FR-8.3, FR-7.4).
-- Data minimization and configurable retention windows for conversation history.
+#### Track
 
-### NFR-6 Usability & Accessibility
+- Promises.
+- Goals.
+- Tasks.
+- Habits.
+- Deadlines.
 
-- Voice-first but fully usable via text/touch.
-- Accessibility: screen-reader support, dynamic font sizes, captions/transcripts for all voice, sufficient contrast.
-- Smooth, low-friction onboarding (clear progress, skip/return).
+#### Generate
 
-### NFR-7 Safety & Content Quality (non-functional aspects)
+- Promise Accuracy.
+- Execution Rate.
+- Consistency Score.
+- Accountability Score.
+- Growth Trend.
 
-- Consistent enforcement of safety guardrails (FR-9) with measurable false-negative targets for crisis detection.
-- Persona consistency across sessions and modalities.
-
-### NFR-8 Cost & Efficiency
-
-- Monitor and cap per-user AI spend (LLM/STT/TTS tokens/minutes); configurable budgets and rate limits.
-- Cache and reuse where safe (e.g., TTS for repeated notification copy) to reduce cost.
-
-### NFR-9 Observability
-
-- Centralized logging, metrics, and tracing for latency, errors, AI provider failures, and notification delivery.
-- Analytics on engagement, retention, mode usage, and habit/goal outcomes (privacy-respecting).
-
-### NFR-10 Maintainability & Portability
-
-- Provider abstraction so LLM/STT/TTS vendors can be swapped without app changes.
-- Modular persona/prompt configuration that can be versioned and A/B tested.
-
-### NFR-11 Localization (future-ready)
-
-- Architecture should not block multi-language STT/TTS/LLM and localized UI later, even if MVP is single-language.
-
-## 5. Phased MVP Build Roadmap
-
-Sequenced to get a usable, talking Alter EGO in your hands as early as possible, then layer intelligence, proactivity, and polish. Each phase ends with something testable. Phases map to the FRs in section 3 and the stack in [TECH_STACK.md](./TECH_STACK.md).
+#### Example
 
 ```mermaid
 flowchart LR
-  p0["P0\nFoundation"] --> p1["P1\nText persona"]
-  p1 --> p2["P2\nVoice loop"]
-  p2 --> p3["P3\nOnboarding + config"]
-  p3 --> p4["P4\nHabits + memory"]
-  p4 --> p5["P5\nNudges + push"]
-  p5 --> p6["P6\nSafety + privacy"]
-  p6 --> p7["P7\nPolish + beta"]
+  goal["Goal: Lose 5kg"] --> reality["Reality: Lost 1kg"]
+  reality --> ai["AI: You overestimated your consistency."]
+```
+
+### FR-7 Fixed Goal Tracks & Habit Tracking
+
+The system shall help users achieve goals through a fixed set of goal tracks. Users do not create arbitrary top-level goals; instead, they add habits, promises, tasks, milestones, and reviews under predefined life-goal categories. This keeps analytics comparable over time and prevents the product from becoming a generic to-do list.
+
+#### Fixed Goal Tracks
+
+- Career.
+- Fitness / Health.
+- Finance.
+- Relationships.
+- Mental Health.
+- Productivity.
+- Discipline.
+- Consistency.
+
+#### Features
+
+- Habit creation under a fixed goal track.
+- Habit reminders.
+- Promise/task creation under a fixed goal track.
+- Goal milestones within fixed tracks.
+- Habit analytics.
+- Progress charts.
+- Streaks.
+- Daily review.
+- Weekly review.
+- Monthly review.
+- Fixed goal dashboard showing progress by track.
+- Track-level Reality Engine scores: Execution Rate, Consistency Score, and Growth Trend.
+- Ability to archive habits/tasks without deleting the underlying fixed goal track.
+
+### FR-8 Decision Journal
+
+Every important decision becomes knowledge.
+
+#### Store
+
+- Decision.
+- Reason.
+- Prediction.
+- Outcome.
+- Reflection.
+- AI analysis.
+
+#### Example
+
+```mermaid
+flowchart LR
+  decision["Decision: Leave company?"] --> predicted["Predicted: Bad culture"]
+  predicted --> reality["Reality: Promotion missed"]
+  reality --> learning["Learning"]
+```
+
+### FR-9 Proactive AI
+
+AI should initiate conversations when user context suggests a useful intervention.
+
+#### Examples
+
+- "You skipped gym."
+- "Interview tomorrow. Let's practice."
+- "You haven't studied in 4 days."
+- "You sound stressed today."
+
+### FR-10 Emotional Intelligence
+
+AI adapts to user emotion and changes response style automatically.
+
+#### Detect
+
+- Stress.
+- Excitement.
+- Burnout.
+- Frustration.
+- Sadness.
+- Confidence.
+
+### FR-11 Analytics Dashboard
+
+The dashboard shall show progress, patterns, and trends across key life areas.
+
+#### Areas
+
+- Career.
+- Fitness.
+- Finance.
+- Relationships.
+- Mental Health.
+- Productivity.
+- Discipline.
+- Consistency.
+- Weekly Progress.
+- Monthly Progress.
+
+### FR-12 Notification Engine
+
+The system shall support different notification types.
+
+#### Notification Types
+
+- Morning motivation.
+- Reality check.
+- Habit reminder.
+- Goal reminder.
+- Weekly review.
+- Monthly report.
+- Milestone achieved.
+
+### FR-13 AI Provider Management
+
+The system shall support multiple AI providers and provider-level routing controls.
+
+#### Providers
+
+- OpenAI.
+- Anthropic.
+- Gemini.
+- Grok.
+- Local models.
+
+#### Features
+
+- Routing.
+- Fallback.
+- Cost optimization.
+
+### FR-14 Privacy & Data Control
+
+The user shall control their data and AI consent settings.
+
+#### Features
+
+- Export data.
+- Delete data.
+- Delete memories.
+- Download conversations.
+- Consent management.
+- Privacy settings.
+
+### FR-15 Reality Timeline
+
+Instead of storing only conversations, the system shall build a chronological timeline of the user's life.
+
+#### Example Timeline
+
+```text
+2026
+|
++-- Joined Adobe
++-- Failed Uber interview
++-- Started startup
++-- Lost 8kg
++-- Ran first half marathon
++-- Launched Kagevo
++-- Raised seed funding
++-- Bought first house
+```
+
+#### Example Questions
+
+- "When did I first mention wanting to start a company?"
+- "What pattern do you see in my career decisions?"
+- "How has my confidence changed over the last year?"
+
+This transforms the product from an AI chat application into a personal life intelligence system. It becomes a long-term moat because accumulated personal context is difficult for competitors to replicate.
+
+## 4. Non-Functional Requirements (NFR)
+
+### NFR-1 Performance
+
+- Voice latency: **< 2 seconds**.
+- Chat first token: **< 800ms**.
+- Conversation resume: **< 300ms**.
+
+### NFR-2 Availability
+
+- Target **99.9% availability**.
+- Automatic retry.
+- Graceful degradation.
+- Offline support.
+
+### NFR-3 Scalability
+
+The architecture shall scale from **100 users** to **1,000 users**, **100,000 users**, and **1M users** without requiring a full redesign.
+
+### NFR-4 Security
+
+- OAuth.
+- JWT.
+- Encryption at rest.
+- Encryption in transit.
+- Secure secrets.
+- Role-based access.
+
+### NFR-5 Privacy
+
+- GDPR.
+- CCPA.
+- Data portability.
+- Data deletion.
+- Consent management.
+- AI provider transparency.
+
+### NFR-6 AI Quality
+
+- Persona consistency.
+- Memory consistency.
+- Response relevance.
+- Low hallucination rate.
+- Source attribution (future).
+
+### NFR-7 Reliability
+
+- No memory loss.
+- Retry failed AI calls.
+- Fallback provider.
+- Automatic recovery.
+- Conversation persistence.
+
+### NFR-8 Extensibility
+
+It shall be easy to add:
+
+- New persona.
+- New AI model.
+- New notification type.
+- New memory type.
+- New provider.
+
+### NFR-9 Observability
+
+- Logs.
+- Metrics.
+- Tracing.
+- Crash analytics.
+- AI latency monitoring.
+- Token usage.
+- Cost dashboard.
+
+### NFR-10 Cost Optimization
+
+- Response caching.
+- Memory summarization.
+- Token budgeting.
+- Prompt optimization.
+- Provider routing.
+- Batch processing.
+
+### NFR-11 Accessibility
+
+- Voice-first.
+- Screen reader support.
+- Large text.
+- Captions.
+- Color accessibility.
+
+### NFR-12 Maintainability
+
+- Clean Architecture.
+- Provider abstraction.
+- Repository pattern.
+- Microservice-ready APIs.
+- Modular prompt engine.
+- Comprehensive test coverage.
+
+## 5. Phased MVP Build Roadmap
+
+Sequenced to get a usable personal intelligence system in hand quickly, then layer the durable moat: memory, reality tracking, decision learning, and timeline context. Each phase ends with something testable. Phases map to the FRs in section 3 and the stack in [TECH_STACK.md](./TECH_STACK.md).
+
+```mermaid
+flowchart LR
+  p0["P0\nFoundation"] --> p1["P1\nIdentity + personas"]
+  p1 --> p2["P2\nConversation"]
+  p2 --> p3["P3\nMemory + reality"]
+  p3 --> p4["P4\nGoals + decisions"]
+  p4 --> p5["P5\nProactive AI"]
+  p5 --> p6["P6\nAnalytics + providers"]
+  p6 --> p7["P7\nPrivacy + timeline"]
 ```
 
 ### Phase 0 — Foundation & Plumbing
 
 - Scaffold Turborepo monorepo: Expo app + Hono Worker gateway + shared TS types.
-- Stand up Supabase (Auth + Postgres + pgvector + Storage); wire Supabase Auth sign-in/up in the app (FR-8.1).
+- Stand up Supabase (Auth + Postgres + pgvector + Storage); wire Supabase Auth sign-in/up in the app (FR-1).
 - Hello-world streaming call app → gateway → Vercel AI SDK → Gemini, rendered in the app.
 - Wire Sentry in app + Worker; create GitHub Actions (lint/typecheck/test) and an EAS dev build.
 - **Exit:** authenticated user gets a streamed LLM reply on a real device.
 
-### Phase 1 — Text Chat with Persona (core value)
+### Phase 1 — Identity + Personas
 
-- Chat UI with persistent history (FR-3.1, FR-3.2) stored in Postgres.
-- Persona system-prompt engine with the 4 modes + intensity dial; manual mode switch in chat (FR-4.1–4.6, FR-3.3).
-- Gemini primary + Groq fallback on rate-limit.
-- **Exit:** you can chat and switch between brutal/roast/motivate/support tones. This is the first "is the magic there?" checkpoint.
+- Build user identity management: profile, goals, values, personality traits, communication preferences, and life areas (FR-1).
+- Build persona CRUD: create, edit, clone, delete; configure tone, style, aggressiveness, and expertise (FR-2).
+- Seed default personas: Brutal Coach, Future Me, CEO Me, Therapist, Nutritionist, Stoic Philosopher.
+- **Exit:** a user can create multiple personas and start a conversation with any one of them.
 
-### Phase 2 — Voice Loop (the headline feature)
+### Phase 2 — Conversational Interface
 
-- Record with expo-audio → gateway → Groq Whisper STT → transcript (FR-2.1, FR-2.5).
-- LLM reply → on-device expo-speech TTS, then add Edge TTS streamed persona voice (FR-2.2).
-- Push-to-talk first; live transcript; graceful no-input/low-confidence handling (FR-2.6); voice ↔ chat share one context (FR-3.5).
-- **Exit:** full spoken conversation round-trip; measure latency against NFR-1.
+- Build text conversation with streaming responses, history, and resume (FR-4).
+- Add voice conversation: recording, STT, spoken reply, real-time transcript, and interrupt support (FR-4).
+- Persist conversations so they can be resumed across sessions (NFR-7).
+- **Exit:** full voice/text conversation loop with measurable latency against NFR-1.
 
-### Phase 3 — Onboarding & Persona Configuration
+### Phase 3 — Memory + Reality Engine
 
-- Questionnaire + habits + goals capture flow (FR-1.1–1.3).
-- Voice/persona-name picker with preview; mode + intensity defaults (FR-1.4, FR-1.5).
-- Generate persona config profile that drives prompts/cadence; editable later (FR-1.6, FR-1.7).
-- **Exit:** a new user is onboarded into a personalized alter ego.
+- Implement long-term memory categories, automatic memory creation, memory search, editing, deletion, and summarization (FR-5).
+- Implement the first version of the Reality Engine: promises, goals, tasks, habits, deadlines, and execution metrics (FR-6).
+- Generate Promise Accuracy, Execution Rate, Consistency Score, Accountability Score, and Growth Trend.
+- **Exit:** the AI can compare what the user said they would do against what they actually did.
 
-### Phase 4 — Habit/Goal Tracking & Memory
+### Phase 4 — Fixed Goals + Decision Journal
 
-- Habit/goal logging, streaks, progress views (FR-5.1–5.3).
-- pgvector semantic memory: persist + recall facts/themes; feed tracking data into persona so feedback is grounded (FR-5.4, FR-7.1–7.2).
-- Memory viewer with edit/delete (FR-7.4).
-- **Exit:** persona references your real behavior and past chats.
+- Build fixed goal tracks, habit creation, reminders, milestones, analytics, charts, streaks, daily reviews, weekly reviews, and monthly reviews (FR-7).
+- Build the Decision Journal: decision, reason, prediction, outcome, reflection, and AI analysis (FR-8).
+- Feed decision outcomes back into memory and Reality Engine scoring.
+- **Exit:** goals and major decisions become queryable learning data.
 
-### Phase 5 — Proactive Notifications & Nudges
+### Phase 5 — Proactive AI + Notifications
 
-- Device-local scheduled habit reminders via expo-notifications (FR-6.1).
-- Server-side persona-flavored nudges via Cloudflare Cron + Expo Push/FCM (FR-6.2, FR-6.3).
-- Notification controls: per-category toggles, quiet hours, frequency caps (FR-6.4); deep-link into context (FR-6.5).
-- **Exit:** Alter EGO reaches out unprompted, in character, respectfully.
+- Add proactive AI triggers for skipped habits, upcoming events, stale goals, stress signals, and review moments (FR-9, FR-10).
+- Add notification types: morning motivation, reality check, habit reminder, goal reminder, weekly review, monthly report, milestone achieved (FR-12).
+- Support notification controls, deep links, quiet hours, and frequency caps.
+- **Exit:** Kagevo can initiate useful conversations without feeling spammy.
 
-### Phase 6 — Safety, Wellbeing & Privacy
+### Phase 6 — Analytics + Provider Management
 
-- Safety guardrails on roast/brutal output; crisis/self-harm detection → supportive response + helpline resources regardless of mode (FR-9.1–9.4).
-- Consent + data controls: AI/data consent, export, delete (FR-8.3, FR-8.4); retention windows (NFR-5).
-- Route sensitive turns to no-train provider (Groq).
-- **Exit:** ship-blocking safety/privacy requirements met.
+- Build analytics dashboard for career, fitness, finance, relationships, mental health, productivity, discipline, consistency, weekly progress, and monthly progress (FR-11).
+- Add AI provider management for OpenAI, Anthropic, Gemini, Grok, and local models with routing, fallback, and cost optimization (FR-13).
+- Add observability for logs, metrics, tracing, crash analytics, AI latency, token usage, and cost dashboard (NFR-9).
+- **Exit:** the system is measurable, tunable, and provider-portable.
 
-### Phase 7 — Polish, Observability & Beta
+### Phase 7 — Privacy + Reality Timeline + Beta
 
-- Adaptive tone over time (FR-7.3); accessibility pass — screen reader, dynamic fonts, captions (NFR-6).
-- PostHog analytics on engagement/mode usage/outcomes + feature-flagged persona A/B (NFR-9, NFR-10).
-- Cost caps/caching for LLM/STT/TTS to stay in free tiers (NFR-8); offline cached history (NFR-2).
+- Add export data, delete data, delete memories, download conversations, consent management, and privacy settings (FR-14).
+- Build the Reality Timeline and timeline query interface (FR-15).
+- Complete accessibility, reliability, security, scalability, cost, and maintainability requirements (NFR-2 through NFR-12).
 - **Exit:** closed beta via TestFlight + Google Play internal testing.
 
 ### Suggested MVP cut line
 
-**Minimum lovable MVP = Phases 0–3** (auth, persona chat, voice loop, onboarding). Phases 4–6 are the retention + trust layer that should land before any public release; Phase 7 is launch-readiness.
+**Minimum lovable MVP = Phases 0–3** (foundation, identity/personas, conversation, memory + Reality Engine). Phases 4–7 create the retention layer and long-term moat: decision learning, proactive AI, analytics, provider routing, privacy controls, and Reality Timeline.
 
 ## 6. Key Assumptions & Open Items
 
-- Cloud AI APIs are acceptable for sending conversation data (covered by consent in FR-8.4 / NFR-5).
+- Cloud AI APIs are acceptable for sending conversation data when the user has consented (covered by FR-14 / NFR-5).
 - MVP language is single (e.g., English); multi-language is future (NFR-11).
-- "Roast/brutal" tone is bounded by safety policy (FR-9) — this is the highest-risk area and needs explicit policy definition.
+- Aggressive personas such as Brutal Coach are bounded by safety policy, user controls, and privacy settings.
 - Specific AI vendors, pricing, and exact latency budgets to be finalized during technical design (out of scope for this requirements doc).
