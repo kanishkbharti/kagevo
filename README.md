@@ -16,6 +16,11 @@ open index.html
 - P0 settings (notifications, crisis safety, privacy)
 - Static gallery of all screens
 
-## Stack
+## Docs
+
+- [PRD](./docs/PRD.md) — functional & non-functional requirements, phased roadmap
+- [Tech stack](./docs/TECH_STACK.md) — free-tier AI providers, full JS/TS architecture
+
+## Stack (prototype)
 
 HTML · CSS · vanilla JS · Google Fonts (Inter, JetBrains Mono)
