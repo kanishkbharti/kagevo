@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KAGEVO — 影 / assign your kage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Reggae+One&family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper:#f1ebdd;        /* warm newsprint */
+  --paper-2:#e7dfcc;      /* screentone base */
+  --ink:#15120d;          /* warm near-black ink */
+  --ink-2:#464034;        /* secondary ink */
+  --ink-3:#8a8175;        /* faint ink */
+  --red:#dd3324;          /* vermilion — the one accent */
+  --red-deep:#a82418;
+  --line:#15120d;
+  --display:'Anton',Impact,sans-serif;
+  --sfx:'Reggae One',system-ui,sans-serif;
+  --brush:'Yuji Syuku',serif;
+  --ui:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--ui);background:var(--paper);color:var(--ink);line-height:1.5;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+/* paper grain + faint halftone, fixed */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+img,svg{display:block;max-width:100%}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+a{color:inherit;text-decoration:none}
+
+.wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:34px 24px 110px}
+
+/* ── shared manga utilities ── */
+.tone{background-image:radial-gradient(var(--ink) 1.1px,transparent 1.4px);background-size:5px 5px}
+.panel{background:var(--paper);border:2.5px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
+.kicker{font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.34em;text-transform:uppercase}
+.jp{font-family:var(--ui);font-weight:500}
+.brush{font-family:var(--brush)}
+
+/* burst star stamp */
+.burst{
+  --r:#fff;display:inline-grid;place-items:center;text-align:center;
+  background:var(--red);color:var(--paper);font-family:var(--display);
+  clip-path:polygon(50% 0,61% 12%,76% 6%,78% 23%,94% 24%,88% 40%,100% 50%,88% 60%,94% 76%,78% 77%,76% 94%,61% 88%,50% 100%,39% 88%,24% 94%,22% 77%,6% 76%,12% 60%,0 50%,12% 40%,6% 24%,22% 23%,24% 6%,39% 12%);
+}
+
+/* ════════ HERO / MANGA COVER ════════ */
+.cover{position:relative;border:3px solid var(--ink);background:var(--paper);overflow:hidden;
+  box-shadow:9px 9px 0 var(--ink);margin-bottom:64px;display:grid;grid-template-columns:1.15fr .85fr}
+.cover .left{padding:40px 38px 36px;position:relative;z-index:2}
+.cover .corner{position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 46px 46px 0;border-color:transparent var(--paper) transparent transparent;z-index:5}
+.cover .corner::after{content:"";position:absolute;top:0;right:-46px;border-style:solid;border-width:0 46px 46px 0;border-color:transparent transparent transparent var(--ink);opacity:.18}
+.cover .tagrow{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.brandmark{display:flex;align-items:center;gap:10px}
+.brandmark .sq{width:34px;height:34px;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-family:var(--brush);font-size:22px;line-height:1}
+.brandmark b{font-family:var(--display);font-size:22px;letter-spacing:.04em}
+.brandmark .kana{font-size:11px;letter-spacing:.3em;color:var(--ink-2);font-weight:700}
+.issue{margin-left:auto;font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.2em;border:2px solid var(--ink);padding:5px 10px}
+.cover h1{font-family:var(--display);font-size:clamp(46px,7vw,104px);line-height:.92;letter-spacing:.01em;text-transform:uppercase}
+.cover h1 .red{color:var(--red);-webkit-text-stroke:2px var(--ink)}
+.cover .sub{margin-top:20px;max-width:42ch;font-size:16px;line-height:1.7;color:var(--ink-2);font-weight:500}
+.cover .sub b{color:var(--ink);background:linear-gradient(transparent 62%,rgba(221,51,36,.32) 62%)}
+.cover .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.ink-btn{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:var(--paper);
+  font-weight:700;font-size:14px;letter-spacing:.02em;padding:13px 22px;border:2.5px solid var(--ink);
+  box-shadow:4px 4px 0 var(--red);transition:transform .08s ease,box-shadow .08s ease}
+.ink-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--red)}
+.ink-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--red)}
+.ink-btn.ghost{background:var(--paper);color:var(--ink);box-shadow:4px 4px 0 var(--ink)}
+.ink-btn.ghost:hover{box-shadow:6px 6px 0 var(--ink)}
+
+/* cover right — the kage portrait panel with speed lines */
+.cover .right{position:relative;border-left:3px solid var(--ink);background:var(--paper-2);overflow:hidden;min-height:420px}
+.speed{position:absolute;inset:-20%;
+  background:repeating-conic-gradient(from 0deg at 52% 46%,var(--ink) 0deg .55deg,transparent .55deg 3.6deg);
+  -webkit-mask:radial-gradient(circle at 52% 46%,transparent 78px,#000 150px);
+  mask:radial-gradient(circle at 52% 46%,transparent 78px,#000 150px);opacity:.9}
+.kage-hero{position:absolute;inset:0;display:grid;place-items:center}
+.kage-hero .disc{width:230px;height:230px;border-radius:50%;background:var(--paper);border:3px solid var(--ink);
+  display:grid;place-items:center;position:relative;box-shadow:6px 6px 0 var(--ink)}
+.kage-hero .disc::before{content:"";position:absolute;inset:14px;border-radius:50%;
+  background-image:radial-gradient(var(--ink) 1.4px,transparent 1.7px);background-size:7px 7px;opacity:.16}
+.kage-face{width:150px;height:170px;color:var(--ink)}
+.kage-face .eye{fill:var(--red)}
+.cover .right .word{position:absolute;font-family:var(--brush);color:var(--ink);opacity:.10;font-size:330px;line-height:1;right:-30px;bottom:-90px;z-index:0}
+.sfx{position:absolute;font-family:var(--sfx);color:var(--red);-webkit-text-stroke:2px var(--ink);
+  text-stroke:2px var(--ink);transform:rotate(-8deg);z-index:4;line-height:.9}
+
+/* ════════ section chrome ════════ */
+.chapter{display:flex;align-items:center;gap:16px;margin:0 0 26px}
+.chapter .no{font-family:var(--display);font-size:13px;letter-spacing:.06em;background:var(--ink);color:var(--paper);padding:6px 11px}
+.chapter h2{font-family:var(--display);font-size:clamp(26px,3.4vw,42px);letter-spacing:.02em;text-transform:uppercase;line-height:1}
+.chapter .jp{margin-left:auto;font-weight:700;color:var(--ink-2);letter-spacing:.24em;font-size:12px}
+.chapter .rule{height:3px;background:var(--ink);flex:1;min-width:24px}
+
+/* ════════ phone (manga object) ════════ */
+.spread{display:flex;flex-wrap:wrap;gap:54px 44px;justify-content:center;align-items:flex-start}
+.unit{display:flex;flex-direction:column;align-items:center;gap:18px;width:330px}
+.phone{width:330px;height:706px;background:var(--ink);border-radius:40px;padding:9px;
+  box-shadow:8px 8px 0 var(--ink);position:relative}
+.phone .nub{position:absolute;top:20px;left:50%;transform:translateX(-50%);width:96px;height:7px;border-radius:6px;background:#000;z-index:30}
+.screen{width:100%;height:100%;border-radius:33px;overflow:hidden;background:var(--paper);position:relative;
+  display:flex;flex-direction:column;border:2px solid var(--ink)}
+.scroll{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.cap{text-align:center}
+.cap .pg{font-family:var(--display);font-size:12px;letter-spacing:.16em;color:var(--ink-2)}
+.cap h3{font-family:var(--display);font-size:19px;letter-spacing:.03em;text-transform:uppercase;margin-top:2px}
+.cap span{display:block;font-size:12.5px;color:var(--ink-2);margin-top:3px;font-weight:500}
+
+/* status bar */
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:13px 20px 8px;font-weight:700;font-size:12px;letter-spacing:.04em;flex-shrink:0;border-bottom:2px solid var(--ink)}
+.sbar .r{display:flex;gap:7px;align-items:center;font-family:var(--display);letter-spacing:.1em}
+
+/* app top */
+.atop{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;flex-shrink:0}
+.atop .who{display:flex;align-items:center;gap:9px}
+.av{width:38px;height:38px;border-radius:50%;background:var(--ink);display:grid;place-items:center;flex-shrink:0;position:relative;overflow:hidden}
+.av svg{width:26px;height:30px;color:var(--paper)}
+.av .eye{fill:var(--red)}
+.atop .who .nm b{font-family:var(--display);font-size:15px;letter-spacing:.03em;display:block;line-height:1}
+.atop .who .nm span{font-size:10px;letter-spacing:.2em;font-weight:700;color:var(--ink-2)}
+.icbtn{width:34px;height:34px;border:2px solid var(--ink);display:grid;place-items:center;background:var(--paper)}
+.icbtn svg{width:17px;height:17px}
+
+/* big page headline inside app */
+.ph-head{padding:6px 18px 4px}
+.ph-head .lead{font-family:var(--display);font-size:30px;line-height:.96;letter-spacing:.02em;text-transform:uppercase}
+.ph-head .lead em{font-style:normal;color:var(--red);-webkit-text-stroke:1.5px var(--ink)}
+.ph-head .day{font-size:12px;color:var(--ink-2);font-weight:700;margin-top:7px;letter-spacing:.02em}
+
+/* ink speech bubble (nudge) */
+.say{position:relative;margin:14px 18px;background:var(--paper);border:2.5px solid var(--ink);
+  border-radius:16px;padding:14px 15px 15px;box-shadow:4px 4px 0 var(--ink)}
+.say::after{content:"";position:absolute;left:30px;bottom:-13px;width:20px;height:20px;background:var(--paper);
+  border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);transform:rotate(45deg)}
+.say.shout{border-radius:6px;clip-path:polygon(0 8%,4% 0,20% 6%,33% 0,48% 6%,62% 0,78% 7%,92% 0,98% 9%,100% 26%,96% 42%,100% 60%,97% 78%,100% 94%,86% 90%,72% 100%,56% 92%,42% 100%,28% 92%,14% 100%,3% 90%,0 74%,4% 56%,0 40%,3% 22%);box-shadow:none;padding:18px 18px}
+.say.shout::after{display:none}
+.say .from{display:flex;align-items:center;gap:7px;font-weight:700;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.say .from i{width:7px;height:7px;background:var(--red);display:inline-block}
+.say p{font-size:14.5px;line-height:1.5;margin-top:8px;font-weight:500}
+.say p b{background:linear-gradient(transparent 60%,rgba(221,51,36,.34) 60%)}
+.say .acts{display:flex;gap:8px;margin-top:13px}
+.chip-btn{font-weight:700;font-size:12px;padding:8px 13px;border:2px solid var(--ink);background:var(--paper)}
+.chip-btn.fill{background:var(--ink);color:var(--paper)}
+.sfx-bg{position:absolute;right:8px;top:-10px;font-family:var(--sfx);font-size:30px;color:var(--ink);opacity:.16;transform:rotate(6deg);letter-spacing:-.04em;pointer-events:none}
+
+/* section label */
+.slab{display:flex;align-items:center;gap:9px;padding:6px 18px 8px;margin-top:6px}
+.slab b{font-family:var(--display);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.slab .ln{flex:1;height:2px;background:var(--ink)}
+.slab .jp{font-size:10px;font-weight:700;color:var(--ink-2);letter-spacing:.16em}
+
+/* task list */
+.tasks{padding:0 18px}
+.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:2px solid var(--ink)}
+.task:last-child{border-bottom:none}
+.box{width:26px;height:26px;border:2.5px solid var(--ink);flex-shrink:0;display:grid;place-items:center;background:var(--paper)}
+.box.done{background:var(--ink);color:var(--paper)}
+.box.done svg{width:15px;height:15px}
+.box.miss{border-color:var(--red);color:var(--red);font-family:var(--display);font-size:16px}
+.task .t{flex:1;min-width:0}
+.task .t h4{font-size:14.5px;font-weight:700;letter-spacing:.01em;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.task .t .meta{font-size:11.5px;color:var(--ink-2);margin-top:2px;font-weight:500}
+.task .t .meta.bad{color:var(--red);font-weight:700}
+.flag{font-family:var(--display);font-size:9px;letter-spacing:.08em;padding:2px 7px;background:var(--ink);color:var(--paper)}
+.flag.red{background:var(--red)}
+.logbtn{font-family:var(--display);font-size:12px;letter-spacing:.04em;padding:7px 13px;background:var(--red);color:var(--paper);box-shadow:3px 3px 0 var(--ink);flex-shrink:0}
+
+/* streak stamp row */
+.stamp-row{display:flex;gap:12px;padding:14px 18px}
+.stamp{flex:1;border:2.5px solid var(--ink);padding:12px;text-align:center;position:relative;background:var(--paper);box-shadow:4px 4px 0 var(--ink)}
+.stamp .n{font-family:var(--display);font-size:30px;line-height:.9;color:var(--red);-webkit-text-stroke:1.5px var(--ink)}
+.stamp .l{font-size:9px;letter-spacing:.18em;font-weight:700;text-transform:uppercase;margin-top:5px;color:var(--ink-2)}
+
+/* dock */
+.dock{display:flex;justify-content:space-around;align-items:center;padding:11px 14px 18px;border-top:2.5px solid var(--ink);flex-shrink:0;background:var(--paper)}
+.dock a{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--display);font-size:9px;letter-spacing:.08em;color:var(--ink-3)}
+.dock a.on{color:var(--ink)}
+.dock svg{width:21px;height:21px}
+.dock .mic{width:52px;height:52px;border-radius:50%;background:var(--red);border:2.5px solid var(--ink);display:grid;place-items:center;color:var(--paper);margin-top:-22px;box-shadow:4px 4px 0 var(--ink)}
+
+/* ════════ ROSTER (assign your kage) ════════ */
+.kage-card{margin:0 18px 12px;border:2.5px solid var(--ink);background:var(--paper);box-shadow:4px 4px 0 var(--ink);
+  display:flex;gap:0;overflow:hidden}
+.kage-card.sel{box-shadow:4px 4px 0 var(--red);border-color:var(--ink)}
+.kage-card .port{width:88px;flex-shrink:0;background:var(--paper-2);border-right:2.5px solid var(--ink);position:relative;display:grid;place-items:center}
+.kage-card .port::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--ink) 1.1px,transparent 1.4px);background-size:6px 6px;opacity:.14}
+.kage-card .port svg{width:52px;height:60px;color:var(--ink);position:relative;z-index:1}
+.kage-card .port .eye{fill:var(--red)}
+.kage-card .info{flex:1;padding:11px 13px;min-width:0}
+.kage-card .info .top{display:flex;align-items:baseline;gap:8px}
+.kage-card .info .top b{font-family:var(--display);font-size:18px;letter-spacing:.03em}
+.kage-card .info .top .kana{font-size:10px;font-weight:700;color:var(--ink-2);letter-spacing:.1em}
+.kage-card .info .arch{font-family:var(--display);font-size:10px;letter-spacing:.12em;color:var(--red);margin-top:1px}
+.kage-card .info .ab{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+.kage-card .info .ab i{font-style:normal;font-weight:700;font-size:9px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--ink);padding:2px 6px}
+.kage-card .info .pw{display:flex;align-items:center;gap:7px;margin-top:9px}
+.kage-card .info .pw .lab{font-family:var(--display);font-size:9px;letter-spacing:.08em;color:var(--ink-2)}
+.kage-card .info .pw .meter{flex:1;height:9px;border:2px solid var(--ink);background:var(--paper);display:flex;overflow:hidden}
+.kage-card .info .pw .meter i{display:block;height:100%;background:var(--red)}
+.kage-card .info .pw .meter.tone i{background-image:repeating-linear-gradient(45deg,var(--ink) 0 2px,transparent 2px 5px),linear-gradient(var(--red),var(--red));background-blend-mode:normal}
+.kage-card .info .pw b{font-family:var(--display);font-size:12px}
+
+/* ════════ VOICE ════════ */
+.voice{position:relative;flex:1;display:flex;flex-direction:column;background:var(--paper-2)}
+.voice .stage{flex:1;position:relative;overflow:hidden;border-bottom:2.5px solid var(--ink)}
+.voice .stage .speed{-webkit-mask:radial-gradient(circle at 50% 42%,transparent 70px,#000 130px);mask:radial-gradient(circle at 50% 42%,transparent 70px,#000 130px);opacity:.8}
+.voice .moon{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);width:150px;height:150px;border-radius:50%;
+  background:var(--paper);border:3px solid var(--ink);display:grid;place-items:center;box-shadow:5px 5px 0 var(--ink)}
+.voice .moon::before{content:"";position:absolute;inset:12px;border-radius:50%;background-image:radial-gradient(var(--ink) 1.3px,transparent 1.6px);background-size:7px 7px;opacity:.15}
+.voice .moon svg{width:96px;height:110px;color:var(--ink);position:relative;z-index:1}
+.voice .moon .eye{fill:var(--red)}
+.voice .vtag{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-family:var(--display);font-size:12px;letter-spacing:.1em;background:var(--ink);color:var(--paper);padding:6px 14px;z-index:5;white-space:nowrap}
+.voice .vtag i{color:var(--red)}
+.voice .sfx{top:24px;right:20px;font-size:34px}
+.voice .wave{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:flex-end;gap:4px;height:40px;z-index:5}
+.voice .wave span{width:5px;background:var(--ink);animation:wv 1s ease-in-out infinite}
+@keyframes wv{0%,100%{height:7px}50%{height:36px}}
+.voice .said{margin:0;border:none;border-radius:0}
+.shout-wrap{padding:14px 16px;background:var(--paper)}
+.shout{position:relative;background:var(--paper);border:3px solid var(--ink);padding:16px 16px}
+.shout .from{display:flex;align-items:center;gap:7px;font-weight:700;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.shout .from i{width:7px;height:7px;background:var(--red);display:inline-block}
+.shout p{font-size:15.5px;line-height:1.45;margin-top:8px;font-weight:700}
+.shout p u{text-decoration:none;background:linear-gradient(transparent 58%,rgba(221,51,36,.4) 58%)}
+.vctrl{display:flex;align-items:center;justify-content:center;gap:16px;padding:14px 18px 22px;flex-shrink:0;background:var(--paper);border-top:2.5px solid var(--ink)}
+.vc{width:50px;height:50px;border:2.5px solid var(--ink);display:grid;place-items:center;background:var(--paper)}
+.vc svg{width:20px;height:20px}
+.vc.end{width:62px;height:62px;border-radius:50%;background:var(--red);color:var(--paper);box-shadow:4px 4px 0 var(--ink)}
+
+/* ════════ REALITY = STATUS WINDOW ════════ */
+.status{padding:14px 18px;flex:1;overflow:hidden}
+.rank-head{display:flex;align-items:center;gap:14px;border:2.5px solid var(--ink);padding:12px;background:var(--paper-2);box-shadow:4px 4px 0 var(--ink);position:relative;overflow:hidden}
+.rank-head::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--ink) 1px,transparent 1.3px);background-size:6px 6px;opacity:.1}
+.rank-badge{width:64px;height:64px;flex-shrink:0;background:var(--red);color:var(--paper);display:grid;place-items:center;border:2.5px solid var(--ink);position:relative;z-index:1}
+.rank-badge b{font-family:var(--display);font-size:38px;line-height:1}
+.rank-head .rh{position:relative;z-index:1}
+.rank-head .rh .k{font-family:var(--display);font-size:11px;letter-spacing:.12em;color:var(--ink-2)}
+.rank-head .rh h4{font-family:var(--display);font-size:22px;letter-spacing:.02em;line-height:1;margin-top:2px}
+.rank-head .rh .jp{font-size:11px;font-weight:700;color:var(--ink-2);margin-top:5px;letter-spacing:.1em}
+.stat{margin-top:14px}
+.stat .row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.stat .row .nm{font-family:var(--display);font-size:12px;letter-spacing:.06em}
+.stat .row .vl{font-family:var(--display);font-size:13px}
+.stat .row .vl em{font-style:normal;color:var(--red)}
+.gauge{height:13px;border:2.5px solid var(--ink);background:var(--paper);display:flex;overflow:hidden;position:relative}
+.gauge i{display:block;height:100%;background:var(--ink)}
+.gauge.red i{background:var(--red)}
+.gauge.hatch i{background-image:repeating-linear-gradient(45deg,var(--ink) 0 3px,transparent 3px 7px)}
+.verdict{margin-top:14px;border:2.5px solid var(--ink);border-left-width:7px;padding:12px 14px;background:var(--paper)}
+.verdict .from{font-weight:700;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.verdict p{font-size:13.5px;line-height:1.5;margin-top:6px;font-weight:500}
+.sample{display:inline-block;font-family:var(--display);font-size:9px;letter-spacing:.1em;border:2px solid var(--ink);padding:3px 7px;margin-left:auto}
+
+/* footer */
+.foot{margin-top:78px;border-top:3px solid var(--ink);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;
+  font-family:var(--display);font-size:12px;letter-spacing:.1em;color:var(--ink-2)}
+.foot .l2{font-family:var(--ui);font-weight:500;letter-spacing:0;font-size:12px}
+
+@media(max-width:720px){
+  .cover{grid-template-columns:1fr}.cover .right{border-left:none;border-top:3px solid var(--ink);min-height:340px}
+  .phone{transform:scale(.94)}
+  .wrap{padding:24px 14px 80px}
+}
+</style>
+</head>
+<body>
+<!-- reusable kage (shadow) face: hooded silhouette, one vermilion eye -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="kage" viewBox="0 0 120 140">
+    <path fill="currentColor" d="M60 6c-26 0-44 19-44 47 0 14 5 23 5 36 0 16-9 22-9 33 0 8 7 12 18 12h60c11 0 18-4 18-12 0-11-9-17-9-33 0-13 5-22 5-36 0-28-18-47-44-47Z"/>
+    <ellipse class="eye" cx="60" cy="62" rx="17" ry="9" transform="rotate(-9 60 62)"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+
+  <!-- ═══════════ COVER ═══════════ -->
+  <section class="cover">
+    <div class="corner"></div>
+    <div class="left">
+      <div class="tagrow">
+        <div class="brandmark">
+          <span class="sq brush">影</span>
+          <div>
+            <b>KAGEVO</b>
+            <div class="kana">カゲヴォ</div>
+          </div>
+        </div>
+        <span class="issue">VOL.02 · かげ</span>
+      </div>
+      <h1>ASSIGN<br/>YOUR <span class="red">KAGE.</span></h1>
+      <p class="sub">Your <b>kage</b> is a shadow-self that talks back — brutally honest, relentless, or kind when you need it. It tracks every promise you make and <b>compares it to what you actually did</b>.</p>
+      <div class="cta">
+        <button class="ink-btn">Forge your kage →</button>
+        <button class="ink-btn ghost">Assign a preset</button>
+      </div>
+    </div>
+    <div class="right">
+      <div class="word brush">影</div>
+      <div class="speed"></div>
+      <div class="kage-hero">
+        <div class="disc">
+          <svg class="kage-face" viewBox="0 0 120 140"><use href="#kage"/></svg>
+        </div>
+      </div>
+      <div class="sfx" style="bottom:20px;left:18px;font-size:30px">ドクン</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CHAPTER 01 — ROSTER ═══════════ -->
+  <div class="chapter">
+    <span class="no">01</span>
+    <h2>Choose your shadow</h2>
+    <span class="rule"></span>
+    <span class="jp">影を選べ</span>
+  </div>
+
+  <div class="spread">
+
+    <!-- ROSTER -->
+    <div class="unit">
+      <div class="phone"><div class="nub"></div>
+        <div class="screen">
+          <div class="sbar"><span>9:12</span><span class="r">影 KAGEVO</span></div>
+          <div class="ph-head" style="padding-top:14px">
+            <div class="lead">PICK YOUR <em>KAGE</em></div>
+            <div class="day">4 archetypes · tune tone &amp; intensity after</div>
+          </div>
+          <div class="scroll" style="padding-top:10px;overflow:hidden">
+            <div class="kage-card sel">
+              <div class="port"><svg viewBox="0 0 120 140"><use href="#kage"/></svg></div>
+              <div class="info">
+                <div class="top"><b>NOVA</b><span class="kana">ノヴァ</span></div>
+                <div class="arch">THE RIVAL</div>
+                <div class="ab"><i>Roast</i><i>Brutal</i></div>
+                <div class="pw"><span class="lab">PWR</span><span class="meter"><i style="width:82%"></i></span><b>8</b></div>
+              </div>
+            </div>
+            <div class="kage-card">
+              <div class="port"><svg viewBox="0 0 120 140"><use href="#kage"/></svg></div>
+              <div class="info">
+                <div class="top"><b>ZEN</b><span class="kana">ゼン</span></div>
+                <div class="arch">THE MONK</div>
+                <div class="ab"><i>Support</i><i>Motivate</i></div>
+                <div class="pw"><span class="lab">PWR</span><span class="meter"><i style="width:40%"></i></span><b>4</b></div>
+              </div>
+            </div>
+            <div class="kage-card">
+              <div class="port"><svg viewBox="0 0 120 140"><use href="#kage"/></svg></div>
+              <div class="info">
+                <div class="top"><b>ONI</b><span class="kana">オニ</span></div>
+                <div class="arch">THE DRILL</div>
+                <div class="ab"><i>Brutal</i><i>Roast</i></div>
+                <div class="pw"><span class="lab">PWR</span><span class="meter"><i style="width:96%"></i></span><b>9</b></div>
+              </div>
+            </div>
+            <div class="kage-card">
+              <div class="port"><svg viewBox="0 0 120 140"><use href="#kage"/></svg></div>
+              <div class="info">
+                <div class="top"><b>HIKARI</b><span class="kana">ヒカリ</span></div>
+                <div class="arch">THE LIGHT</div>
+                <div class="ab"><i>Motivate</i><i>Support</i></div>
+                <div class="pw"><span class="lab">PWR</span><span class="meter"><i style="width:58%"></i></span><b>6</b></div>
+              </div>
+            </div>
+          </div>
+          <div class="dock" style="border-top-width:2.5px">
+            <button class="ink-btn" style="width:100%;justify-content:center;box-shadow:4px 4px 0 var(--red)">Assign NOVA →</button>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><div class="pg">PAGE 01</div><h3>Kage Roster</h3><span>Archetypes · abilities · power level</span></div>
+    </div>
+
+    <!-- HOME -->
+    <div class="unit">
+      <div class="phone"><div class="nub"></div>
+        <div class="screen">
+          <div class="sbar"><span>9:41</span><span class="r">影 KAGEVO</span></div>
+          <div class="atop">
+            <div class="who">
+              <span class="av"><svg viewBox="0 0 120 140"><use href="#kage"/></svg></span>
+              <div class="nm"><b>NOVA</b><span>ROAST · LV.7</span></div>
+            </div>
+            <button class="icbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>
+          </div>
+          <div class="ph-head">
+            <div class="lead">MORNING,<br/><em>KANISHK.</em></div>
+            <div class="day">DAY 14 · not lying to yourself</div>
+          </div>
+          <div class="say">
+            <div class="sfx-bg sfx" style="position:absolute">ゴゴゴ</div>
+            <div class="from"><i></i> NOVA · proactive</div>
+            <p>You snoozed the 6AM run <b>twice</b> this week. Move the alarm or stop calling yourself a runner.</p>
+            <div class="acts"><button class="chip-btn fill">Reply by voice</button><button class="chip-btn">Snooze</button></div>
+          </div>
+          <div class="slab"><b>Today</b><span class="ln"></span><span class="jp">本日のタスク</span></div>
+          <div class="tasks">
+            <div class="task">
+              <div class="box"></div>
+              <div class="t"><h4><span class="flag">MAIN</span> Ship demo deck</h4><div class="meta">Due 6 PM · 45 min block</div></div>
+              <button class="logbtn">LOG</button>
+            </div>
+            <div class="task">
+              <div class="box miss">✕</div>
+              <div class="t"><h4><span class="flag red">MISS</span> 6AM deep-work run</h4><div class="meta bad">Window closed · 8 AM</div></div>
+            </div>
+            <div class="task">
+              <div class="box done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></div>
+              <div class="t"><h4>MVP auth slice</h4><div class="meta">Logged · Sun deadline</div></div>
+            </div>
+          </div>
+          <div class="stamp-row">
+            <div class="stamp"><div class="n">14</div><div class="l">Day streak</div></div>
+            <div class="stamp"><div class="n">86<span style="font-size:16px">%</span></div><div class="l">Logged</div></div>
+          </div>
+          <div class="dock">
+            <a class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>HOME</a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>CHAT</a>
+            <a><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span></a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>QUEST</a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>YOU</a>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><div class="pg">PAGE 02</div><h3>Home / Today</h3><span>Nudge · tasks · streak stamps</span></div>
+    </div>
+
+    <!-- VOICE -->
+    <div class="unit">
+      <div class="phone"><div class="nub"></div>
+        <div class="screen">
+          <div class="sbar"><span>9:42</span><span class="r">影 LIVE</span></div>
+          <div class="voice">
+            <div class="stage">
+              <div class="speed"></div>
+              <div class="vtag"><i>●</i> ROAST · INTENSITY 7</div>
+              <div class="sfx">ザワ…</div>
+              <div class="moon"><svg viewBox="0 0 120 140"><use href="#kage"/></svg></div>
+              <div class="wave">
+                <span style="animation-delay:0s"></span><span style="animation-delay:.12s"></span><span style="animation-delay:.26s"></span><span style="animation-delay:.16s"></span><span style="animation-delay:.34s"></span><span style="animation-delay:.06s"></span><span style="animation-delay:.3s"></span><span style="animation-delay:.2s"></span><span style="animation-delay:.4s"></span><span style="animation-delay:.1s"></span><span style="animation-delay:.28s"></span>
+              </div>
+            </div>
+            <div class="shout-wrap">
+              <div class="shout">
+                <div class="from"><i></i> NOVA · roast</div>
+                <p>Skipped the run AND skipped the excuse this time — <u>efficiency!</u> Three days, zero kilometres. Lace up or change the goal, champ.</p>
+              </div>
+            </div>
+            <div class="vctrl">
+              <button class="vc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="7" y="7" width="10" height="10"/></svg></button>
+              <button class="vc end"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.46l-5.27-.61-2.52 2.52a15.05 15.05 0 0 1-6.59-6.59l2.53-2.53L8.54 3H3.03A18 18 0 0 0 21 20.97z"/></svg></button>
+              <button class="vc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><div class="pg">PAGE 03</div><h3>Voice / The Kage Speaks</h3><span>Speed lines · shout bubble · barge-in</span></div>
+    </div>
+
+    <!-- REALITY / STATUS -->
+    <div class="unit">
+      <div class="phone"><div class="nub"></div>
+        <div class="screen">
+          <div class="sbar"><span>9:44</span><span class="r">影 STATUS</span></div>
+          <div class="ph-head" style="padding-top:14px">
+            <div class="lead">REALITY <em>ENGINE</em></div>
+            <div class="day">Promises vs. actions · last 7 days</div>
+          </div>
+          <div class="status">
+            <div class="rank-head">
+              <div class="rank-badge"><b>C</b></div>
+              <div class="rh">
+                <div class="k">OVERALL RANK</div>
+                <h4>HONEST-ISH</h4>
+                <div class="jp">growth ↑ · trending up</div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="row"><span class="nm">PROMISE ACCURACY</span><span class="vl"><em>64</em>/100 · C</span></div>
+              <div class="gauge hatch"><i style="width:64%"></i></div>
+            </div>
+            <div class="stat">
+              <div class="row"><span class="nm">EXECUTION RATE</span><span class="vl"><em>58</em>/100 · C</span></div>
+              <div class="gauge"><i style="width:58%"></i></div>
+            </div>
+            <div class="stat">
+              <div class="row"><span class="nm">CONSISTENCY</span><span class="vl"><em>71</em>/100 · B</span></div>
+              <div class="gauge"><i style="width:71%"></i></div>
+            </div>
+            <div class="stat">
+              <div class="row"><span class="nm">ACCOUNTABILITY</span><span class="vl"><em>66</em>/100 · B−</span></div>
+              <div class="gauge red"><i style="width:66%"></i></div>
+            </div>
+            <div class="verdict">
+              <div class="from">NOVA · the verdict</div>
+              <p>Goal said lose 5kg. Reality says 1kg. Every skip landed on a Saturday — your weekend self is writing cheques your weekday self won't cash.</p>
+            </div>
+          </div>
+          <div class="slab" style="padding-bottom:14px"><b>Sample data</b><span class="ln"></span><span class="sample">DEMO</span></div>
+        </div>
+      </div>
+      <div class="cap"><div class="pg">PAGE 04</div><h3>Reality Engine</h3><span>Stat window · ranks · the verdict</span></div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <span>影 KAGEVO · カゲヴォ · VOL.02</span>
+    <span class="l2">Concept UI — not a medical or mental-health service.</span>
+    <span>kagevo.app</span>
+  </div>
+
+</div>
+</body>
+</html>

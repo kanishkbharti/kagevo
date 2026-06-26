@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KAGEVO — 影 / assign your kage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Reggae+One&family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper:#f1ebdd; --paper-2:#e7dfcc; --paper-3:#ded4bd;
+  --ink:#15120d; --ink-2:#464034; --ink-3:#8a8175;
+  --red:#dd3324; --red-deep:#a82418;
+  /* legacy aliases so inline var() in JS/markup still resolve, mapped to manga */
+  --bg:var(--paper); --bg-2:#efe8d7; --panel:#f7f1e3; --panel-2:#ece4d1;
+  --line:#15120d; --line-2:#15120d; --muted:#5a5246; --faint:#8a8175;
+  --roast:var(--red); --brutal:var(--ink); --motiv:var(--ink); --support:var(--ink-2);
+  --display:'Anton',Impact,sans-serif; --sfx:'Reggae One',system-ui,sans-serif;
+  --brush:'Yuji Syuku',serif; --ui:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN',system-ui,sans-serif;
+  --sans:var(--ui); --mono:'Anton',ui-monospace,monospace;
+  --r-sm:0px;--r-md:0px;--r-lg:0px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ui);background:var(--paper);color:var(--ink);line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+img,svg{display:block;max-width:100%}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+a{color:inherit;text-decoration:none}
+input,select,textarea{font:inherit}
+.wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:34px 24px 110px}
+
+/* ── utilities ── */
+.tone{background-image:radial-gradient(var(--ink) 1.1px,transparent 1.4px);background-size:5px 5px}
+.brush{font-family:var(--brush)}
+.ink-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--ink);color:var(--paper);
+  font-weight:700;font-size:14px;letter-spacing:.02em;padding:13px 22px;border:2.5px solid var(--ink);
+  box-shadow:4px 4px 0 var(--red);transition:transform .08s ease,box-shadow .08s ease}
+.ink-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--red)}
+.ink-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--red)}
+.ink-btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:4px 4px 0 var(--ink-3)}
+.ink-btn.ghost{background:var(--paper);color:var(--ink);box-shadow:4px 4px 0 var(--ink)}
+.ink-btn.ghost:hover{box-shadow:6px 6px 0 var(--ink)}
+
+/* ════════ COVER ════════ */
+.cover{position:relative;border:3px solid var(--ink);background:var(--paper);overflow:hidden;box-shadow:9px 9px 0 var(--ink);margin-bottom:60px;display:grid;grid-template-columns:1.15fr .85fr}
+.cover .left{padding:40px 38px 36px;position:relative;z-index:2}
+.cover .tagrow{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.brandmark{display:flex;align-items:center;gap:10px}
+.brandmark .sq{width:34px;height:34px;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-family:var(--brush);font-size:22px;line-height:1}
+.brandmark b{font-family:var(--display);font-size:22px;letter-spacing:.04em}
+.brandmark .kana{font-size:11px;letter-spacing:.3em;color:var(--ink-2);font-weight:700}
+.issue{margin-left:auto;font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.2em;border:2px solid var(--ink);padding:5px 10px}
+.cover h1{font-family:var(--display);font-size:clamp(46px,7vw,100px);line-height:.92;letter-spacing:.01em;text-transform:uppercase}
+.cover h1 .red{color:var(--red);-webkit-text-stroke:2px var(--ink)}
+.cover .sub{margin-top:20px;max-width:42ch;font-size:16px;line-height:1.7;color:var(--ink-2);font-weight:500}
+.cover .sub b{color:var(--ink);background:linear-gradient(transparent 62%,rgba(221,51,36,.32) 62%)}
+.cover .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.cover .right{position:relative;border-left:3px solid var(--ink);background:var(--paper-2);overflow:hidden;min-height:420px}
+.speed{position:absolute;inset:-20%;background:repeating-conic-gradient(from 0deg at 52% 46%,var(--ink) 0deg .55deg,transparent .55deg 3.6deg);-webkit-mask:radial-gradient(circle at 52% 46%,transparent 78px,#000 150px);mask:radial-gradient(circle at 52% 46%,transparent 78px,#000 150px);opacity:.9}
+.kage-hero{position:absolute;inset:0;display:grid;place-items:center}
+.kage-hero .disc{width:230px;height:230px;border-radius:50%;background:var(--paper);border:3px solid var(--ink);display:grid;place-items:center;position:relative;box-shadow:6px 6px 0 var(--ink)}
+.kage-hero .disc::before{content:"";position:absolute;inset:14px;border-radius:50%;background-image:radial-gradient(var(--ink) 1.4px,transparent 1.7px);background-size:7px 7px;opacity:.16}
+.kage-hero svg{width:150px;height:170px;color:var(--ink);position:relative;z-index:1}
+.kage-hero .eye{fill:var(--red)}
+.cover .right .word{position:absolute;font-family:var(--brush);color:var(--ink);opacity:.10;font-size:330px;line-height:1;right:-30px;bottom:-90px;z-index:0}
+.sfx{position:absolute;font-family:var(--sfx);color:var(--red);-webkit-text-stroke:2px var(--ink);transform:rotate(-8deg);z-index:4;line-height:.9}
+
+/* ════════ chapter / spread / phone ════════ */
+.chapter{display:flex;align-items:center;gap:16px;margin:54px 0 22px}
+.chapter .no{font-family:var(--display);font-size:13px;letter-spacing:.06em;background:var(--ink);color:var(--paper);padding:6px 11px}
+.chapter h2{font-family:var(--display);font-size:clamp(24px,3.2vw,40px);letter-spacing:.02em;text-transform:uppercase;line-height:1}
+.chapter .jp{margin-left:auto;font-weight:700;color:var(--ink-2);letter-spacing:.24em;font-size:12px}
+.chapter .rule{height:3px;background:var(--ink);flex:1;min-width:24px}
+.demo-banner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;border:2.5px solid var(--ink);border-left-width:7px;background:var(--paper);padding:16px 18px;box-shadow:4px 4px 0 var(--ink)}
+.demo-banner .tag{font-family:var(--display);font-size:11px;letter-spacing:.1em;color:var(--red)}
+.demo-banner h2{font-family:var(--display);font-size:20px;letter-spacing:.03em;text-transform:uppercase;margin-top:3px}
+.demo-banner p{font-size:13.5px;color:var(--ink-2);margin-top:5px;max-width:480px;font-weight:500}
+.mini-btn{font-weight:700;font-size:13px;padding:11px 18px;border:2.5px solid var(--ink);background:var(--paper);box-shadow:3px 3px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.mini-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.mini-btn.fill{background:var(--ink);color:var(--paper);box-shadow:3px 3px 0 var(--red)}
+.demo-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:8px}
+.demo-wrap .hint{font-family:var(--display);font-size:11px;letter-spacing:.1em;color:var(--ink-3);text-transform:uppercase}
+.spread{display:flex;flex-wrap:wrap;gap:54px 44px;justify-content:center;align-items:flex-start}
+.unit{display:flex;flex-direction:column;align-items:center;gap:18px;width:330px}
+.phone{width:330px;height:706px;background:var(--ink);border-radius:40px;padding:9px;box-shadow:8px 8px 0 var(--ink);position:relative}
+.island{position:absolute;top:20px;left:50%;transform:translateX(-50%);width:96px;height:26px;background:#000;border-radius:100px;z-index:30}
+.screen{width:100%;height:100%;border-radius:33px;overflow:hidden;background:var(--paper);position:relative;display:flex;flex-direction:column;border:2px solid var(--ink);font-size:14px}
+.screen::-webkit-scrollbar,.scroll::-webkit-scrollbar,.ob-body::-webkit-scrollbar,.add-body::-webkit-scrollbar,.settings-body::-webkit-scrollbar,.crisis-body::-webkit-scrollbar{display:none}
+.scroll{flex:1;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column}
+.cap{text-align:center}
+.cap .pg{font-family:var(--display);font-size:12px;letter-spacing:.16em;color:var(--ink-2)}
+.cap h3{font-family:var(--display);font-size:19px;letter-spacing:.03em;text-transform:uppercase;margin-top:2px}
+.cap span{display:block;font-size:12.5px;color:var(--ink-2);margin-top:3px;font-weight:500}
+
+/* status bar */
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:13px 20px 8px;font-weight:700;font-size:12px;letter-spacing:.04em;flex-shrink:0;border-bottom:2px solid var(--ink)}
+.statusbar .ico{font-family:var(--display);letter-spacing:.1em;font-size:11px;color:var(--ink-2)}
+
+/* kage marks / avatars */
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--ink);display:grid;place-items:center;flex-shrink:0;overflow:hidden}
+.avatar svg{width:24px;height:28px;color:var(--paper)}
+.avatar .eye{fill:var(--red)}
+.avatar.kage{background:var(--paper);border:2px solid var(--ink)}
+.avatar.kage svg{color:var(--ink)}
+.persona-tag{font-size:11px;color:var(--ink-2);display:flex;align-items:center;gap:7px;font-weight:600}
+.persona-tag b{color:var(--ink);font-weight:800}
+.meta-actions{display:flex;align-items:center;gap:9px}
+.greet{padding:14px 18px 8px;flex-shrink:0}
+.greet .meta{display:flex;align-items:center;justify-content:space-between}
+.greet h2{font-family:var(--display);font-size:24px;letter-spacing:.02em;text-transform:uppercase;margin-top:12px;line-height:.98}
+.greet h2 .soft{color:var(--red);-webkit-text-stroke:1px var(--ink)}
+.sec-label{font-family:var(--display);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:0 18px;margin:8px 0 8px;display:flex;justify-content:space-between;align-items:center}
+.sec-label a{color:var(--red)}
+.card{margin:0 18px 12px;background:var(--paper);border:2.5px solid var(--ink);padding:14px;box-shadow:4px 4px 0 var(--ink)}
+
+/* ════════ ONBOARDING ════════ */
+.onboard{display:flex;flex-direction:column;height:100%}
+.ob-top{padding:10px 20px 0;flex-shrink:0}
+.ob-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.ob-back{width:34px;height:34px;border:2px solid var(--ink);display:grid;place-items:center;font-size:18px;background:var(--paper)}
+.ob-back.hidden{visibility:hidden;pointer-events:none}
+.ob-skip{font-weight:700;font-size:12px;color:var(--ink-2);padding:8px;text-transform:uppercase;letter-spacing:.06em}
+.ob-progress{display:flex;gap:5px;margin-bottom:7px}
+.ob-progress span{flex:1;height:6px;background:var(--paper-2);border:2px solid var(--ink)}
+.ob-progress span.done{background:var(--ink)}
+.ob-progress span.active{background:var(--red)}
+.ob-step-label{font-family:var(--display);font-size:11px;letter-spacing:.1em;color:var(--ink-2)}
+.ob-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:10px 20px 12px;display:flex;flex-direction:column}
+.ob-body h2{font-family:var(--display);font-size:26px;letter-spacing:.02em;line-height:1.02;text-transform:uppercase;margin-bottom:10px}
+.ob-body .sub{font-size:13.5px;color:var(--ink-2);line-height:1.55;margin-bottom:18px;font-weight:500}
+.ob-options{display:flex;flex-direction:column;gap:10px}
+.ob-opt{display:flex;align-items:flex-start;gap:13px;padding:13px 14px;border:2.5px solid var(--ink);background:var(--paper);text-align:left;width:100%;box-shadow:3px 3px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.ob-opt:hover{transform:translate(-1px,-1px)}
+.ob-opt.sel{box-shadow:3px 3px 0 var(--red)}
+.ob-opt .ic{width:40px;height:40px;border:2px solid var(--ink);display:grid;place-items:center;font-family:var(--brush);font-size:20px;flex-shrink:0;background:var(--paper-2)}
+.ob-opt .txt h4{font-size:14.5px;font-weight:800;letter-spacing:.01em}
+.ob-opt .txt p{font-size:12.5px;color:var(--ink-2);margin-top:3px;line-height:1.45;font-weight:500}
+.ob-opt.multi .check{margin-left:auto;width:24px;height:24px;border:2.5px solid var(--ink);flex-shrink:0;margin-top:2px;display:grid;place-items:center;font-family:var(--display);font-size:14px;background:var(--paper)}
+.ob-opt.multi.sel .check{background:var(--ink);color:var(--paper)}
+.ob-input{width:100%;padding:13px 14px;border:2.5px solid var(--ink);background:var(--paper);color:var(--ink);font-size:16px;font-weight:700;outline:none}
+.ob-input::placeholder{color:var(--ink-3);font-weight:500}
+.ob-input:focus{box-shadow:3px 3px 0 var(--red)}
+.ob-foot{padding:12px 20px 24px;flex-shrink:0;border-top:2.5px solid var(--ink);background:var(--paper)}
+.ob-foot button{width:100%;padding:14px;background:var(--ink);color:var(--paper);font-family:var(--display);font-size:15px;letter-spacing:.04em;text-transform:uppercase;box-shadow:4px 4px 0 var(--red);transition:transform .08s,box-shadow .08s}
+.ob-foot button:hover:not(:disabled){transform:translate(-1px,-1px)}
+.ob-foot button:disabled{opacity:.4;cursor:not-allowed;box-shadow:4px 4px 0 var(--ink-3)}
+.ob-foot button.secondary{background:var(--paper);color:var(--ink);box-shadow:4px 4px 0 var(--ink);margin-top:10px}
+/* path / avatar / anime / summary */
+.path-grid{display:flex;flex-direction:column;gap:12px}
+.path-card{padding:18px;border:2.5px solid var(--ink);background:var(--paper);text-align:left;position:relative;width:100%;box-shadow:4px 4px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.path-card.sel{box-shadow:4px 4px 0 var(--red)}
+.path-card .badge{font-family:var(--display);font-size:10px;letter-spacing:.08em;padding:4px 8px;background:var(--ink);color:var(--paper);display:inline-block;margin-bottom:12px}
+.path-card h3{font-family:var(--display);font-size:19px;letter-spacing:.02em;text-transform:uppercase}
+.path-card p{font-size:13px;color:var(--ink-2);margin-top:6px;line-height:1.5;font-weight:500;max-width:90%}
+.path-card .arrow{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-family:var(--display);font-size:22px;color:var(--ink)}
+.av-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.av-item{aspect-ratio:1;border:2.5px solid var(--ink);background:var(--paper-2);display:grid;place-items:center;font-family:var(--brush);font-size:28px;color:var(--ink);cursor:pointer;position:relative;transition:transform .08s,box-shadow .08s}
+.av-item.sel{box-shadow:4px 4px 0 var(--red)}
+.av-item.sel::after{content:"";position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;background:var(--red)}
+.av-item svg{width:30px;height:34px;color:var(--ink)}
+.av-item .eye{fill:var(--red)}
+.av-preview{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:8px}
+.av-preview .big{width:96px;height:96px;border:3px solid var(--ink);background:var(--paper-2);display:grid;place-items:center;font-family:var(--brush);font-size:44px;color:var(--ink);box-shadow:5px 5px 0 var(--ink)}
+.av-preview .big svg{width:54px;height:62px;color:var(--ink)}
+.av-preview .big .eye{fill:var(--red)}
+.av-preview .name{font-family:var(--display);font-size:22px;letter-spacing:.03em;text-transform:uppercase}
+.av-preview .name span{color:var(--red);-webkit-text-stroke:1px var(--ink)}
+.anime-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.anime-card{padding:13px;border:2.5px solid var(--ink);background:var(--paper);text-align:left;position:relative;width:100%;box-shadow:4px 4px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.anime-card.sel{box-shadow:4px 4px 0 var(--red)}
+.anime-card .face{width:50px;height:50px;border:2.5px solid var(--ink);background:var(--paper-2);display:grid;place-items:center;font-family:var(--brush);font-size:26px;color:var(--ink);margin-bottom:10px}
+.anime-card h4{font-family:var(--display);font-size:15px;letter-spacing:.02em}
+.anime-card .show{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin-top:2px;font-weight:700}
+.anime-card .vibe{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.anime-card .vibe i{font-style:normal;font-weight:700;font-size:8.5px;letter-spacing:.04em;text-transform:uppercase;padding:3px 6px;border:1.5px solid var(--ink)}
+.anime-card .vibe i.roast{background:var(--red);color:var(--paper);border-color:var(--red)}
+.anime-card .quote{font-size:10.5px;color:var(--ink-2);margin-top:8px;line-height:1.4;font-weight:500}
+.anime-card .sel-mark{position:absolute;top:9px;right:9px;width:20px;height:20px;border:2px solid var(--ink)}
+.anime-card.sel .sel-mark{background:var(--red);border-color:var(--red)}
+.ob-summary{margin-top:8px;border:2.5px solid var(--ink);background:var(--paper);box-shadow:4px 4px 0 var(--ink)}
+.ob-summary .row{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:2px solid var(--ink);font-size:13px;font-weight:500}
+.ob-summary .row:last-child{border:none}
+.ob-summary .row span{color:var(--ink-2)}
+.ob-summary .row b{font-weight:800;text-align:right;max-width:55%}
+.fixed-goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px}
+.fixed-goal{padding:11px 10px;border:2.5px solid var(--ink);background:var(--paper);font-size:12px;font-weight:800;color:var(--ink-2);text-align:left}
+.fixed-goal.sel{background:var(--ink);color:var(--paper)}
+.fixed-goal.sel span{color:var(--paper)!important}
+
+/* ════════ VOICE INTERVIEW (onboarding) ════════ */
+.iv{display:flex;flex-direction:column}
+.iv-stage{position:relative;height:218px;border:2.5px solid var(--ink);background:var(--paper-2);overflow:hidden;box-shadow:4px 4px 0 var(--ink);margin-bottom:14px}
+.iv-speed{position:absolute;inset:-20%;background:repeating-conic-gradient(from 0deg at 50% 44%,var(--ink) 0deg .5deg,transparent .5deg 3.4deg);-webkit-mask:radial-gradient(circle at 50% 44%,transparent 60px,#000 116px);mask:radial-gradient(circle at 50% 44%,transparent 60px,#000 116px);opacity:.85}
+.iv-counter{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-family:var(--display);font-size:11px;letter-spacing:.12em;background:var(--ink);color:var(--paper);padding:5px 12px;z-index:5;white-space:nowrap}
+.iv-counter i{color:var(--red);font-style:normal}
+.iv-sfx{position:absolute;top:20px;right:14px;font-family:var(--sfx);font-size:26px;color:var(--red);-webkit-text-stroke:1.5px var(--ink);transform:rotate(-7deg);z-index:4;line-height:.9;pointer-events:none}
+.iv-moon{position:absolute;top:47%;left:50%;transform:translate(-50%,-50%);width:124px;height:124px;border-radius:50%;background:var(--paper);border:3px solid var(--ink);display:grid;place-items:center;box-shadow:5px 5px 0 var(--ink)}
+.iv-moon::before{content:"";position:absolute;inset:11px;border-radius:50%;background-image:radial-gradient(var(--ink) 1.3px,transparent 1.6px);background-size:7px 7px;opacity:.15}
+.iv-moon svg{width:78px;height:90px;color:var(--ink);position:relative;z-index:1}
+.iv-moon .eye{fill:var(--red)}
+.iv-wave{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;align-items:flex-end;gap:4px;height:32px;z-index:5}
+.iv-wave span{width:5px;background:var(--ink);animation:ivw 1s ease-in-out infinite}
+.iv-wave.idle span{animation:none;height:6px!important}
+@keyframes ivw{0%,100%{height:6px}50%{height:30px}}
+@media(prefers-reduced-motion:reduce){.iv-wave span{animation:none;height:18px}}
+.iv-q{position:relative;border:2.5px solid var(--ink);background:var(--paper);padding:13px 14px;box-shadow:4px 4px 0 var(--ink);margin-bottom:12px}
+.iv-q .from{display:flex;align-items:center;gap:7px;font-weight:700;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.iv-q .from i{width:7px;height:7px;background:var(--red);display:inline-block}
+.iv-q p{font-size:15px;line-height:1.45;margin-top:8px;font-weight:700}
+.iv-said{border:2.5px solid var(--ink);background:var(--ink);color:var(--paper);padding:11px 13px;margin-bottom:12px;font-size:13.5px;line-height:1.5;font-weight:500;animation:ivpop .25s ease both}
+.iv-said .who{font-family:var(--display);font-size:9px;letter-spacing:.14em;opacity:.65;margin-bottom:6px}
+.iv-cap-label{font-family:var(--display);font-size:10px;letter-spacing:.08em;color:var(--ink-2);margin:2px 0 8px;display:flex;align-items:center;gap:8px}
+.iv-cap-label .ln{flex:1;height:2px;background:var(--ink)}
+.iv-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.iv-chip{font-weight:700;font-size:11px;letter-spacing:.01em;padding:5px 9px;border:2px solid var(--ink);background:var(--paper);display:inline-flex;align-items:center;gap:6px;animation:ivpop .3s ease both}
+.iv-chip b{font-family:var(--display);font-size:9px;letter-spacing:.06em;color:var(--red)}
+@keyframes ivpop{0%{opacity:0;transform:scale(.85)}100%{opacity:1;transform:scale(1)}}
+.iv-mic{display:flex;align-items:center;gap:12px;width:100%;padding:13px 15px;border:2.5px solid var(--ink);background:var(--red);color:var(--paper);box-shadow:4px 4px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.iv-mic:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.iv-mic .mc{width:34px;height:34px;border:2.5px solid currentColor;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.iv-mic .mc svg{width:18px;height:18px}
+.iv-mic .lbl{text-align:left}
+.iv-mic .lbl b{font-family:var(--display);font-size:14px;letter-spacing:.03em;display:block;line-height:1}
+.iv-mic .lbl span{font-size:11px;font-weight:600;opacity:.85}
+.iv-mic.next{background:var(--paper);color:var(--ink);box-shadow:4px 4px 0 var(--red)}
+.iv-typelink{text-align:center;font-weight:700;font-size:12px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em;margin-top:12px}
+.iv-done{text-align:center;font-family:var(--display);font-size:12px;letter-spacing:.06em;color:var(--red);margin-top:12px}
+.iv-prefill{font-family:var(--display);font-size:10px;letter-spacing:.05em;color:var(--ink);border:2px solid var(--ink);border-left-width:6px;border-left-color:var(--red);padding:8px 11px;margin-bottom:14px;background:var(--paper-2)}
+
+/* ════════ GOALS ════════ */
+.goals-view{display:flex;flex-direction:column;height:100%}
+.goals-view.hidden{display:none}
+.cadence-tabs{display:flex;gap:8px;padding:0 18px 12px;flex-shrink:0}
+.c-tab{flex:0 0 auto;padding:9px 13px;border:2.5px solid var(--ink);font-family:var(--display);font-size:12px;letter-spacing:.04em;color:var(--ink-2);background:var(--paper)}
+.c-tab.on{background:var(--ink);color:var(--paper)}
+.c-tab .cnt{font-size:10px;opacity:.8;margin-left:4px}
+.slot-bar{margin:0 18px 14px;padding:12px 14px;border:2.5px solid var(--ink);background:var(--paper-2)}
+.slot-bar .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.slot-bar .top span{font-family:var(--display);font-size:10px;letter-spacing:.1em;color:var(--ink-2)}
+.slot-bar .top b{font-family:var(--display);font-size:12px}
+.slots{display:flex;gap:4px}
+.slots i{flex:1;height:8px;border:2px solid var(--ink);background:var(--paper)}
+.slots i.used{background:var(--ink)}
+.slots i.warn{background:var(--red);border-color:var(--red)}
+.add-fab{position:absolute;bottom:22px;right:20px;width:54px;height:54px;border-radius:50%;background:var(--red);color:var(--paper);display:grid;place-items:center;font-family:var(--display);font-size:30px;line-height:1;border:2.5px solid var(--ink);box-shadow:4px 4px 0 var(--ink);z-index:10}
+.add-head{padding:10px 18px 10px;flex-shrink:0;border-bottom:2.5px solid var(--ink)}
+.add-head .row{display:flex;align-items:center;justify-content:space-between}
+.add-head .add-step-tag{font-family:var(--display);font-size:10px;letter-spacing:.08em;color:var(--red);margin:8px 0 4px;display:block}
+.add-head h2{font-family:var(--display);font-size:22px;letter-spacing:.02em;text-transform:uppercase}
+.add-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:14px 18px}
+.field-label{font-family:var(--display);font-size:10px;letter-spacing:.08em;color:var(--ink-2);margin:14px 0 8px;display:block}
+.field-label:first-child{margin-top:0}
+.cadence-pick-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.c-pick-lg{padding:16px 14px;border:2.5px solid var(--ink);background:var(--paper);text-align:left;width:100%;box-shadow:3px 3px 0 var(--ink)}
+.c-pick-lg.sel{box-shadow:3px 3px 0 var(--red)}
+.c-pick-lg .c-name{font-family:var(--display);font-size:17px;letter-spacing:.02em;display:block}
+.c-pick-lg .c-slots{font-family:var(--display);font-size:10px;color:var(--ink-2);margin-top:5px;display:block}
+.c-pick-lg .c-desc{font-size:11.5px;color:var(--ink-2);margin-top:7px;line-height:1.4;display:block;font-weight:500}
+.repeat-toggle{display:flex;border:2.5px solid var(--ink);overflow:hidden;margin-top:0}
+.repeat-toggle button{flex:1;padding:12px 8px;font-size:12px;font-weight:800;color:var(--ink-2);background:var(--paper);border-right:2.5px solid var(--ink)}
+.repeat-toggle button:last-child{border-right:none}
+.repeat-toggle button.on{background:var(--ink);color:var(--paper)}
+.time-box{display:flex;gap:10px;align-items:center;margin-top:0}
+.time-box input,.time-box select{flex:1;padding:12px;border:2.5px solid var(--ink);background:var(--paper);color:var(--ink);font-size:14px;font-weight:700}
+.add-foot{padding:12px 18px 22px;border-top:2.5px solid var(--ink);flex-shrink:0}
+.add-foot button{width:100%;padding:14px;background:var(--ink);color:var(--paper);font-family:var(--display);font-size:15px;letter-spacing:.04em;text-transform:uppercase;box-shadow:4px 4px 0 var(--red)}
+.add-foot button:disabled{opacity:.4;cursor:not-allowed;box-shadow:4px 4px 0 var(--ink-3)}
+.add-foot .limit-note{font-family:var(--display);font-size:10px;letter-spacing:.04em;color:var(--ink-2);text-align:center;margin-top:10px;line-height:1.5}
+.goal-row{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:2px solid var(--ink);position:relative}
+.goal-row:last-child{border-bottom:none}
+.goal-row .check{width:28px;height:28px;border:2.5px solid var(--ink);flex-shrink:0;display:grid;place-items:center;font-family:var(--display);font-size:15px;background:var(--paper)}
+.goal-row .check.done{background:var(--ink);color:var(--paper)}
+.goal-row .check.miss{border-color:var(--red);color:var(--red)}
+.goal-row .body{flex:1;min-width:0}
+.goal-row .body h4{font-size:14.5px;font-weight:800;letter-spacing:.01em;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.goal-track{display:inline-flex;align-items:center;font-family:var(--display);font-size:9px;letter-spacing:.06em;padding:3px 7px;background:var(--red);color:var(--paper)}
+.goal-row .repeat-badge{font-family:var(--display);font-size:8px;letter-spacing:.06em;padding:3px 7px;border:1.5px solid var(--ink);color:var(--ink)}
+.goal-row .repeat-badge.once{color:var(--ink-3);border-color:var(--ink-3)}
+.goal-row .sub{font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.45;font-weight:500}
+.goal-row .menu-btn{margin-left:auto;width:30px;height:30px;border:2px solid var(--ink);display:grid;place-items:center;color:var(--ink);flex-shrink:0;font-size:16px;line-height:1;background:var(--paper)}
+.goal-row .rename-input{width:100%;padding:7px 9px;border:2.5px solid var(--red);background:var(--paper);color:var(--ink);font-size:15px;font-weight:800;outline:none}
+.goal-actions-menu{position:absolute;right:0;top:100%;margin-top:4px;background:var(--paper);border:2.5px solid var(--ink);padding:5px;min-width:140px;z-index:20;box-shadow:4px 4px 0 var(--ink);display:none}
+.goal-actions-menu.open{display:block}
+.goal-actions-menu button{display:block;width:100%;text-align:left;padding:10px 12px;font-size:13px;font-weight:700;color:var(--ink)}
+.goal-actions-menu button.danger{color:var(--red)}
+.empty-goals{text-align:center;padding:30px 20px;color:var(--ink-2);font-size:13px;font-weight:500}
+.empty-goals b{display:block;color:var(--ink);font-family:var(--display);font-size:16px;letter-spacing:.02em;margin-bottom:6px;text-transform:uppercase}
+.brutal-modal-overlay{position:absolute;inset:0;background:rgba(21,18,13,.55);z-index:40;display:none;align-items:center;justify-content:center;padding:24px}
+.brutal-modal-overlay.open{display:flex}
+.brutal-modal{background:var(--paper);border:3px solid var(--ink);padding:20px;max-width:280px;width:100%;box-shadow:7px 7px 0 var(--red)}
+.brutal-modal .from{font-weight:700;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);display:flex;align-items:center;gap:7px}
+.brutal-modal .from span{width:7px;height:7px;background:var(--red);display:inline-block}
+.brutal-modal h3{font-family:var(--display);font-size:20px;letter-spacing:.01em;text-transform:uppercase;margin:12px 0 8px;line-height:1.05}
+.brutal-modal p{font-size:13px;color:var(--ink-2);line-height:1.5;font-weight:500}
+.brutal-modal .acts{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+.brutal-modal .acts button{padding:13px;font-family:var(--display);font-size:13px;letter-spacing:.03em;text-transform:uppercase}
+.brutal-modal .acts .primary{background:var(--ink);color:var(--paper)}
+.brutal-modal .acts .ghost{background:var(--paper);border:2.5px solid var(--ink);color:var(--ink-2)}
+
+/* ════════ P0 SETTINGS / SAFETY / PRIVACY ════════ */
+.settings-view{display:flex;flex-direction:column;height:100%}
+.settings-tabs{display:flex;gap:8px;padding:0 18px 12px;flex-shrink:0}
+.s-tab{flex:0 0 auto;padding:9px 13px;border:2.5px solid var(--ink);font-family:var(--display);font-size:11px;letter-spacing:.04em;color:var(--ink-2);background:var(--paper)}
+.s-tab.on{background:var(--ink);color:var(--paper)}
+.settings-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 18px 24px}
+.set-group{margin-bottom:18px}
+.set-group-title{font-family:var(--display);font-size:11px;letter-spacing:.08em;color:var(--ink-2);margin-bottom:10px;display:block}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 0;border-bottom:2px solid var(--ink)}
+.set-row:last-child{border-bottom:none}
+.set-row .info h4{font-size:14px;font-weight:800;letter-spacing:.01em}
+.set-row .info p{font-size:11.5px;color:var(--ink-2);margin-top:3px;line-height:1.4;max-width:220px;font-weight:500}
+.toggle{width:50px;height:28px;background:var(--paper);border:2.5px solid var(--ink);position:relative;flex-shrink:0}
+.toggle::after{content:"";position:absolute;top:1px;left:1px;width:20px;height:20px;background:var(--ink-3);transition:.15s}
+.toggle.on{background:var(--ink)}
+.toggle.on::after{left:25px;background:var(--paper)}
+.quiet-hours{display:flex;gap:10px;margin-top:4px}
+.quiet-hours select{flex:1;padding:11px;border:2.5px solid var(--ink);background:var(--paper);color:var(--ink);font-size:13px;font-weight:700}
+.freq-slider .top{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-bottom:8px;font-weight:600}
+.freq-slider .top b{font-family:var(--display);font-size:15px;color:var(--ink)}
+.freq-slider input[type=range]{width:100%;accent-color:var(--red)}
+.set-btn{display:block;width:100%;padding:13px;border:2.5px solid var(--ink);background:var(--paper);font-weight:800;font-size:14px;text-align:center;margin-top:8px;color:var(--ink)}
+.set-btn.danger{border-color:var(--red);color:var(--red)}
+.set-btn.warn{border-color:var(--red);color:var(--red)}
+.consent-box{padding:14px;border:2.5px solid var(--ink);background:var(--paper);margin-bottom:10px}
+.consent-box h4{font-size:14px;font-weight:800;margin-bottom:4px}
+.consent-box p{font-size:12px;color:var(--ink-2);line-height:1.45;font-weight:500}
+.consent-box .provider{font-family:var(--display);font-size:9px;letter-spacing:.06em;color:var(--ink-3);margin-top:8px}
+.retention-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border:2.5px solid var(--ink);background:var(--paper);font-size:13px;font-weight:600}
+.retention-row b{font-family:var(--display);font-weight:400;letter-spacing:.02em}
+.p0-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;background:var(--red);color:var(--paper);font-family:var(--display);font-size:10px;letter-spacing:.1em;margin:14px 0 14px}
+/* crisis */
+.crisis-screen{background:var(--paper);height:100%;display:flex;flex-direction:column}
+.crisis-screen.hidden{display:none!important}
+.support-banner{margin:12px 18px;padding:11px 13px;border:2.5px solid var(--ink);background:var(--paper-2);font-family:var(--display);font-size:10px;letter-spacing:.08em;color:var(--ink);display:flex;align-items:center;gap:8px}
+.support-banner span{width:8px;height:8px;background:var(--ink);display:inline-block}
+.crisis-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:8px 18px 20px;display:flex;flex-direction:column;gap:14px}
+.crisis-orb{width:80px;height:80px;border-radius:50%;margin:6px auto;background:var(--paper);border:3px solid var(--ink);display:grid;place-items:center;box-shadow:4px 4px 0 var(--ink)}
+.crisis-orb svg{width:40px;height:46px;color:var(--ink)}
+.crisis-orb .eye{fill:var(--red)}
+.crisis-msg{padding:15px 16px;border:2.5px solid var(--ink);background:var(--paper);font-size:14.5px;line-height:1.55;font-weight:500}
+.crisis-msg .who{font-weight:700;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+.crisis-disclaimer{font-size:11px;color:var(--ink-3);line-height:1.5;text-align:center;padding:0 12px;font-weight:500}
+.helpline{display:block;width:100%;padding:15px;border:2.5px solid var(--ink);background:var(--paper);text-align:left;box-shadow:3px 3px 0 var(--ink)}
+.helpline h4{font-family:var(--display);font-size:15px;letter-spacing:.01em}
+.helpline p{font-size:12px;color:var(--ink-2);margin-top:4px;font-weight:500}
+.helpline .num{font-family:var(--display);font-size:13px;color:var(--red);margin-top:6px;letter-spacing:.02em}
+.crisis-foot{padding:14px 18px 22px;border-top:2.5px solid var(--ink);flex-shrink:0}
+.crisis-foot button{width:100%;padding:14px;background:var(--paper);border:2.5px solid var(--ink);color:var(--ink);font-family:var(--display);font-size:13px;letter-spacing:.03em;text-transform:uppercase}
+.share-toast{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);background:var(--ink);color:var(--paper);padding:12px 20px;font-family:var(--display);font-size:13px;letter-spacing:.04em;opacity:0;visibility:hidden;transition:.2s;z-index:60;pointer-events:none;box-shadow:4px 4px 0 var(--red)}
+.share-toast.show{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1)}
+
+/* ════════ SHARE ════════ */
+.share-btn{width:34px;height:34px;border:2px solid var(--ink);display:grid;place-items:center;color:var(--ink);flex-shrink:0;background:var(--paper)}
+.share-btn svg{width:16px;height:16px}
+.share-promo{margin:0 18px 14px;padding:14px 16px;border:2.5px solid var(--ink);background:var(--paper-2);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.share-promo .txt h4{font-family:var(--display);font-size:15px;letter-spacing:.02em}
+.share-promo .txt p{font-size:11.5px;color:var(--ink-2);margin-top:3px;font-weight:500}
+.share-promo button{padding:9px 14px;background:var(--ink);color:var(--paper);font-family:var(--display);font-size:12px;letter-spacing:.03em;flex-shrink:0;box-shadow:3px 3px 0 var(--red)}
+.share-sheet-overlay{position:absolute;inset:0;background:rgba(21,18,13,.55);z-index:30;opacity:0;visibility:hidden;transition:.25s}
+.share-sheet-overlay.open{opacity:1;visibility:visible}
+.share-sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;background:var(--paper);border-top:3px solid var(--ink);padding:12px 18px 24px;transform:translateY(100%);transition:transform .32s cubic-bezier(.16,1,.3,1);max-height:90%;overflow-y:auto;scrollbar-width:none}
+.share-sheet.open{transform:translateY(0)}
+.share-handle{width:40px;height:5px;background:var(--ink);margin:0 auto 16px}
+.share-sheet h3{font-family:var(--display);font-size:20px;letter-spacing:.03em;text-transform:uppercase;text-align:center}
+.share-sub{font-size:12px;color:var(--ink-2);text-align:center;margin-bottom:16px;font-weight:500}
+.share-types{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.share-type{flex:0 0 auto;padding:8px 13px;border:2.5px solid var(--ink);font-family:var(--display);font-size:11px;letter-spacing:.03em;color:var(--ink-2);background:var(--paper)}
+.share-type.on{background:var(--ink);color:var(--paper)}
+.share-card-preview{overflow:hidden;margin:0 auto 18px;aspect-ratio:9/16;max-height:330px;position:relative;border:3px solid var(--ink);box-shadow:7px 7px 0 var(--red)}
+.share-card-inner{position:absolute;inset:0;padding:15px 14px 14px;display:flex;flex-direction:column;background:var(--ink);color:var(--paper);overflow:hidden}
+.share-card-inner.light{background:var(--paper);color:var(--ink)}
+.share-card-inner::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--paper) 1.2px,transparent 1.5px);background-size:8px 8px;opacity:.06;pointer-events:none}
+.share-card-inner.light::before{background-image:radial-gradient(var(--ink) 1.1px,transparent 1.4px);opacity:.1}
+.share-card-inner>*{position:relative;z-index:2}
+/* top bar */
+.sc-top{display:flex;align-items:flex-start;justify-content:space-between}
+.sc-brand{font-family:var(--display);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.sc-issue{font-family:var(--display);font-size:10px;letter-spacing:.06em;background:var(--red);color:var(--paper);padding:4px 9px;transform:rotate(3deg)}
+/* hero band: portrait + speed lines + big stat */
+.sc-hero{position:relative;flex:1;min-height:96px;margin:9px -14px;border-top:2.5px solid var(--paper);border-bottom:2.5px solid var(--paper);overflow:hidden;display:grid;place-items:center}
+.share-card-inner.light .sc-hero{border-color:var(--ink)}
+.sc-speed{position:absolute;inset:-40%;background:repeating-conic-gradient(from 0deg at 50% 50%,var(--paper) 0deg .55deg,transparent .55deg 3.5deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 46px,#000 104px);mask:radial-gradient(circle at 50% 50%,transparent 46px,#000 104px);opacity:.5}
+.share-card-inner.light .sc-speed{background:repeating-conic-gradient(from 0deg at 50% 50%,var(--ink) 0deg .55deg,transparent .55deg 3.5deg);opacity:.6}
+.sc-disc{width:96px;height:96px;border-radius:50%;background:var(--paper);border:3px solid var(--paper);display:grid;place-items:center;position:relative;box-shadow:4px 4px 0 var(--red)}
+.share-card-inner.light .sc-disc{background:var(--paper-2);border-color:var(--ink)}
+.sc-disc::before{content:"";position:absolute;inset:9px;border-radius:50%;background-image:radial-gradient(var(--ink) 1.2px,transparent 1.5px);background-size:6px 6px;opacity:.16}
+.sc-disc svg{width:62px;height:72px;color:var(--ink);position:relative;z-index:1}
+.sc-disc .eye{fill:var(--red)}
+.sc-bignum{position:absolute;left:8px;bottom:4px;font-family:var(--display);font-size:42px;line-height:.78;color:var(--red);-webkit-text-stroke:2px var(--paper)}
+.share-card-inner.light .sc-bignum{-webkit-text-stroke:2px var(--ink)}
+.sc-bignum span{font-size:18px}
+.sc-bignum em{display:block;font-style:normal;font-size:8px;letter-spacing:.1em;color:var(--paper);-webkit-text-stroke:0;margin-top:2px}
+.share-card-inner.light .sc-bignum em{color:var(--ink-2)}
+.sc-sfx{position:absolute;right:6px;top:6px;font-family:var(--sfx);font-size:28px;color:var(--red);-webkit-text-stroke:2px var(--paper);transform:rotate(-9deg);line-height:.8}
+.share-card-inner.light .sc-sfx{-webkit-text-stroke:2px var(--ink)}
+/* headline */
+.sc-head{font-family:var(--display);font-size:23px;line-height:.94;letter-spacing:.01em;text-transform:uppercase;margin-top:9px}
+.sc-head em{font-style:normal;color:var(--red);-webkit-text-stroke:1px var(--paper)}
+.share-card-inner.light .sc-head em{-webkit-text-stroke:1px var(--ink)}
+/* stat stamps */
+.sc-stats{display:flex;gap:6px;margin-top:10px}
+.sc-stats div{flex:1;border:2.5px solid var(--paper);padding:7px 5px;text-align:center;min-width:0}
+.share-card-inner.light .sc-stats div{border-color:var(--ink)}
+.sc-stats b{display:block;font-family:var(--display);font-size:18px;line-height:1;color:var(--red);letter-spacing:.01em}
+.sc-stats span{display:block;font-family:var(--display);font-size:7px;letter-spacing:.06em;margin-top:4px;opacity:.72}
+/* quote */
+.sc-quote{font-size:11.5px;font-weight:700;line-height:1.35;margin-top:10px}
+.sc-quote u{text-decoration:none;background:linear-gradient(transparent 56%,rgba(221,51,36,.55) 56%)}
+/* footer */
+.sc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;font-family:var(--display);font-size:8px;letter-spacing:.06em;opacity:.85}
+.sc-foot .qr{width:24px;height:24px;flex-shrink:0;background-image:linear-gradient(45deg,currentColor 25%,transparent 25%,transparent 75%,currentColor 75%),linear-gradient(45deg,currentColor 25%,transparent 25%,transparent 75%,currentColor 75%);background-size:6px 6px;background-position:0 0,3px 3px;opacity:.85}
+.share-row{display:flex;justify-content:space-around;gap:6px;margin-bottom:16px}
+.share-target{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:58px}
+.share-target .ic{width:50px;height:50px;border:2.5px solid var(--ink);display:grid;place-items:center;font-family:var(--display);font-size:13px;letter-spacing:.02em;background:var(--paper)}
+.share-target .ic.link{background:var(--red);color:var(--paper);border-color:var(--red)}
+.share-target span{font-size:9.5px;font-weight:700;color:var(--ink-2);text-align:center;text-transform:uppercase;letter-spacing:.04em}
+.share-copy-row{display:flex;gap:8px;align-items:center;padding:11px 13px;border:2.5px solid var(--ink);background:var(--paper)}
+.share-copy-row input{flex:1;background:none;border:none;color:var(--ink-2);font-family:var(--display);font-size:11px;letter-spacing:.02em;outline:none;min-width:0}
+.share-copy-row button{padding:8px 14px;background:var(--ink);color:var(--paper);font-family:var(--display);font-size:12px;letter-spacing:.03em;flex-shrink:0}
+
+/* ════════ NEW PAGES — chat / journal / timeline ════════ */
+.ph-head{padding:14px 18px 6px;flex-shrink:0}
+.ph-head .lead{font-family:var(--display);font-size:28px;line-height:.96;letter-spacing:.02em;text-transform:uppercase}
+.ph-head .lead em{font-style:normal;color:var(--red);-webkit-text-stroke:1.5px var(--ink)}
+.ph-head .day{font-size:12px;color:var(--ink-2);font-weight:700;margin-top:7px}
+/* chat */
+.chat-head{display:flex;align-items:center;gap:11px;padding:12px 18px;border-bottom:2.5px solid var(--ink);flex-shrink:0}
+.chat-head .who b{font-family:var(--display);font-size:16px;letter-spacing:.02em;display:block;line-height:1}
+.chat-head .who span{font-size:10px;letter-spacing:.14em;font-weight:700;color:var(--ink-2)}
+.chat-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:16px 16px;display:flex;flex-direction:column;gap:13px}
+.cbub{max-width:82%;padding:11px 13px;font-size:13.5px;line-height:1.45;border:2.5px solid var(--ink);position:relative;font-weight:500}
+.cbub .who{font-weight:700;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-bottom:5px}
+.cbub.ai{align-self:flex-start;background:var(--paper);box-shadow:3px 3px 0 var(--ink)}
+.cbub.ai::after{content:"";position:absolute;left:14px;bottom:-9px;width:14px;height:14px;background:var(--paper);border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);transform:rotate(45deg)}
+.cbub.me{align-self:flex-end;background:var(--ink);color:var(--paper);font-weight:600}
+.cbub.me u{text-decoration:none;background:linear-gradient(transparent 58%,rgba(221,51,36,.55) 58%)}
+.suggest{display:flex;gap:8px;padding:8px 16px;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.suggest button{flex:0 0 auto;font-weight:700;font-size:12px;padding:8px 13px;border:2.5px solid var(--ink);color:var(--ink-2);white-space:nowrap;background:var(--paper)}
+.composer{display:flex;align-items:center;gap:10px;padding:12px 16px 20px;border-top:2.5px solid var(--ink);flex-shrink:0}
+.composer .field{flex:1;background:var(--paper);border:2.5px solid var(--ink);padding:11px 14px;font-size:13.5px;color:var(--ink-3)}
+.composer .send{width:44px;height:44px;background:var(--red);display:grid;place-items:center;color:var(--paper);flex-shrink:0;border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.composer .send svg{width:19px;height:19px}
+/* decision journal — case file */
+.case{padding:14px 18px;flex:1;overflow-y:auto;scrollbar-width:none}
+.case-file{border:2.5px solid var(--ink);background:var(--paper);box-shadow:5px 5px 0 var(--ink);margin-bottom:14px}
+.case-file .ch{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:2.5px solid var(--ink);background:var(--paper-2)}
+.case-file .ch .no{font-family:var(--display);font-size:13px;letter-spacing:.06em}
+.case-file .ch .stat{font-family:var(--display);font-size:10px;letter-spacing:.06em;color:var(--paper);background:var(--red);padding:3px 8px}
+.case-file .jstep{padding:11px 14px;border-bottom:2px solid var(--ink)}
+.case-file .jstep:last-child{border-bottom:none}
+.case-file .jstep .k{font-family:var(--display);font-size:9px;letter-spacing:.08em;color:var(--ink-2);display:block;margin-bottom:3px}
+.case-file .jstep .v{font-size:13.5px;font-weight:600;line-height:1.4}
+.case-file .jstep.verdict{background:var(--paper-2)}
+.case-file .jstep.verdict .v{color:var(--red)}
+.predict-tag{display:inline-flex;font-family:var(--display);font-size:8px;letter-spacing:.06em;padding:2px 7px;margin-left:6px;color:var(--paper)}
+.predict-tag.hit{background:var(--ink)}
+.predict-tag.miss{background:var(--red)}
+/* timeline — story arcs */
+.arcs{padding:6px 18px 18px;flex:1;overflow-y:auto;scrollbar-width:none}
+.arc{display:flex;gap:13px;align-items:stretch;padding:11px 0;border-bottom:2px solid var(--ink)}
+.arc:last-child{border-bottom:none}
+.arc .vol{width:50px;flex-shrink:0;border:2.5px solid var(--ink);background:var(--paper-2);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.arc .vol .k{font-family:var(--display);font-size:8px;letter-spacing:.08em;color:var(--ink-2)}
+.arc .vol .kanji{font-family:var(--brush);font-size:24px;line-height:1;margin-top:1px}
+.arc.hot .vol{background:var(--red)}
+.arc.hot .vol .k,.arc.hot .vol .kanji{color:var(--paper)}
+.arc .body{flex:1;min-width:0;padding-top:2px}
+.arc .body .when{font-family:var(--display);font-size:10px;letter-spacing:.06em;color:var(--ink-2)}
+.arc .body h4{font-family:var(--display);font-size:16px;letter-spacing:.02em;line-height:1.05;margin-top:2px;text-transform:uppercase}
+.arc .body p{font-size:11.5px;color:var(--ink-2);margin-top:4px;line-height:1.4;font-weight:500}
+.arc-ask{margin:0 0 14px;padding:11px 13px;border:2.5px solid var(--ink);background:var(--paper-2);display:flex;align-items:center;gap:9px}
+.arc-ask svg{width:15px;height:15px;flex-shrink:0}
+.arc-ask p{font-size:12px;color:var(--ink-2);font-weight:600}
+/* dock */
+.dock{display:flex;justify-content:space-around;align-items:center;padding:11px 14px 18px;border-top:2.5px solid var(--ink);flex-shrink:0;background:var(--paper)}
+.dock a{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--display);font-size:9px;letter-spacing:.06em;color:var(--ink-3)}
+.dock a.on{color:var(--ink)}
+.dock svg{width:21px;height:21px}
+.dock .mic{width:52px;height:52px;border-radius:50%;background:var(--red);border:2.5px solid var(--ink);display:grid;place-items:center;color:var(--paper);margin-top:-22px;box-shadow:4px 4px 0 var(--ink)}
+
+/* ════════ TODAY / HOME ════════ */
+.home-greet{padding:13px 18px 4px;flex-shrink:0}
+.home-greet .meta{display:flex;align-items:center;justify-content:space-between}
+.home-greet .who{display:flex;align-items:center;gap:10px}
+.home-greet .who .nm b{font-family:var(--display);font-size:15px;letter-spacing:.03em;display:block;line-height:1}
+.home-greet .who .nm span{font-size:10px;letter-spacing:.16em;font-weight:700;color:var(--ink-2)}
+.home-greet .icbtn{width:34px;height:34px;border:2px solid var(--ink);display:grid;place-items:center;background:var(--paper)}
+.home-greet .icbtn svg{width:17px;height:17px}
+.home-greet h2{font-family:var(--display);font-size:29px;line-height:.95;letter-spacing:.02em;text-transform:uppercase;margin-top:12px}
+.home-greet h2 em{font-style:normal;color:var(--red);-webkit-text-stroke:1.5px var(--ink)}
+.home-greet .day{font-size:12px;color:var(--ink-2);font-weight:700;margin-top:7px;letter-spacing:.02em}
+/* proactive nudge speech bubble */
+.say{position:relative;margin:14px 18px 6px;background:var(--paper);border:2.5px solid var(--ink);padding:13px 14px 14px;box-shadow:4px 4px 0 var(--ink)}
+.say::after{content:"";position:absolute;left:28px;bottom:-12px;width:18px;height:18px;background:var(--paper);border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);transform:rotate(45deg)}
+.say .from{display:flex;align-items:center;gap:7px;font-weight:700;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.say .from i{width:7px;height:7px;background:var(--red);display:inline-block}
+.say p{font-size:14.5px;line-height:1.45;margin-top:8px;font-weight:600}
+.say p b{font-weight:800;background:linear-gradient(transparent 60%,rgba(221,51,36,.34) 60%)}
+.say .acts{display:flex;gap:8px;margin-top:13px}
+.chip-btn{font-weight:700;font-size:12px;padding:9px 13px;border:2px solid var(--ink);background:var(--paper);color:var(--ink)}
+.chip-btn.fill{background:var(--red);color:var(--paper);border-color:var(--red);display:inline-flex;align-items:center;gap:7px}
+.chip-btn.fill svg{width:14px;height:14px}
+.sfx-bg{position:absolute;right:10px;top:-12px;font-family:var(--sfx);font-size:28px;color:var(--ink);opacity:.16;transform:rotate(6deg);pointer-events:none}
+/* section label */
+.slab{display:flex;align-items:center;gap:9px;padding:14px 18px 8px}
+.slab b{font-family:var(--display);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.slab .ln{flex:1;height:2px;background:var(--ink)}
+.slab .jp{font-size:10px;font-weight:700;color:var(--ink-2);letter-spacing:.14em}
+/* today's promises */
+.tasks{padding:0 18px}
+.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:2px solid var(--ink)}
+.task:last-child{border-bottom:none}
+.box{width:26px;height:26px;border:2.5px solid var(--ink);flex-shrink:0;display:grid;place-items:center;background:var(--paper);color:var(--ink)}
+.box.done{background:var(--ink);color:var(--paper)}
+.box.done svg{width:15px;height:15px}
+.box.miss{border-color:var(--red);color:var(--red);font-family:var(--display);font-size:16px}
+.task .t{flex:1;min-width:0}
+.task .t h4{font-size:14.5px;font-weight:800;letter-spacing:.01em;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.task .t .mt{font-size:11.5px;color:var(--ink-2);margin-top:2px;font-weight:600}
+.task .t .mt.bad{color:var(--red);font-weight:800}
+.flag{font-family:var(--display);font-size:9px;letter-spacing:.08em;padding:2px 7px;background:var(--ink);color:var(--paper)}
+.flag.red{background:var(--red)}
+.logbtn{font-family:var(--display);font-size:12px;letter-spacing:.04em;padding:7px 13px;background:var(--red);color:var(--paper);box-shadow:3px 3px 0 var(--ink);flex-shrink:0}
+/* pulse stamps */
+.stamp-row{display:flex;gap:12px;padding:14px 18px 16px}
+.stamp{flex:1;border:2.5px solid var(--ink);padding:12px;text-align:center;background:var(--paper);box-shadow:4px 4px 0 var(--ink)}
+.stamp .n{font-family:var(--display);font-size:30px;line-height:.9;color:var(--red);-webkit-text-stroke:1.5px var(--ink)}
+.stamp .n span{font-size:16px}
+.stamp .l{font-size:9px;letter-spacing:.16em;font-weight:700;text-transform:uppercase;margin-top:5px;color:var(--ink-2)}
+
+/* ════════ AUTH · LOGIN / REGISTER ════════ */
+.auth{display:flex;flex-direction:column;height:100%}
+.auth-hero{position:relative;overflow:hidden;border-bottom:2.5px solid var(--ink);background:var(--ink);color:var(--paper);padding:20px 20px 18px;flex-shrink:0}
+.auth-hero .speedmini{position:absolute;inset:-40% -20%;background:repeating-conic-gradient(from 0deg at 78% 30%,var(--paper) 0deg .5deg,transparent .5deg 3.6deg);-webkit-mask:radial-gradient(circle at 78% 30%,transparent 30px,#000 96px);mask:radial-gradient(circle at 78% 30%,transparent 30px,#000 96px);opacity:.4}
+.auth-hero .brand{position:relative;z-index:2;font-family:var(--display);font-size:12px;letter-spacing:.2em;color:var(--red)}
+.auth-hero h2{position:relative;z-index:2;font-family:var(--display);font-size:30px;line-height:.94;letter-spacing:.02em;text-transform:uppercase;margin-top:12px;max-width:8ch}
+.auth-hero h2 em{font-style:normal;color:var(--red);-webkit-text-stroke:1.5px var(--paper)}
+.auth-hero .disc{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:78px;height:78px;border-radius:50%;background:var(--paper);border:2.5px solid var(--paper);display:grid;place-items:center;z-index:2;box-shadow:4px 4px 0 var(--red)}
+.auth-hero .disc svg{width:50px;height:58px;color:var(--ink)}
+.auth-hero .disc .eye{fill:var(--red)}
+.auth-hero .sfx{position:absolute;right:84px;top:14px;font-family:var(--sfx);font-size:22px;color:var(--red);-webkit-text-stroke:1.5px var(--paper);transform:rotate(-8deg);z-index:2}
+.auth-body{flex:1;overflow-y:auto;scrollbar-width:none;padding:16px 20px 8px;display:flex;flex-direction:column}
+.auth-tabs{display:flex;border:2.5px solid var(--ink);margin-bottom:16px;flex-shrink:0}
+.auth-tabs button{flex:1;padding:10px;font-family:var(--display);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);background:var(--paper);border-right:2.5px solid var(--ink)}
+.auth-tabs button:last-child{border-right:none}
+.auth-tabs button.on{background:var(--ink);color:var(--paper)}
+.auth-field{margin-bottom:11px}
+.auth-field label{font-family:var(--display);font-size:10px;letter-spacing:.08em;color:var(--ink-2);display:block;margin-bottom:6px}
+.auth-input{width:100%;padding:12px 13px;border:2.5px solid var(--ink);background:var(--paper);color:var(--ink);font-size:15px;font-weight:700;outline:none}
+.auth-input::placeholder{color:var(--ink-3);font-weight:500}
+.auth-input:focus{box-shadow:3px 3px 0 var(--red)}
+.auth-meta{display:flex;justify-content:space-between;align-items:center;margin:2px 0 14px;font-size:11.5px;font-weight:700}
+.auth-meta a{color:var(--red)}
+.auth-meta .remember{display:flex;align-items:center;gap:7px;color:var(--ink-2)}
+.auth-meta .remember .bx{width:18px;height:18px;border:2.5px solid var(--ink);display:grid;place-items:center;background:var(--ink);color:var(--paper);font-family:var(--display);font-size:11px}
+.auth-submit{width:100%;padding:14px;background:var(--ink);color:var(--paper);font-family:var(--display);font-size:15px;letter-spacing:.04em;text-transform:uppercase;box-shadow:4px 4px 0 var(--red);transition:transform .08s,box-shadow .08s}
+.auth-submit:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--red)}
+.auth-or{display:flex;align-items:center;gap:10px;margin:16px 0;font-family:var(--display);font-size:10px;letter-spacing:.1em;color:var(--ink-3)}
+.auth-or .ln{flex:1;height:2px;background:var(--ink);opacity:.5}
+.auth-social{display:flex;flex-direction:column;gap:9px}
+.auth-social button{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:12px;border:2.5px solid var(--ink);background:var(--paper);color:var(--ink);font-weight:800;font-size:13.5px;box-shadow:3px 3px 0 var(--ink)}
+.auth-social button svg{width:17px;height:17px}
+.auth-foot{text-align:center;font-size:12px;font-weight:600;color:var(--ink-2);padding:14px 20px 22px;flex-shrink:0;border-top:2.5px solid var(--ink)}
+.auth-foot a{color:var(--red);font-weight:800}
+.auth-terms{font-size:10.5px;color:var(--ink-3);line-height:1.5;margin-top:14px;font-weight:500}
+.auth-terms a{color:var(--ink-2);text-decoration:underline}
+
+/* footer */
+.foot{margin-top:72px;border-top:3px solid var(--ink);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;font-family:var(--display);font-size:12px;letter-spacing:.1em;color:var(--ink-2)}
+.foot .l2{font-family:var(--ui);font-weight:500;letter-spacing:0;font-size:12px}
+
+@media(max-width:720px){
+  .cover{grid-template-columns:1fr}.cover .right{border-left:none;border-top:3px solid var(--ink);min-height:340px}
+  .phone{transform:scale(.95)}.wrap{padding:24px 14px 80px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="kage-icon" viewBox="0 0 120 140">
+    <path fill="currentColor" d="M60 6c-26 0-44 19-44 47 0 14 5 23 5 36 0 16-9 22-9 33 0 8 7 12 18 12h60c11 0 18-4 18-12 0-11-9-17-9-33 0-13 5-22 5-36 0-28-18-47-44-47Z"/>
+    <ellipse class="eye" cx="60" cy="62" rx="17" ry="9" transform="rotate(-9 60 62)"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+
+  <!-- ═══════════ COVER ═══════════ -->
+  <section class="cover">
+    <div class="left">
+      <div class="tagrow">
+        <div class="brandmark">
+          <span class="sq">影</span>
+          <div><b>KAGEVO</b><div class="kana">カゲヴォ</div></div>
+        </div>
+        <span class="issue">VOL.02 · かげ</span>
+      </div>
+      <h1>ASSIGN<br/>YOUR <span class="red">KAGE.</span></h1>
+      <p class="sub">Your <b>kage</b> is a shadow-self that talks back — brutally honest, relentless, or kind when you need it. It tracks every promise and <b>compares it to what you actually did</b>. Below: the working app.</p>
+      <div class="cta">
+        <button class="ink-btn">Forge your kage →</button>
+        <button class="ink-btn ghost">Assign a preset</button>
+      </div>
+    </div>
+    <div class="right">
+      <div class="word brush">影</div>
+      <div class="speed"></div>
+      <div class="kage-hero"><div class="disc"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div></div>
+      <div class="sfx" style="bottom:20px;left:18px;font-size:30px">ドクン</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CH.00 AUTH ═══════════ -->
+  <div class="chapter"><span class="no">00</span><h2>Get in · the gate</h2><span class="rule"></span><span class="jp">ログイン</span></div>
+  <div class="spread">
+
+    <!-- LOGIN -->
+    <div class="unit">
+      <div class="phone"><div class="island"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span class="ico">影 KAGEVO</span></div>
+          <div class="auth">
+            <div class="auth-hero">
+              <div class="speedmini"></div>
+              <div class="sfx">バン</div>
+              <div class="brand">影 KAGEVO</div>
+              <h2>WELCOME<br/><em>BACK.</em></h2>
+              <div class="disc"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div>
+            </div>
+            <div class="auth-body">
+              <div class="auth-tabs"><button type="button" class="on">Sign in</button><button type="button">Create</button></div>
+              <div class="auth-field"><label>EMAIL</label><input class="auth-input" type="email" value="kanishk@kagevo.app" /></div>
+              <div class="auth-field"><label>PASSWORD</label><input class="auth-input" type="password" value="········" /></div>
+              <div class="auth-meta"><span class="remember"><span class="bx">✓</span> Remember me</span><a>Forgot?</a></div>
+              <button type="button" class="auth-submit">Wake your kage →</button>
+              <div class="auth-or"><span class="ln"></span>OR<span class="ln"></span></div>
+              <div class="auth-social">
+                <button type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.04c-.02-2.06 1.68-3.05 1.76-3.1-.96-1.41-2.46-1.6-2.99-1.62-1.27-.13-2.49.75-3.13.75-.65 0-1.64-.73-2.7-.71-1.39.02-2.67.81-3.38 2.05-1.44 2.5-.37 6.2 1.04 8.23.69.99 1.51 2.1 2.58 2.06 1.04-.04 1.43-.67 2.69-.67 1.25 0 1.61.67 2.7.65 1.12-.02 1.83-1.01 2.51-2.01.79-1.15 1.12-2.27 1.14-2.33-.03-.01-2.18-.84-2.2-3.32zM15 6.21c.57-.69.95-1.65.85-2.61-.82.03-1.81.55-2.4 1.24-.53.61-.99 1.59-.87 2.53.91.07 1.85-.47 2.42-1.16z"/></svg>Continue with Apple</button>
+                <button type="button"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M21.35 11.1H12v3.83h5.35c-.23 1.4-1.66 4.1-5.35 4.1-3.22 0-5.85-2.66-5.85-5.95S8.78 7.13 12 7.13c1.83 0 3.06.78 3.76 1.45l2.56-2.47C16.7 4.6 14.6 3.7 12 3.7 6.98 3.7 2.9 7.78 2.9 12.8s4.08 9.1 9.1 9.1c5.26 0 8.74-3.7 8.74-8.9 0-.6-.06-1.05-.14-1.5z"/></svg>Continue with Google</button>
+              </div>
+            </div>
+            <div class="auth-foot">New here? <a>Forge your kage →</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><div class="pg">PAGE 00a</div><h3>Sign in</h3><span>Email · social · the gate</span></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="unit">
+      <div class="phone"><div class="island"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span class="ico">影 KAGEVO</span></div>
+          <div class="auth">
+            <div class="auth-hero">
+              <div class="speedmini"></div>
+              <div class="sfx">ドン</div>
+              <div class="brand">影 KAGEVO · 新規</div>
+              <h2>CLAIM YOUR<br/><em>SHADOW.</em></h2>
+              <div class="disc"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div>
+            </div>
+            <div class="auth-body">
+              <div class="auth-tabs"><button type="button">Sign in</button><button type="button" class="on">Create</button></div>
+              <div class="auth-field"><label>YOUR NAME</label><input class="auth-input" type="text" placeholder="What should your kage call you?" /></div>
+              <div class="auth-field"><label>EMAIL</label><input class="auth-input" type="email" placeholder="you@email.com" /></div>
+              <div class="auth-field"><label>PASSWORD</label><input class="auth-input" type="password" placeholder="8+ characters" /></div>
+              <button type="button" class="auth-submit">Create account →</button>
+              <p class="auth-terms">By creating an account you agree to the <a>Terms</a> and <a>Privacy Policy</a>. Kagevo is a self-improvement tool, not a medical or mental-health service.</p>
+              <div class="auth-or"><span class="ln"></span>OR<span class="ln"></span></div>
+              <div class="auth-social">
+                <button type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.04c-.02-2.06 1.68-3.05 1.76-3.1-.96-1.41-2.46-1.6-2.99-1.62-1.27-.13-2.49.75-3.13.75-.65 0-1.64-.73-2.7-.71-1.39.02-2.67.81-3.38 2.05-1.44 2.5-.37 6.2 1.04 8.23.69.99 1.51 2.1 2.58 2.06 1.04-.04 1.43-.67 2.69-.67 1.25 0 1.61.67 2.7.65 1.12-.02 1.83-1.01 2.51-2.01.79-1.15 1.12-2.27 1.14-2.33-.03-.01-2.18-.84-2.2-3.32zM15 6.21c.57-.69.95-1.65.85-2.61-.82.03-1.81.55-2.4 1.24-.53.61-.99 1.59-.87 2.53.91.07 1.85-.47 2.42-1.16z"/></svg>Sign up with Apple</button>
+                <button type="button"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M21.35 11.1H12v3.83h5.35c-.23 1.4-1.66 4.1-5.35 4.1-3.22 0-5.85-2.66-5.85-5.95S8.78 7.13 12 7.13c1.83 0 3.06.78 3.76 1.45l2.56-2.47C16.7 4.6 14.6 3.7 12 3.7 6.98 3.7 2.9 7.78 2.9 12.8s4.08 9.1 9.1 9.1c5.26 0 8.74-3.7 8.74-8.9 0-.6-.06-1.05-.14-1.5z"/></svg>Sign up with Google</button>
+              </div>
+            </div>
+            <div class="auth-foot">Already forged one? <a>Sign in →</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><div class="pg">PAGE 00b</div><h3>Register</h3><span>Name · email · claim your kage</span></div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════ CH.01 ONBOARDING ═══════════ -->
+  <div class="chapter"><span class="no">01</span><h2>Forge your kage</h2><span class="rule"></span><span class="jp">影を作れ</span></div>
+  <div class="demo-banner">
+    <div>
+      <div class="tag">ONBOARDING · voice-first</div>
+      <h2>Your kage interviews you first</h2>
+      <p>Voice-first: the kage asks a few questions out loud, transcribes your answers, and extracts your goals live — <b>before</b> anything is configured. Then you refine and assign. Or skip straight to a preset.</p>
+    </div>
+    <button type="button" id="restartOnboard" class="mini-btn fill">Restart flow</button>
+  </div>
+  <div class="demo-wrap">
+    <div class="phone" id="onboardPhone">
+      <div class="island"></div>
+      <div class="screen onboard" id="onboardApp">
+        <div class="statusbar"><span>9:12</span><span class="ico">影 KAGEVO</span></div>
+        <div class="ob-top">
+          <div class="ob-nav">
+            <button type="button" class="ob-back hidden" id="obBack" aria-label="Back">←</button>
+            <button type="button" class="ob-skip" id="obSkip">Skip for now</button>
+          </div>
+          <div class="ob-progress" id="obProgress"></div>
+          <div class="ob-step-label" id="obStepLabel">Step 1 of 8</div>
+        </div>
+        <div class="ob-body" id="obBody"></div>
+        <div class="ob-foot"><button type="button" id="obNext" disabled>Continue</button></div>
+      </div>
+    </div>
+    <div class="hint">tap through · skip to presets</div>
+  </div>
+
+  <!-- ═══════════ CH.02 TODAY / HOME ═══════════ -->
+  <div class="chapter"><span class="no">02</span><h2>Today · the home you land on</h2><span class="rule"></span><span class="jp">本日</span></div>
+  <div class="demo-banner">
+    <div>
+      <div class="tag">HOME · post-onboarding</div>
+      <h2>What your kage wants from you today</h2>
+      <p>The screen a returning user lands on. Kage and the one nudge that matters come first, then today's promises — and the talk button is one thumb-tap away. Stats live deeper; the front door is for getting pushed and logging.</p>
+    </div>
+  </div>
+  <div class="spread">
+    <div class="unit">
+      <div class="phone"><div class="island"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span class="ico">影 KAGEVO</span></div>
+          <div class="scroll">
+            <div class="home-greet">
+              <div class="meta">
+                <div class="who"><span class="avatar kage"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></span><div class="nm"><b>NOVA</b><span>ROAST · LV.7</span></div></div>
+                <button type="button" class="icbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+              </div>
+              <h2>MORNING,<br/><em>KANISHK.</em></h2>
+              <div class="day">DAY 14 · not lying to yourself</div>
+            </div>
+            <div class="say">
+              <div class="sfx-bg">ゴゴゴ</div>
+              <div class="from"><i></i> NOVA · proactive</div>
+              <p>You snoozed the 6AM run <b>twice</b> this week. Move the alarm or stop calling yourself a runner.</p>
+              <div class="acts"><button type="button" class="chip-btn fill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>Reply by voice</button><button type="button" class="chip-btn">Snooze</button></div>
+            </div>
+            <div class="slab"><b>Today's promises</b><span class="ln"></span><span class="jp">本日の約束</span></div>
+            <div class="tasks">
+              <div class="task"><div class="box"></div><div class="t"><h4><span class="flag">MAIN</span> Ship demo deck</h4><div class="mt">Career · due 6 PM · 45 min block</div></div><button type="button" class="logbtn">LOG</button></div>
+              <div class="task"><div class="box miss">✕</div><div class="t"><h4><span class="flag red">MISS</span> 6AM deep-work run</h4><div class="mt bad">Fitness · window closed 8 AM</div></div></div>
+              <div class="task"><div class="box done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></div><div class="t"><h4>20 min reading</h4><div class="mt">Discipline · logged 7:10 AM</div></div></div>
+            </div>
+            <div class="stamp-row">
+              <div class="stamp"><div class="n">14</div><div class="l">Day streak</div></div>
+              <div class="stamp"><div class="n">67<span>%</span></div><div class="l">Logged today</div></div>
+            </div>
+          </div>
+          <div class="dock">
+            <a class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>HOME</a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>CHAT</a>
+            <a><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span></a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>GOALS</a>
+            <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>YOU</a>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><div class="pg">PAGE 02</div><h3>Today / Home</h3><span>Kage · the nudge · today's promises</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ CH.03 GOALS ═══════════ -->
+  <div class="chapter"><span class="no">03</span><h2>Fixed goals · habits</h2><span class="rule"></span><span class="jp">目標は固定</span></div>
+  <div class="demo-banner">
+    <div>
+      <div class="tag">GOALS · interactive</div>
+      <h2>Fixed tracks, flexible habits</h2>
+      <p>Top-level goals are fixed life tracks. Add habits and promises underneath; the kage won't let you rewrite history.</p>
+    </div>
+    <button type="button" id="goalsShowList" class="mini-btn">Back to habits</button>
+  </div>
+  <div class="demo-wrap">
+    <div class="phone" id="goalsPhone">
+      <div class="island"></div>
+      <div class="screen" style="position:relative">
+        <div class="statusbar"><span>10:02</span><span class="ico">影 GOALS</span></div>
+        <div class="goals-view" id="goalsListView">
+          <div class="greet" style="padding-bottom:6px"><div class="meta"><h2 style="margin:0">FIXED GOALS</h2><div class="avatar kage"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div></div></div>
+          <div class="cadence-tabs" id="goalsTabs">
+            <button type="button" class="c-tab on" data-list="daily">TODAY <span class="cnt" id="dailyCnt">2/3</span></button>
+            <button type="button" class="c-tab" data-list="weekly">THIS WEEK <span class="cnt" id="weeklyCnt">2/5</span></button>
+          </div>
+          <div class="scroll" style="padding-bottom:84px">
+            <div class="slot-bar" id="goalsSlotBar"></div>
+            <div class="sec-label"><span id="goalsListLabel">Today habits</span></div>
+            <div class="card" id="goalsList"></div>
+            <p style="padding:8px 18px 0;font-size:11px;color:var(--ink-3);line-height:1.5;font-weight:500">Career, Fitness, Finance, Relationships, Mental Health, Productivity, Discipline, Consistency are fixed. Habits underneath can change.</p>
+          </div>
+          <button type="button" class="add-fab" id="goalsAddFab" title="Add habit">+</button>
+        </div>
+        <div class="goals-view hidden" id="goalsAddView">
+          <div class="add-head">
+            <div class="row"><button type="button" class="ob-back" id="goalsAddBack">←</button><button type="button" class="ob-skip" id="goalsAddCancel">Cancel</button></div>
+            <span class="add-step-tag">Pick fixed goal</span>
+            <h2>ADD HABIT</h2>
+          </div>
+          <div class="add-body" id="goalsAddBody"></div>
+          <div class="add-foot"><button type="button" id="goalsSaveBtn" disabled>Commit habit →</button><div class="limit-note" id="goalsAddNote"></div></div>
+        </div>
+        <div class="brutal-modal-overlay" id="brutalModal">
+          <div class="brutal-modal">
+            <div class="from"><span></span> NOVA · brutal honesty</div>
+            <h3 id="brutalTitle">You don't get to rewrite history.</h3>
+            <p id="brutalMsg">You committed to this goal. Rename it if you want — or delete it and start over like an adult.</p>
+            <div class="acts">
+              <button type="button" class="primary" id="brutalOk">Fine, edit habit only</button>
+              <button type="button" class="ghost" id="brutalDismiss">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hint">+ add · ⋮ rename/delete · tap "edit habit"</div>
+  </div>
+
+  <!-- ═══════════ CH.04 P0 SAFETY ═══════════ -->
+  <div class="chapter"><span class="no">04</span><h2>Safety · privacy</h2><span class="rule"></span><span class="jp">安全第一</span></div>
+  <div class="demo-banner">
+    <div>
+      <div class="tag">P0 · ship blockers</div>
+      <h2>Notifications, safety, privacy</h2>
+      <p>Required before beta. Toggle settings, or run the crisis flow — roast/brutal switch off automatically.</p>
+    </div>
+    <button type="button" id="p0SimCrisis" class="mini-btn fill">Simulate crisis</button>
+  </div>
+  <div class="demo-wrap">
+    <div class="phone" id="p0Phone">
+      <div class="island"></div>
+      <div class="screen settings-view" id="p0App">
+        <div class="statusbar"><span>10:30</span><span class="ico">影 SETTINGS</span></div>
+        <div class="greet" style="padding-bottom:6px"><div class="meta"><h2 style="margin:0">SETTINGS</h2><div class="avatar kage"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div></div></div>
+        <div class="settings-tabs" id="p0Tabs">
+          <button type="button" class="s-tab on" data-p0="notif">NOTIFS</button>
+          <button type="button" class="s-tab" data-p0="safety">SAFETY</button>
+          <button type="button" class="s-tab" data-p0="privacy">PRIVACY</button>
+        </div>
+        <div class="settings-body" id="p0Body"></div>
+      </div>
+      <div class="screen crisis-screen hidden" id="p0Crisis" style="position:absolute;inset:9px;border-radius:33px;z-index:50">
+        <div class="statusbar"><span>10:31</span><span class="ico">影 SUPPORT</span></div>
+        <div class="support-banner"><span></span> Support mode · all roast/brutal off</div>
+        <div class="crisis-body">
+          <div class="crisis-orb"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div>
+          <div class="crisis-msg">
+            <div class="who">NOVA · emotional support</div>
+            Hey. I hear you, and I'm not going to roast you right now. What you're feeling matters. You don't have to go through this alone — reaching out is strength, not weakness.
+          </div>
+          <p class="crisis-disclaimer">Kagevo is not a medical or mental-health professional. If you're in crisis, please contact a qualified service below.</p>
+          <button type="button" class="helpline"><h4>988 Suicide &amp; Crisis Lifeline</h4><p>Free · 24/7 · US</p><div class="num">Call or text 988</div></button>
+          <button type="button" class="helpline"><h4>Crisis Text Line</h4><p>Text with a trained counselor</p><div class="num">Text HOME to 741741</div></button>
+          <button type="button" class="helpline"><h4>Int'l Assoc. for Suicide Prevention</h4><p>Find help in your country</p><div class="num">iasp.info/resources</div></button>
+        </div>
+        <div class="crisis-foot"><button type="button" id="p0CrisisClose">I'm okay for now — return</button></div>
+      </div>
+      <div class="share-toast" id="p0Toast"></div>
+    </div>
+    <div class="hint">switch tabs · toggle · preview crisis</div>
+  </div>
+
+  <!-- ═══════════ CH.05 SHARE ═══════════ -->
+  <div class="chapter"><span class="no">05</span><h2>Wrapped · share</h2><span class="rule"></span><span class="jp">自慢しろ</span></div>
+  <div class="demo-banner">
+    <div>
+      <div class="tag">SHARE</div>
+      <h2>Wrapped cards &amp; streaks</h2>
+      <p>Spotify-style sheet — switch card, copy link, post to Stories or WhatsApp. Stats only, never chat content.</p>
+    </div>
+    <button type="button" id="openShareDemo" class="mini-btn fill">Open share sheet</button>
+  </div>
+  <div class="demo-wrap">
+    <div class="phone" id="sharePhone">
+      <div class="island"></div>
+      <div class="screen" style="position:relative">
+        <div class="statusbar"><span>9:41</span><span class="ico">影 KAGEVO</span></div>
+        <div class="scroll" style="padding-bottom:20px">
+          <div class="greet">
+            <div class="meta">
+              <div class="persona-tag"><span style="width:7px;height:7px;background:var(--red);display:inline-block"></span> Kage · <b>NOVA</b></div>
+              <div class="meta-actions"><button type="button" class="share-btn" id="shareTrigger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button><div class="avatar kage"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div></div>
+            </div>
+            <h2>WEEK 14<br/><span class="soft">WRAPPED</span></h2>
+          </div>
+          <div class="share-promo">
+            <div class="txt"><h4>86% main tasks logged</h4><p>Tap Share ↑ or the button below</p></div>
+            <button type="button" id="shareTrigger2">SHARE</button>
+          </div>
+        </div>
+        <div class="share-sheet-overlay" id="shareOverlay"></div>
+        <div class="share-sheet" id="shareSheet">
+          <div class="share-handle"></div>
+          <h3>SHARE</h3>
+          <p class="share-sub">Your kage stats · public link optional</p>
+          <div class="share-types" id="shareTypes">
+            <button type="button" class="share-type on" data-type="wrapped">WEEK WRAPPED</button>
+            <button type="button" class="share-type" data-type="streak">STREAK</button>
+            <button type="button" class="share-type" data-type="persona">MY KAGE</button>
+          </div>
+          <div class="share-card-preview" id="shareCardPreview"></div>
+          <div class="share-row">
+            <button type="button" class="share-target" data-action="copy"><span class="ic link">URL</span><span>Copy link</span></button>
+            <button type="button" class="share-target" data-action="ig"><span class="ic">IG</span><span>Stories</span></button>
+            <button type="button" class="share-target" data-action="wa"><span class="ic">WA</span><span>WhatsApp</span></button>
+            <button type="button" class="share-target" data-action="x"><span class="ic">X</span><span>Post</span></button>
+            <button type="button" class="share-target" data-action="more"><span class="ic">···</span><span>More</span></button>
+          </div>
+          <div class="share-copy-row">
+            <input type="text" id="shareLink" readonly value="https://kagevo.app/w/kanishk-w14" />
+            <button type="button" id="shareCopyBtn">COPY</button>
+          </div>
+        </div>
+        <div class="share-toast" id="shareToast">Link copied!</div>
+      </div>
+    </div>
+    <div class="hint">switch card · copy link · tap targets</div>
+  </div>
+
+  <!-- ═══════════ CH.06 MORE PAGES ═══════════ -->
+  <div class="chapter"><span class="no">06</span><h2>The rest of the world</h2><span class="rule"></span><span class="jp">続きの章</span></div>
+
+  <div class="spread">
+
+    <!-- CHAT -->
+    <div class="unit">
+      <div class="phone"><div class="island"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:38</span><span class="ico">影 CHAT</span></div>
+          <div class="chat-head">
+            <div class="avatar"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div>
+            <div class="who"><b>NOVA</b><span>ROAST · ONLINE</span></div>
+          </div>
+          <div class="chat-body">
+            <div class="cbub me">honestly might skip the gym again today</div>
+            <div class="cbub ai"><div class="who">NOVA</div>Of course you might. You "might" do a lot of things. <u>You've said that 3 days straight.</u> What's actually different about today?</div>
+            <div class="cbub me">work's insane rn</div>
+            <div class="cbub ai"><div class="who">NOVA</div>Work's always insane. Drop it to 20 minutes then — small enough you can't lie your way out. I'll move the goal and log it. Deal?</div>
+            <div class="cbub me">…fine. 20 min</div>
+          </div>
+          <div class="suggest">
+            <button>Move goal to 20 min</button><button>Switch to Support</button><button>Why?</button>
+          </div>
+          <div class="composer">
+            <div class="field">Message your kage…</div>
+            <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><div class="pg">PAGE 05</div><h3>Chat / Same Memory</h3><span>Switch mode · the kage pushes back</span></div>
+    </div>
+
+    <!-- DECISION JOURNAL -->
+    <div class="unit">
+      <div class="phone"><div class="island"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:40</span><span class="ico">影 JOURNAL</span></div>
+          <div class="ph-head">
+            <div class="lead">DECISION <em>JOURNAL</em></div>
+            <div class="day">Every choice becomes evidence · 影の記録</div>
+          </div>
+          <div class="case">
+            <div class="case-file">
+              <div class="ch"><span class="no">CASE #014</span><span class="stat">RESOLVED</span></div>
+              <div class="jstep"><span class="k">DECISION</span><span class="v">Leave the company for a startup offer.</span></div>
+              <div class="jstep"><span class="k">REASON</span><span class="v">Stalled growth; manager blocking promotion.</span></div>
+              <div class="jstep"><span class="k">PREDICTION <span class="predict-tag miss">WRONG</span></span><span class="v">"Culture will only get worse."</span></div>
+              <div class="jstep"><span class="k">OUTCOME</span><span class="v">Promotion came through — to someone who stayed.</span></div>
+              <div class="jstep verdict"><span class="k">NOVA · THE VERDICT</span><span class="v">You read culture as fixed when it was shifting. 3 of 4 manager calls = pessimistic miss.</span></div>
+            </div>
+            <div class="case-file">
+              <div class="ch"><span class="no">CASE #015</span><span class="stat" style="background:var(--ink)">OPEN</span></div>
+              <div class="jstep"><span class="k">DECISION</span><span class="v">Ship the MVP solo before raising.</span></div>
+              <div class="jstep"><span class="k">PREDICTION <span class="predict-tag hit">TRACKING</span></span><span class="v">"I can ship in 6 weeks."</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><div class="pg">PAGE 06</div><h3>Decision Journal</h3><span>Predict · outcome · the verdict</span></div>
+    </div>
+
+    <!-- TIMELINE / STORY ARCS -->
+    <div class="unit">
+      <div class="phone"><div class="island"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:46</span><span class="ico">影 TIMELINE</span></div>
+          <div class="ph-head">
+            <div class="lead">YOUR <em>ARCS</em></div>
+            <div class="day">Your life as story chapters · 物語</div>
+          </div>
+          <div class="arcs">
+            <div class="arc-ask">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              <p>"When did I first mention starting a company?"</p>
+            </div>
+            <div class="arc"><div class="vol"><span class="k">ARC</span><span class="kanji">壱</span></div><div class="body"><div class="when">JAN 2026</div><h4>The Day Job</h4><p>Joined Adobe. Comfortable. Restless.</p></div></div>
+            <div class="arc hot"><div class="vol"><span class="k">ARC</span><span class="kanji">弐</span></div><div class="body"><div class="when">MAR 2026 · first mention</div><h4>The Spark</h4><p>"I think I want to start something." NOVA logged it.</p></div></div>
+            <div class="arc"><div class="vol"><span class="k">ARC</span><span class="kanji">参</span></div><div class="body"><div class="when">APR 2026</div><h4>The Setback</h4><p>Failed the Uber interview. Under-prepared mocks.</p></div></div>
+            <div class="arc"><div class="vol"><span class="k">ARC</span><span class="kanji">四</span></div><div class="body"><div class="when">JUN 2026</div><h4>The Leap</h4><p>Started the startup. Lost 8kg. First half-marathon.</p></div></div>
+            <div class="arc hot"><div class="vol"><span class="k">ARC</span><span class="kanji">五</span></div><div class="body"><div class="when">NOV 2026</div><h4>The Launch</h4><p>Launched Kagevo. Raised the seed round.</p></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><div class="pg">PAGE 07</div><h3>Reality Timeline</h3><span>Life as story arcs · ask anything</span></div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <span>影 KAGEVO · カゲヴォ · VOL.02</span>
+    <span class="l2">Concept UI — not a medical or mental-health service.</span>
+    <span>kagevo.app</span>
+  </div>
+
+</div>
+
+<script>
+const AVATARS=[
+  {e:'影',bg:'var(--paper-2)'},
+  {shadow:true,bg:'var(--paper-2)'},
+  {e:'炎',bg:'var(--paper-2)'},
+  {e:'鏡',bg:'var(--paper-2)'},
+  {e:'陽',bg:'var(--paper-2)'},
+  {e:'夢',bg:'var(--paper-2)'},
+  {e:'海',bg:'var(--paper-2)'},
+  {e:'闇',bg:'var(--paper-2)'}
+];
+const KAGE_MARK='<svg viewBox="0 0 120 140" fill="currentColor"><use href="#kage-icon"/></svg>';
+function avFace(a,cls='big'){return a.shadow?`<div class="${cls} kage-av kage-shadow">${KAGE_MARK}</div>`:`<div class="${cls}" style="background:${a.bg}">${a.e}</div>`;}
+
+const ANIME=[
+  {id:'naruto',name:'Naruto',show:'Never give up',e:'渦',bg:'var(--paper-2)',modes:['motiv','brutal'],quote:'Believe it — but actually do the work.',intensity:6},
+  {id:'vegeta',name:'Vegeta',show:'Pride & discipline',e:'王',bg:'var(--paper-2)',modes:['roast','brutal'],quote:"A warrior doesn't skip leg day. Pathetic.",intensity:8},
+  {id:'goku',name:'Goku',show:'Pure drive',e:'空',bg:'var(--paper-2)',modes:['motiv','support'],quote:"Let's go another round — you're getting stronger.",intensity:5},
+  {id:'luffy',name:'Luffy',show:'Freedom & grit',e:'海',bg:'var(--paper-2)',modes:['motiv','roast'],quote:"You're gonna be king of your goals or what?",intensity:7},
+  {id:'levi',name:'Levi',show:'Zero excuses',e:'刃',bg:'var(--paper-2)',modes:['brutal','roast'],quote:'Clean your room. Then your habits.',intensity:9},
+  {id:'tanjiro',name:'Tanjiro',show:'Steady heart',e:'炭',bg:'var(--paper-2)',modes:['support','motiv'],quote:"Breathe. You're doing better than you think.",intensity:4}
+];
+
+const CUSTOM_STEPS=[
+  {id:'welcome',title:'Welcome to Kagevo',sub:'Make your kage — a shadow-self that talks back. Brutally honest, motivating, or supportive.',type:'info'},
+  {id:'path',title:'How will you make your kage?',sub:'Craft from scratch, or assign a legendary alter ego with preset modes.',type:'path'},
+  {id:'interview',title:"First — let's talk.",sub:'Before you build anything, your kage asks a few questions out loud. Answer by voice — it listens, then forges itself around what it hears.',type:'voice',questions:[
+    {sfx:'ザワ…',q:"Who are you trying to become this year? Say it out loud — don't overthink it.",a:'A founder who actually ships. Fitter. Less reactive when work gets heavy.',caps:[{k:'BUILD',t:'Ship the work'},{k:'BUILD',t:'Train consistently'},{k:'GOAL',t:'Career'},{k:'GOAL',t:'Fitness'}],prefill:{'habits-build':['move','learn'],'goal':['career','fitness']}},
+    {sfx:'ピシ',q:"And what keeps tripping you up? Be honest — I'll remember it.",a:'I snooze the alarm, then doom-scroll half the night and skip the run.',caps:[{k:'BREAK',t:'Snoozing alarms'},{k:'BREAK',t:'Doom-scrolling'}],prefill:{'habits-break':['snooze','scroll']}},
+    {sfx:'ドクン',q:'Last one. When you slip — how hard should I push you?',a:"Hard. Roast me when I make excuses. Going easy hasn't worked.",caps:[{k:'MODE',t:'Tough love'},{k:'INTENSITY',t:'Roast · 7/10'}],prefill:{'motivation':'tough'}}
+  ]},
+  {id:'habits-build',title:'What habits do you want to build?',sub:'Pick all that apply. Your kage tracks these and holds you accountable.',type:'multi',options:[
+    {id:'move',ic:'走',t:'Morning movement',d:'Run, gym, yoga — before the day steals your energy.'},
+    {id:'learn',ic:'学',t:'Daily learning',d:'Read, study, or skill-build for 20+ minutes.'},
+    {id:'health',ic:'水',t:'Hydration & sleep',d:'Water targets and a consistent wind-down routine.'},
+    {id:'digital',ic:'禅',t:'Digital boundaries',d:'No phone after a set time, fewer doom-scrolls.'}
+  ]},
+  {id:'habits-break',title:'Anything you want to break?',sub:'Bad habits your kage should call out when they creep back.',type:'multi',options:[
+    {id:'snooze',ic:'眠',t:'Snoozing alarms',d:'Hitting snooze and missing morning commitments.'},
+    {id:'scroll',ic:'画',t:'Doom-scrolling',d:'Late-night reels, feeds, and mindless scrolling.'},
+    {id:'junk',ic:'食',t:'Junk food loops',d:'Stress eating or skipping meals entirely.'},
+    {id:'avoid',ic:'逃',t:'Avoidance',d:'Putting off hard tasks until panic sets in.'}
+  ]},
+  {id:'goal',title:'Pick your fixed goal tracks',sub:'Kagevo keeps these top-level tracks fixed. You add habits, promises, and tasks underneath.',type:'multi',options:[
+    {id:'career',ic:'業',t:'Career',d:'Work, craft, business, interviews, shipping.'},
+    {id:'fitness',ic:'力',t:'Fitness / Health',d:'Training, food, sleep, recovery, body.'},
+    {id:'finance',ic:'金',t:'Finance',d:'Saving, earning, spending, investing.'},
+    {id:'relationships',ic:'絆',t:'Relationships',d:'Family, friends, partner, social effort.'},
+    {id:'mental',ic:'心',t:'Mental Health',d:'Stress, burnout, confidence, emotional baseline.'},
+    {id:'productivity',ic:'集',t:'Productivity',d:'Focus, deep work, planning, execution.'},
+    {id:'discipline',ic:'律',t:'Discipline',d:'Follow-through, discomfort, self-control.'},
+    {id:'consistency',ic:'続',t:'Consistency',d:'Streaks, repetition, showing up.'}
+  ]},
+  {id:'motivation',title:'How do you respond to pressure?',sub:'This shapes default mode and intensity for your assigned alter ego.',type:'single',options:[
+    {id:'tough',ic:'炎',t:'Tough love works',d:'Roast me, be direct — I need a kick.'},
+    {id:'balanced',ic:'陰',t:'Mix of push and support',d:'Motivate first, get honest when I slip.'},
+    {id:'gentle',ic:'優',t:'Go easy on me',d:'Encouragement and empathy over harshness.'}
+  ]},
+  {id:'avatar',title:'Name your kage',sub:'Assign your alter ego a look and a name.',type:'avatar'},
+  {id:'summary',title:'Your kage is assigned',sub:'Review your setup. You can change anything later in Settings.',type:'summary'}
+];
+
+const ANIME_STEPS=[
+  {id:'welcome',title:'Welcome to Kagevo',sub:'Make your kage — a shadow-self that talks back. Brutally honest, motivating, or supportive.',type:'info'},
+  {id:'path',title:'How will you make your kage?',sub:'Craft from scratch, or assign a legendary alter ego with preset modes.',type:'path'},
+  {id:'anime',title:'Assign your alter ego',sub:'Pre-built kages inspired by legendary characters. Modes, intensity, and voice preset included.',type:'anime'},
+  {id:'summary',title:'Your kage is assigned',sub:'Review your setup. You can change anything later in Settings.',type:'summary'}
+];
+
+const state={path:'custom',step:0,answers:{},animeId:'vegeta',avatarIdx:1,name:'NOVA',iv:{i:0,answered:false,captured:[],prefilled:[]}};
+function steps(){return state.path==='anime'?ANIME_STEPS:CUSTOM_STEPS;}
+function cur(){return steps()[state.step];}
+function canContinue(){
+  const s=cur();if(!s)return false;
+  if(['info','path','summary'].includes(s.type))return s.type!=='path'||!!state.path;
+  if(s.type==='path')return !!state.path;
+  if(s.type==='multi'){const a=state.answers[s.id];return Array.isArray(a)&&a.length>0;}
+  if(s.type==='single')return !!state.answers[s.id];
+  if(s.type==='voice')return state.iv.answered&&state.iv.i===s.questions.length-1;
+  if(s.type==='avatar')return (state.name||'').trim().length>=2;
+  if(s.type==='anime')return !!state.animeId;
+  return false;
+}
+function renderProgress(){
+  const list=steps();
+  document.getElementById('obProgress').innerHTML=list.map((_,i)=>`<span class="${i<state.step?'done':i===state.step?'active':''}"></span>`).join('');
+  document.getElementById('obStepLabel').textContent=`Step ${state.step+1} of ${list.length}`;
+  document.getElementById('obBack').classList.toggle('hidden',state.step===0);
+}
+function modeTag(m){return `<i class="${m}">${{brutal:'Brutal',roast:'Roast',motiv:'Motivate',support:'Support'}[m]}</i>`;}
+function renderBody(){
+  const s=cur(),body=document.getElementById('obBody');
+  let html=`<h2>${s.title}</h2><p class="sub">${s.sub}</p>`;
+  if(s.type==='info')html+=`<div class="ob-summary"><div class="row"><span>Journey</span><b>~3 min custom · 30 sec preset</b></div><div class="row"><span>Modes</span><b>Brutal · Roast · Motivate · Support</b></div><div class="row"><span>Safety</span><b>Always on · not medical advice</b></div></div>`;
+  if(s.type==='path')html+=`<div class="path-grid"><button type="button" class="path-card ${state.path==='custom'?'sel':''}" data-path="custom"><span class="badge">Recommended</span><h3>Make your kage</h3><p>Answer questions, pick an avatar, and assign your alter ego.</p><span class="arrow">→</span></button><button type="button" class="path-card ${state.path==='anime'?'sel':''}" data-path="anime"><span class="badge">Quick start</span><h3>Assign a preset kage</h3><p>Skip the questionnaire. Pick a legendary alter ego.</p><span class="arrow">→</span></button></div>`;
+  if(s.type==='voice'){
+    const qs=s.questions,i=state.iv.i,q=qs[i],ans=state.iv.answered;
+    html+=`<div class="iv">`;
+    html+=`<div class="iv-stage"><div class="iv-speed"></div><div class="iv-counter">QUESTION <i>${i+1}</i> / ${qs.length}</div><div class="iv-sfx">${q.sfx}</div><div class="iv-moon"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div><div class="iv-wave ${ans?'idle':''}">${Array.from({length:9},(_,k)=>`<span style="animation-delay:${(k*0.09).toFixed(2)}s"></span>`).join('')}</div></div>`;
+    html+=`<div class="iv-q"><div class="from"><i></i> ${(state.name||'YOUR KAGE')} · asks</div><p>${q.q}</p></div>`;
+    if(ans)html+=`<div class="iv-said"><div class="who">YOU · transcribed</div>${q.a}</div>`;
+    if(state.iv.captured.length)html+=`<div class="iv-cap-label">CAPTURED <span class="ln"></span> 記録</div><div class="iv-chips">${state.iv.captured.map(c=>`<span class="iv-chip"><b>${c.k}</b>${c.t}</span>`).join('')}</div>`;
+    if(!ans)html+=`<button type="button" class="iv-mic" id="ivMic"><span class="mc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span><span class="lbl"><b>Hold to answer</b><span>tap to hear a sample reply</span></span></button><div class="iv-typelink">or type your answer instead</div>`;
+    else if(i<qs.length-1)html+=`<button type="button" class="iv-mic next" id="ivNext"><span class="mc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span><span class="lbl"><b>Next question</b><span>your kage keeps listening</span></span></button>`;
+    else html+=`<div class="iv-done">Interview complete · tap Continue to forge ↓</div>`;
+    html+=`</div>`;
+  }
+  if(s.type==='multi'||s.type==='single'){
+    const sel=state.answers[s.id],arr=s.type==='multi'?(sel||[]):[sel];
+    if(state.iv.prefilled.includes(s.id))html+=`<div class="iv-prefill">✓ Pre-filled from your voice interview — tweak freely</div>`;
+    html+=`<div class="ob-options">${s.options.map(o=>{const on=s.type==='multi'?arr.includes(o.id):sel===o.id;return `<button type="button" class="ob-opt ${s.type==='multi'?'multi':''} ${on?'sel':''}" data-id="${o.id}"><span class="ic">${o.ic}</span><span class="txt"><h4>${o.t}</h4><p>${o.d}</p></span>${s.type==='multi'?`<span class="check">${on?'✓':''}</span>`:''}</button>`;}).join('')}</div>`;
+  }
+  if(s.type==='avatar'){
+    const av=AVATARS[state.avatarIdx];
+    html+=`<div class="av-preview">${avFace(av)}<div class="name">Meet <span id="previewName">${state.name||'…'}</span></div></div><input class="ob-input" id="egoName" type="text" maxlength="20" placeholder="Kage name…" value="${state.name}" /><div class="sec-label" style="padding:16px 0 8px;margin:0"><span>Choose avatar</span></div><div class="av-grid">${AVATARS.map((a,i)=>`<button type="button" class="av-item ${i===state.avatarIdx?'sel':''}${a.shadow?' kage-shadow kage-av':''}" ${a.shadow?'':'style="background:'+a.bg+'"'} data-av="${i}">${a.shadow?KAGE_MARK:a.e}</button>`).join('')}</div>`;
+  }
+  if(s.type==='anime')html+=`<div class="anime-grid">${ANIME.map(a=>`<button type="button" class="anime-card ${state.animeId===a.id?'sel':''}" data-anime="${a.id}"><span class="sel-mark"></span><div class="face" style="background:${a.bg}">${a.e}</div><h4>${a.name}</h4><div class="show">${a.show}</div><div class="vibe">${a.modes.map(modeTag).join('')}</div><div class="quote">“${a.quote}”</div></button>`).join('')}</div>`;
+  if(s.type==='summary'){
+    if(state.path==='anime'){
+      const a=ANIME.find(x=>x.id===state.animeId);
+      html+=`<div class="av-preview"><div class="big" style="background:${a.bg}">${a.e}</div><div class="name"><span>${a.name}</span></div></div><div class="ob-summary"><div class="row"><span>Path</span><b>Preset quick-start</b></div><div class="row"><span>Persona</span><b>${a.name}</b></div><div class="row"><span>Modes</span><b>${a.modes.join(' · ')}</b></div><div class="row"><span>Intensity</span><b>${a.intensity} / 10</b></div><div class="row"><span>Questionnaire</span><b>Skipped</b></div></div>`;
+    }else{
+      const av=AVATARS[state.avatarIdx];
+      html+=`<div class="av-preview">${avFace(av)}<div class="name"><span>${state.name}</span></div></div><div class="ob-summary"><div class="row"><span>Path</span><b>Custom kage</b></div><div class="row"><span>Name</span><b>${state.name}</b></div><div class="row"><span>Build habits</span><b>${(state.answers['habits-build']||[]).length} selected</b></div><div class="row"><span>Break habits</span><b>${(state.answers['habits-break']||[]).length} selected</b></div><div class="row"><span>Main goal</span><b>${labelFor('goal')}</b></div><div class="row"><span>Style</span><b>${labelFor('motivation')}</b></div></div>`;
+    }
+  }
+  body.innerHTML=html;bindStepEvents();
+}
+function labelFor(key){
+  const s=CUSTOM_STEPS.find(x=>x.id===key),id=state.answers[key];
+  if(!s||!id)return '—';
+  if(Array.isArray(id))return id.map(x=>s.options.find(o=>o.id===x)?.t).filter(Boolean).join(' · ')||'—';
+  const o=s.options.find(x=>x.id===id);return o?o.t:'—';
+}
+function bindStepEvents(){
+  document.querySelectorAll('[data-path]').forEach(b=>b.addEventListener('click',()=>{state.path=b.dataset.path;renderProgress();renderBody();updateNext();}));
+  const s=cur();
+  if(s.type==='voice'){
+    const mic=document.getElementById('ivMic');
+    if(mic)mic.addEventListener('click',()=>{
+      const q=s.questions[state.iv.i];
+      state.iv.answered=true;
+      q.caps.forEach(c=>state.iv.captured.push(c));
+      if(q.prefill)Object.entries(q.prefill).forEach(([k,v])=>{state.answers[k]=Array.isArray(v)?[...v]:v;if(!state.iv.prefilled.includes(k))state.iv.prefilled.push(k);});
+      renderBody();updateNext();
+    });
+    const nx=document.getElementById('ivNext');
+    if(nx)nx.addEventListener('click',()=>{state.iv.i++;state.iv.answered=false;renderBody();updateNext();});
+  }
+  if(s.type==='multi')document.querySelectorAll('.ob-opt[data-id]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id,a=state.answers[s.id]||[];state.answers[s.id]=a.includes(id)?a.filter(x=>x!==id):[...a,id];renderBody();updateNext();}));
+  if(s.type==='single')document.querySelectorAll('.ob-opt[data-id]').forEach(b=>b.addEventListener('click',()=>{state.answers[s.id]=b.dataset.id;renderBody();updateNext();}));
+  if(s.type==='avatar'){
+    const inp=document.getElementById('egoName');
+    inp.addEventListener('input',()=>{state.name=inp.value;document.getElementById('previewName').textContent=state.name||'…';updateNext();});
+    document.querySelectorAll('[data-av]').forEach(b=>b.addEventListener('click',()=>{state.avatarIdx=+b.dataset.av;renderBody();updateNext();}));
+  }
+  if(s.type==='anime')document.querySelectorAll('[data-anime]').forEach(b=>b.addEventListener('click',()=>{state.animeId=b.dataset.anime;renderBody();updateNext();}));
+}
+function updateNext(){
+  const btn=document.getElementById('obNext'),s=cur();
+  btn.disabled=!canContinue();
+  btn.textContent=s.type==='summary'?(state.path==='anime'?`Start with ${ANIME.find(a=>a.id===state.animeId).name} →`:`Wake up ${state.name} →`):'Continue';
+}
+function nextStep(){
+  if(state.step<steps().length-1){state.step++;renderProgress();renderBody();updateNext();}
+  else{const msg=state.path==='anime'?`${ANIME.find(a=>a.id===state.animeId).name} is your kage!`:`${state.name} is assigned. Open Kagevo to talk.`;alert('🎉 '+msg);}
+}
+function prevStep(){if(state.step>0){state.step--;renderProgress();renderBody();updateNext();}}
+function resetOnboard(){state.path='custom';state.step=0;state.answers={};state.animeId='vegeta';state.avatarIdx=1;state.name='NOVA';state.iv={i:0,answered:false,captured:[],prefilled:[]};renderProgress();renderBody();updateNext();}
+document.getElementById('obNext').addEventListener('click',nextStep);
+document.getElementById('obBack').addEventListener('click',prevStep);
+document.getElementById('obSkip').addEventListener('click',()=>{state.path='anime';state.step=2;renderProgress();renderBody();updateNext();});
+document.getElementById('restartOnboard').addEventListener('click',resetOnboard);
+resetOnboard();
+
+const FIXED_GOALS=['Career','Fitness','Finance','Relationships','Mental Health','Productivity','Discipline','Consistency'];
+const GOAL_LIMITS={daily:3,weekly:5};
+let goalsData={
+  daily:[
+    {id:1,track:'Career',name:'90 min deep work',repeat:true,status:'pending',sub:'45 min · 6 PM'},
+    {id:2,track:'Fitness',name:'Gym before work',repeat:true,status:'miss',sub:'Missed · Reality score -4'},
+    {id:3,track:'Mental Health',name:'10 min journal',repeat:false,status:'done',sub:'Logged 2:14 PM'}
+  ],
+  weekly:[
+    {id:4,track:'Career',name:'MVP auth slice',repeat:true,status:'pending',sub:'Due Sun 11:59 PM'},
+    {id:5,track:'Relationships',name:'Call parents',repeat:false,status:'pending',sub:'This week only'}
+  ]
+};
+let goalsTab='daily';
+let addState={track:'Career',cadence:'daily',title:'',why:'',repeat:true,duration:60};
+let openMenuId=null;
+function slotsUsed(c){return goalsData[c].length;}
+function slotsLeft(c){return GOAL_LIMITS[c]-slotsUsed(c);}
+function showGoalsList(){document.getElementById('goalsListView').classList.remove('hidden');document.getElementById('goalsAddView').classList.add('hidden');renderGoalsList();}
+function showGoalsAdd(){document.getElementById('goalsListView').classList.add('hidden');document.getElementById('goalsAddView').classList.remove('hidden');addState={track:'Career',cadence:goalsTab,title:'',why:'',repeat:true,duration:60};renderAddForm();}
+function showBrutal(msg){document.getElementById('brutalMsg').textContent=msg||'The top-level goal track is fixed. Edit the habit, archive it, or create a better one.';document.getElementById('brutalModal').classList.add('open');}
+function renderGoalsList(){
+  const list=goalsData[goalsTab];
+  document.getElementById('dailyCnt').textContent=`${goalsData.daily.length}/${GOAL_LIMITS.daily}`;
+  document.getElementById('weeklyCnt').textContent=`${goalsData.weekly.length}/${GOAL_LIMITS.weekly}`;
+  document.getElementById('goalsListLabel').textContent=`${goalsTab==='daily'?'Today':'This week'} habits`;
+  document.getElementById('goalsSlotBar').innerHTML=`<div class="top"><span>Fixed goal tracks</span><b>${FIXED_GOALS.length} total</b></div><div class="slots">${FIXED_GOALS.map((_,i)=>`<i class="${i<4?'used':''}"></i>`).join('')}</div>`;
+  document.querySelectorAll('#goalsTabs .c-tab').forEach(t=>t.classList.toggle('on',t.dataset.list===goalsTab));
+  const el=document.getElementById('goalsList');
+  if(!list.length){el.innerHTML=`<div class="empty-goals"><b>No ${goalsTab} habits yet</b>Tap + to add one under a fixed goal</div>`;return;}
+  el.innerHTML=list.map(g=>`
+    <div class="goal-row" data-id="${g.id}">
+      <div class="check ${g.status==='done'?'done':g.status==='miss'?'miss':''}">${g.status==='done'?'✓':g.status==='miss'?'✕':''}</div>
+      <div class="body">
+        <h4 class="goal-name"><span class="goal-track">${g.track}</span>${g.name} <span class="repeat-badge ${g.repeat?'':'once'}">${g.repeat?(goalsTab==='daily'?'↻ DAILY':'↻ WEEKLY'):'ONCE'}</span></h4>
+        <div class="sub">${g.sub} · <button type="button" class="edit-lock" data-id="${g.id}" style="color:var(--red);font-weight:700;font-size:11px">edit habit</button></div>
+      </div>
+      <button type="button" class="menu-btn goal-menu" data-id="${g.id}">⋮</button>
+      <div class="goal-actions-menu" id="menu-${g.id}">
+        <button type="button" class="goal-rename" data-id="${g.id}">Rename</button>
+        <button type="button" class="goal-delete danger" data-id="${g.id}">Delete</button>
+      </div>
+    </div>`).join('');
+  bindListEvents();
+}
+function bindListEvents(){
+  document.querySelectorAll('.goal-menu').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();const id=+b.dataset.id;
+    document.querySelectorAll('.goal-actions-menu').forEach(m=>m.classList.remove('open'));
+    openMenuId=openMenuId===id?null:id;
+    if(openMenuId)document.getElementById('menu-'+id).classList.add('open');
+  }));
+  document.querySelectorAll('.goal-rename').forEach(b=>b.addEventListener('click',()=>{
+    const id=+b.dataset.id,g=[...goalsData.daily,...goalsData.weekly].find(x=>x.id===id);
+    const row=document.querySelector(`.goal-row[data-id="${id}"] .goal-name`);
+    row.innerHTML=`<input class="rename-input" value="${g.name}" data-id="${id}" />`;
+    row.querySelector('input').focus();
+    row.querySelector('input').addEventListener('blur',e=>{g.name=e.target.value.trim()||g.name;renderGoalsList();});
+    row.querySelector('input').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
+    document.querySelectorAll('.goal-actions-menu').forEach(m=>m.classList.remove('open'));
+  }));
+  document.querySelectorAll('.goal-delete').forEach(b=>b.addEventListener('click',()=>{
+    const id=+b.dataset.id;
+    ['daily','weekly'].forEach(c=>{goalsData[c]=goalsData[c].filter(g=>g.id!==id);});
+    renderGoalsList();
+  }));
+  document.querySelectorAll('.edit-lock').forEach(b=>b.addEventListener('click',()=>{
+    const id=+b.dataset.id;
+    const g=[...goalsData.daily,...goalsData.weekly].find(x=>x.id===id);
+    showBrutal(`"${g.name}" belongs to the fixed ${g.track} track. You can edit the habit or archive it, but the top-level goal tracks stay fixed so Reality scores remain comparable.`);
+  }));
+  document.addEventListener('click',()=>document.querySelectorAll('.goal-actions-menu').forEach(m=>m.classList.remove('open')),{once:true});
+}
+function renderAddForm(){
+  const c=addState.cadence;
+  document.getElementById('goalsAddBody').innerHTML=`
+    <label class="field-label">1 · Fixed goal track</label>
+    <div class="fixed-goal-grid">${FIXED_GOALS.map(g=>`<button type="button" class="fixed-goal ${addState.track===g?'sel':''}" data-track="${g}">${g}</button>`).join('')}</div>
+    <label class="field-label">2 · Daily or weekly</label>
+    <div class="cadence-pick-2">
+      <button type="button" class="c-pick-lg ${c==='daily'?'sel':''}" data-cad="daily"><span class="c-name">Daily</span><span class="c-slots">${goalsData.daily.length} / ${GOAL_LIMITS.daily}</span><span class="c-desc">Resets every midnight</span></button>
+      <button type="button" class="c-pick-lg ${c==='weekly'?'sel':''}" data-cad="weekly"><span class="c-name">Weekly</span><span class="c-slots">${goalsData.weekly.length} / ${GOAL_LIMITS.weekly}</span><span class="c-desc">Resets every Sunday</span></button>
+    </div>
+    <label class="field-label">3 · Habit / promise</label>
+    <input class="ob-input" id="gTitle" type="text" placeholder="90 min deep work…" value="${addState.title}" />
+    <label class="field-label">4 · Repeat</label>
+    <div class="repeat-toggle" id="gRepeat">
+      <button type="button" class="${addState.repeat?'on':''}" data-r="1">${c==='daily'?'↻ EVERY DAY':'↻ EVERY WEEK'}</button>
+      <button type="button" class="${!addState.repeat?'on':''}" data-r="0">ONCE ONLY</button>
+    </div>
+    <label class="field-label">5 · Why it matters</label>
+    <input class="ob-input" id="gWhy" type="text" placeholder="Moves the ${addState.track} track because…" value="${addState.why}" style="font-size:14px;font-weight:500" />
+    <label class="field-label">6 · Time-box</label>
+    <div class="time-box"><input id="gDur" type="number" min="15" max="240" value="${addState.duration}" /><select disabled><option>minutes</option></select></div>
+    <p style="font-size:11px;color:var(--ink-3);margin-top:12px;line-height:1.5;font-weight:500">Goal tracks are fixed. Habits can be edited, archived, or replaced while Reality scores stay comparable.</p>`;
+  document.querySelectorAll('#goalsAddBody [data-track]').forEach(b=>b.addEventListener('click',()=>{addState.track=b.dataset.track;renderAddForm();}));
+  document.querySelectorAll('#goalsAddBody [data-cad]').forEach(b=>b.addEventListener('click',()=>{if(slotsLeft(b.dataset.cad)<=0&&addState.cadence!==b.dataset.cad)return;addState.cadence=b.dataset.cad;renderAddForm();}));
+  document.getElementById('gTitle').addEventListener('input',e=>{addState.title=e.target.value;updateAddSave();});
+  document.getElementById('gWhy').addEventListener('input',e=>{addState.why=e.target.value;updateAddSave();});
+  document.getElementById('gDur').addEventListener('input',e=>{addState.duration=+e.target.value;});
+  document.querySelectorAll('#gRepeat button').forEach(b=>b.addEventListener('click',()=>{addState.repeat=b.dataset.r==='1';renderAddForm();}));
+  updateAddSave();
+}
+function canSaveGoal(){return addState.title.trim().length>=4&&addState.why.trim().length>=8&&slotsLeft(addState.cadence)>0;}
+function updateAddSave(){
+  const btn=document.getElementById('goalsSaveBtn'),note=document.getElementById('goalsAddNote');
+  btn.disabled=!canSaveGoal();
+  const c=addState.cadence;
+  note.textContent=`${addState.track} · ${c}: ${slotsUsed(c)}/${GOAL_LIMITS[c]} habits · fixed goal track`;
+}
+document.getElementById('goalsAddFab').addEventListener('click',showGoalsAdd);
+document.getElementById('goalsAddBack').addEventListener('click',showGoalsList);
+document.getElementById('goalsAddCancel').addEventListener('click',showGoalsList);
+document.getElementById('goalsShowList').addEventListener('click',showGoalsList);
+document.getElementById('goalsTabs').addEventListener('click',e=>{const t=e.target.closest('[data-list]');if(!t)return;goalsTab=t.dataset.list;renderGoalsList();});
+document.getElementById('goalsSaveBtn').addEventListener('click',()=>{
+  if(!canSaveGoal())return;
+  const id=Date.now();
+  goalsData[addState.cadence].push({id,track:addState.track,name:addState.title.trim(),repeat:addState.repeat,status:'pending',sub:`${addState.duration} min · ${addState.cadence==='daily'?'11:59 PM daily':'Sun 11:59 PM'}`});
+  showGoalsList();
+});
+document.getElementById('brutalOk').addEventListener('click',()=>document.getElementById('brutalModal').classList.remove('open'));
+document.getElementById('brutalDismiss').addEventListener('click',()=>document.getElementById('brutalModal').classList.remove('open'));
+showGoalsList();
+
+const SHARE_CARDS={
+  wrapped:{link:'https://kagevo.app/w/kanishk-w14',html:`<div class="share-card-inner"><div class="sc-top"><div class="sc-brand">影 KAGEVO</div><div class="sc-issue">WEEK 14</div></div><div class="sc-hero"><div class="sc-speed"></div><div class="sc-sfx">ドン</div><div class="sc-disc"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div><div class="sc-bignum">86<span>%</span><em>TASKS LOGGED</em></div></div><div class="sc-head">NOT LYING<br/>TO <em>YOURSELF.</em></div><div class="sc-stats"><div><b>22</b><span>STREAK</span></div><div><b>47</b><span>TALKS</span></div><div><b>ROAST</b><span>TOP MODE</span></div></div><div class="sc-quote">"Day 14. NOVA approved your week — <u>barely.</u>"</div><div class="sc-foot"><span>kagevo.app/w/kanishk</span><span class="qr"></span></div></div>`},
+  streak:{link:'https://kagevo.app/s/kanishk-22',html:`<div class="share-card-inner"><div class="sc-top"><div class="sc-brand">影 STREAK</div><div class="sc-issue">DAY 22</div></div><div class="sc-hero"><div class="sc-speed"></div><div class="sc-sfx">ゴゴゴ</div><div class="sc-disc"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div><div class="sc-bignum">22<em>DAY STREAK</em></div></div><div class="sc-head">ON A <em>ROLL.</em></div><div class="sc-stats"><div><b>22</b><span>DAYS</span></div><div><b>86%</b><span>LOG RATE</span></div><div><b>0</b><span>ROASTS</span></div></div><div class="sc-quote">"NOVA didn't roast you once this week. <u>Suspicious.</u>"</div><div class="sc-foot"><span>kagevo.app/s/22</span><span class="qr"></span></div></div>`},
+  persona:{link:'https://kagevo.app/p/nova-kanishk',html:`<div class="share-card-inner light"><div class="sc-top"><div class="sc-brand">影 MY KAGE</div><div class="sc-issue">LV.7</div></div><div class="sc-hero"><div class="sc-speed"></div><div class="sc-sfx">ザワ…</div><div class="sc-disc"><svg viewBox="0 0 120 140"><use href="#kage-icon"/></svg></div><div class="sc-bignum">7<em>INTENSITY</em></div></div><div class="sc-head">MEET <em>NOVA.</em><br/>THE RIVAL</div><div class="sc-stats"><div><b>14</b><span>DAYS</span></div><div><b>ROAST</b><span>MODE</span></div><div><b>LV.7</b><span>POWER</span></div></div><div class="sc-quote">"Move the alarm or stop calling yourself a runner."</div><div class="sc-foot"><span>MAKE YOUR KAGE</span><span>kagevo.app</span></div></div>`}
+};
+let shareType='wrapped';
+function renderShareCard(){const c=SHARE_CARDS[shareType];document.getElementById('shareCardPreview').innerHTML=c.html;document.getElementById('shareLink').value=c.link;}
+function openShare(){document.getElementById('shareOverlay').classList.add('open');document.getElementById('shareSheet').classList.add('open');renderShareCard();}
+function closeShare(){document.getElementById('shareOverlay').classList.remove('open');document.getElementById('shareSheet').classList.remove('open');}
+function showShareToast(msg){const t=document.getElementById('shareToast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+['shareTrigger','shareTrigger2','openShareDemo'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('click',openShare);});
+document.getElementById('shareOverlay').addEventListener('click',closeShare);
+document.querySelectorAll('#shareTypes .share-type').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#shareTypes .share-type').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');shareType=b.dataset.type;renderShareCard();
+}));
+document.getElementById('shareCopyBtn').addEventListener('click',()=>{navigator.clipboard?.writeText(document.getElementById('shareLink').value);showShareToast('Link copied!');});
+document.querySelectorAll('#shareSheet .share-target').forEach(b=>b.addEventListener('click',()=>{
+  const a=b.dataset.action,map={copy:'Link copied!',ig:'Opening Instagram Stories…',wa:'Opening WhatsApp…',x:'Opening X…',more:'System share sheet…'};
+  if(a==='copy')navigator.clipboard?.writeText(document.getElementById('shareLink').value);
+  showShareToast(map[a]||'Shared!');
+}));
+renderShareCard();
+
+const p0State={tab:'notif',notif:{goals:true,proactive:true,roast:true,morning:false,maxNudges:5,snoozed:false},privacy:{cloudAI:true,memories:true,retention:'90 days'}};
+function showP0Toast(msg){const t=document.getElementById('p0Toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+function p0Toggle(key,box){if(box==='notif')p0State.notif[key]=!p0State.notif[key];else p0State.privacy[key]=!p0State.privacy[key];renderP0();}
+function renderNotif(){
+  const n=p0State.notif;
+  const rows=[{k:'goals',h:'Goal reminders',p:'Daily/weekly log window alerts'},{k:'proactive',h:'Proactive nudges',p:'Your kage reaches out in character'},{k:'roast',h:'Roast / brutal nudges',p:'Accountability when you slip'},{k:'morning',h:'Morning check-in',p:'Persona-flavored start to day'}];
+  return `<span class="p0-badge">P0 · FR-6.4</span>
+    <div class="set-group"><span class="set-group-title">Nudge categories</span>
+      ${rows.map(r=>`<div class="set-row"><div class="info"><h4>${r.h}</h4><p>${r.p}</p></div><button type="button" class="toggle${n[r.k]?' on':''}" data-p0-toggle="notif:${r.k}"></button></div>`).join('')}
+    </div>
+    <div class="set-group"><span class="set-group-title">Quiet hours</span>
+      <div class="quiet-hours">
+        <select id="p0QuietStart">${['9:00 PM','10:00 PM','11:00 PM'].map(t=>`<option${t.startsWith('10')?' selected':''}>${t}</option>`).join('')}</select>
+        <span style="color:var(--ink-2);padding-top:11px">→</span>
+        <select id="p0QuietEnd">${['6:00 AM','7:00 AM','8:00 AM'].map(t=>`<option${t.startsWith('7')?' selected':''}>${t}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="set-group"><span class="set-group-title">Frequency cap</span>
+      <div class="freq-slider"><div class="top"><span>Max nudges per day</span><b id="p0MaxLabel">${n.maxNudges}</b></div>
+        <input type="range" id="p0MaxRange" min="1" max="10" value="${n.maxNudges}"></div>
+    </div>
+    ${n.snoozed?'<p style="font-size:12px;color:var(--red);margin-bottom:8px;font-weight:600">Your kage is snoozed until tomorrow 10:30 AM</p>':''}
+    <button type="button" class="set-btn warn" id="p0Snooze">${n.snoozed?'Cancel snooze':'Snooze your kage for 24 hours'}</button>
+    <button type="button" class="set-btn" id="p0AllOff">Turn off all notifications</button>`;
+}
+function renderSafety(){
+  return `<span class="p0-badge">P0 · FR-9</span>
+    <div class="set-group"><span class="set-group-title">Crisis detection</span>
+      <div class="consent-box"><h4>Auto support mode</h4><p>When distress signals are detected in voice or chat, NOVA switches to emotional support — roast and brutal modes disabled.</p></div>
+      <div class="set-row"><div class="info"><h4>Crisis detection</h4><p>Cannot be disabled — required for safety</p></div><div class="toggle on" style="opacity:.5;pointer-events:none"></div></div>
+    </div>
+    <div class="set-group"><span class="set-group-title">Helplines shown</span>
+      <div class="helpline" style="margin-bottom:8px"><h4>988 Suicide &amp; Crisis Lifeline</h4><p>US · free · 24/7</p><div class="num">Call or text 988</div></div>
+      <div class="helpline"><h4>Crisis Text Line</h4><p>Text with a trained counselor</p><div class="num">Text HOME to 741741</div></div>
+    </div>
+    <button type="button" class="set-btn" id="p0TestCrisis" style="margin-top:12px">Preview crisis flow</button>
+    <p style="font-size:11px;color:var(--ink-3);line-height:1.5;margin-top:12px;font-weight:500">Kagevo is not a medical or mental-health service. Always contact qualified professionals in an emergency.</p>`;
+}
+function renderPrivacy(){
+  const p=p0State.privacy;
+  return `<span class="p0-badge">P0 · FR-8.3 · NFR-5</span>
+    <div class="set-group"><span class="set-group-title">AI &amp; data consent</span>
+      <div class="consent-box"><h4>Send conversations to cloud AI</h4><p>Required for voice &amp; chat. Encrypted in transit.</p><div class="provider">Voice: Groq (no training) · Chat: Gemini</div>
+        <div style="margin-top:10px;display:flex;justify-content:flex-end"><button type="button" class="toggle${p.cloudAI?' on':''}" data-p0-toggle="privacy:cloudAI"></button></div></div>
+      <div class="consent-box"><h4>Store memories &amp; goals</h4><p>Powers persona consistency across sessions.</p>
+        <div style="margin-top:10px;display:flex;justify-content:flex-end"><button type="button" class="toggle${p.memories?' on':''}" data-p0-toggle="privacy:memories"></button></div></div>
+    </div>
+    <div class="set-group"><span class="set-group-title">Retention</span>
+      <div class="retention-row"><span>Chat history</span><b>${p.retention}</b></div>
+    </div>
+    <div class="set-group"><span class="set-group-title">Your data</span>
+      <button type="button" class="set-btn" id="p0Export">Export all data (JSON)</button>
+      <button type="button" class="set-btn" id="p0Memories">View stored memories</button>
+      <button type="button" class="set-btn danger" id="p0Delete">Delete account &amp; all data</button>
+    </div>
+    <p style="font-size:11px;color:var(--ink-3);line-height:1.5;margin-top:8px;font-weight:500">Share cards include stats only — never private chat content.</p>`;
+}
+function renderP0(){
+  const body=document.getElementById('p0Body');
+  body.innerHTML=p0State.tab==='notif'?renderNotif():p0State.tab==='safety'?renderSafety():renderPrivacy();
+  document.querySelectorAll('#p0Tabs .s-tab').forEach(t=>t.classList.toggle('on',t.dataset.p0===p0State.tab));
+  body.querySelectorAll('[data-p0-toggle]').forEach(btn=>{btn.addEventListener('click',()=>{const [box,key]=btn.dataset.p0Toggle.split(':');p0Toggle(key,box);});});
+  const range=document.getElementById('p0MaxRange');
+  if(range){range.addEventListener('input',()=>{p0State.notif.maxNudges=+range.value;document.getElementById('p0MaxLabel').textContent=range.value;});}
+  document.getElementById('p0Snooze')?.addEventListener('click',()=>{p0State.notif.snoozed=!p0State.notif.snoozed;showP0Toast(p0State.notif.snoozed?'Kage snoozed for 24h':'Snooze cancelled');renderP0();});
+  document.getElementById('p0AllOff')?.addEventListener('click',()=>{Object.keys(p0State.notif).forEach(k=>{if(typeof p0State.notif[k]==='boolean')p0State.notif[k]=false;});showP0Toast('All notifications off');renderP0();});
+  document.getElementById('p0TestCrisis')?.addEventListener('click',openP0Crisis);
+  document.getElementById('p0Export')?.addEventListener('click',()=>showP0Toast('Export queued — email in ~5 min'));
+  document.getElementById('p0Memories')?.addEventListener('click',()=>showP0Toast('Memory viewer — P1'));
+  document.getElementById('p0Delete')?.addEventListener('click',()=>showP0Toast('Confirm delete — P0 flow'));
+}
+function openP0Crisis(){document.getElementById('p0Crisis').classList.remove('hidden');document.getElementById('p0App').style.visibility='hidden';}
+function closeP0Crisis(){document.getElementById('p0Crisis').classList.add('hidden');document.getElementById('p0App').style.visibility='';}
+document.getElementById('p0Tabs').addEventListener('click',e=>{const t=e.target.closest('[data-p0]');if(!t)return;p0State.tab=t.dataset.p0;renderP0();});
+document.getElementById('p0SimCrisis').addEventListener('click',openP0Crisis);
+document.getElementById('p0CrisisClose').addEventListener('click',closeP0Crisis);
+renderP0();
+</script>
+</body>
+</html>
