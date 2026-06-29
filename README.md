@@ -19,6 +19,7 @@ open index.html
 ## Docs
 
 - [PRD](./docs/PRD.md) — functional & non-functional requirements, phased roadmap
+- [Features checklist](./docs/PRD-CHECKLIST.md) — tickable build checklist with priority, phase & prototype coverage
 - [Tech stack](./docs/TECH_STACK.md) — free-tier AI providers, full JS/TS architecture
 
 ## Stack (prototype)
