@@ -10,15 +10,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Reggae+One&family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet" />
 <style>
 :root{
-  --paper:#f1ebdd; --paper-2:#e7dfcc; --ink:#15120d; --ink-2:#464034; --ink-3:#8a8175;
+  --paper:#f1ebdd; --paper-2:#e7dfcc; --ink:#15120d; --ink-2:#3b362b; --ink-3:#665e4f;
   --red:#dd3324; --red-deep:#a82418;
   --display:'Anton',Impact,sans-serif; --sfx:'Reggae One',system-ui,sans-serif;
   --brush:'Yuji Syuku',serif; --ui:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN',system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-body{font-family:var(--ui);background:var(--paper);color:var(--ink);line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;
+body{font-family:var(--ui);background:var(--paper);color:var(--ink);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 img,svg{display:block;max-width:100%}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}

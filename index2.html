@@ -10,11 +10,11 @@
 <style>
 :root{
   --paper:#f1ebdd; --paper-2:#e7dfcc; --paper-3:#ded4bd;
-  --ink:#15120d; --ink-2:#464034; --ink-3:#8a8175;
+  --ink:#15120d; --ink-2:#3b362b; --ink-3:#665e4f;
   --red:#dd3324; --red-deep:#a82418;
   /* legacy aliases so inline var() in JS/markup still resolve, mapped to manga */
   --bg:var(--paper); --bg-2:#efe8d7; --panel:#f7f1e3; --panel-2:#ece4d1;
-  --line:#15120d; --line-2:#15120d; --muted:#5a5246; --faint:#8a8175;
+  --line:#15120d; --line-2:#15120d; --muted:#433d30; --faint:#665e4f;
   --roast:var(--red); --brutal:var(--ink); --motiv:var(--ink); --support:var(--ink-2);
   --display:'Anton',Impact,sans-serif; --sfx:'Reggae One',system-ui,sans-serif;
   --brush:'Yuji Syuku',serif; --ui:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN',system-ui,sans-serif;
@@ -23,8 +23,8 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
-body{font-family:var(--ui);background:var(--paper);color:var(--ink);line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;
+body{font-family:var(--ui);background:var(--paper);color:var(--ink);line-height:1.58;overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 img,svg{display:block;max-width:100%}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
@@ -576,6 +576,25 @@ input,select,textarea{font:inherit}
   .cover{grid-template-columns:1fr}.cover .right{border-left:none;border-top:3px solid var(--ink);min-height:340px}
   .phone{transform:scale(.95)}.wrap{padding:24px 14px 80px}
 }
+
+/* ════════ READABILITY PASS (manga kept, copy made legible) ════════ */
+/* Sentence-style body copy was set at 10.5–11.5px; bump to a comfortable
+   floor and relax line-height. Decorative ALL-CAPS labels are left as-is. */
+.anime-card .quote,
+.c-pick-lg .c-desc,
+.set-row .info p,
+.share-promo .txt p,
+.arc .body p,
+.task .t .mt{font-size:13px;line-height:1.55;color:var(--ink-2)}
+.crisis-disclaimer,
+.auth-terms{font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.sc-quote{font-size:12.5px;line-height:1.45}
+.say p,.iv-said{line-height:1.55}
+/* the fixed-habits note rendered via inline style */
+.scroll p[style*="11px"]{font-size:13px!important;line-height:1.55!important;color:var(--ink-2)!important}
+/* darker dock labels + provider notes so faint UI text clears contrast */
+.dock a{color:var(--ink-2)}
+.consent-box .provider{color:var(--ink-2)}
 </style>
 </head>
 <body>

@@ -12,8 +12,8 @@
   --paper:#f1ebdd;        /* warm newsprint */
   --paper-2:#e7dfcc;      /* screentone base */
   --ink:#15120d;          /* warm near-black ink */
-  --ink-2:#464034;        /* secondary ink */
-  --ink-3:#8a8175;        /* faint ink */
+  --ink-2:#3b362b;        /* secondary ink */
+  --ink-3:#665e4f;        /* faint ink */
   --red:#dd3324;          /* vermilion — the one accent */
   --red-deep:#a82418;
   --line:#15120d;
@@ -25,11 +25,11 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
 body{
-  font-family:var(--ui);background:var(--paper);color:var(--ink);line-height:1.5;
-  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  font-family:var(--ui);background:var(--paper);color:var(--ink);line-height:1.58;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
 }
 /* paper grain + faint halftone, fixed */
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 img,svg{display:block;max-width:100%}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
